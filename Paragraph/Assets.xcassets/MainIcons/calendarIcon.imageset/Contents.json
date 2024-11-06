@@ -1,0 +1,20 @@
+{
+  "images" : [
+    {
+      "filename" : "calendarIconPhone 1.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "calendarIconPhone.pdf",
+      "idiom" : "iphone"
+    },
+    {
+      "filename" : "calendarIconPhone 2.pdf",
+      "idiom" : "ipad"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

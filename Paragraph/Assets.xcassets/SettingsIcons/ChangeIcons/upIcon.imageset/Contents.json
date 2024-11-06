@@ -1,0 +1,31 @@
+{
+  "images" : [
+    {
+      "filename" : "upIconPhone.pdf",
+      "idiom" : "iphone",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "upIconPhone 1.pdf",
+      "idiom" : "iphone",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "upIconPhone 2.pdf",
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "2x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

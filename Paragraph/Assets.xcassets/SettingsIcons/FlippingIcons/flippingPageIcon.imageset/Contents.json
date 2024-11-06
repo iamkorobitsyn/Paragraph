@@ -1,0 +1,31 @@
+{
+  "images" : [
+    {
+      "filename" : "flippingPageIconPhone 1.pdf",
+      "idiom" : "iphone",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "flippingPageIconPhone.pdf",
+      "idiom" : "iphone",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "flippingPageIconPhone 2.pdf",
+      "idiom" : "iphone",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "2x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
