@@ -8,21 +8,37 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @State private var currentIndex = 1
+
+    @State private var device = UIDevice.current.userInterfaceIdiom
     
     var body: some View {
         
-        ZStack {
-            Selector(mode: .settingsLeafing(currentIndex)) { i in
-                test(index: i)
+        GeometryReader { geometry in
+            if geometry.size.width > geometry.size.height {
+                ZStack {
+                    Image("mainTexture")
+                        .resizable()
+                    HStack {
+                        ToolBar(sizeWidth: device == .pad ? 500 : 350,
+                                sizeHeight: device == .pad ? 250 : 200,
+                                paddingEdge: .leading, paddingPoint: 70)
+                        Spacer()
+                    }
+                    
+                }.ignoresSafeArea()
+            } else {
+                ZStack {
+                    Image("mainTexture")
+                        .resizable()
+                    VStack {
+                        ToolBar(sizeWidth: device == .pad ? 500 : 350,
+                                sizeHeight: device == .pad ? 250 : 200,
+                                paddingEdge: .top, paddingPoint: 150)
+                        Spacer()
+                    }
+                }.ignoresSafeArea()
             }
         }
-    }
-    
-    private func test(index: Int) {
-        currentIndex = index
-        print(index)
     }
 }
 

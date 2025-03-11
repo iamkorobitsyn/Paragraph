@@ -60,25 +60,25 @@ struct SelectorContent: View {
         switch mode {
             
         case .toolbarProgress:
-            setButtons(images: ["bookmarkIcon", "progressIcon"], selectedIndex: nil)
+            setButtons(images: ["toolbarBookmark", "toolbarProgress"], selectedIndex: nil)
             
         case .toolbarControls:
-            setButtons(images: ["addIcon", "settingsIcon"], selectedIndex: nil)
+            setButtons(images: ["toolbarAddBook", "toolbarOpenSettings"], selectedIndex: nil)
             
         case .toolBarBookSort(let index):
-            setButtons(images: ["bookShelfIcon", "newBooksIcon", "openBooksIcon", "completeBooksIcon"], selectedIndex: index)
+            setButtons(images: ["toolbarBookshelf", "toolbarNewBooks", "toolbarOpenBooks", "toolbarCompletedBooks"], selectedIndex: index)
     
         case .settingsBackAndForward:
-            setButtons(images: ["prevIcon", "nextIcon"], selectedIndex: nil)
+            setButtons(images: ["settingsPrevious", "settingtNext"], selectedIndex: nil)
             
         case .settingsLessAndMore:
-            setButtons(images: ["minusIcon", "plusIcon"], selectedIndex: nil)
+            setButtons(images: ["settingsMinus", "settingsPlus"], selectedIndex: nil)
 
         case .settingsCancelAndDone:
-            setButtons(images: ["cancelIcon", "checkMarkIcon"], selectedIndex: nil)
+            setButtons(images: ["settingsCancel", "settingsCheckmark"], selectedIndex: nil)
 
         case .settingsLeafing(let index):
-            setButtons(images: ["smifflingIcon", "impositionIcon", "leafletIcon"], selectedIndex: index)
+            setButtons(images: ["settingsSmiffling", "settingsImposition", "settingsLeaflet"], selectedIndex: index)
         }
     }
     
@@ -114,7 +114,7 @@ struct SelectorBackground: View {
         switch mode {
         case .toolbarProgress:
             Rectangle()
-                .fill(Color.gray.opacity(0.3))
+                .fill(Color.white.opacity(0.3))
                 .cornerRadius(21)
 
         case .toolbarControls:
