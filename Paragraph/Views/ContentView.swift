@@ -9,13 +9,24 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @State private var currentIndex = 1
+    
     var body: some View {
         
-        
-        MainPage(gradientColors: [.blue, .white])
-        
+        ZStack {
+            Selector(mode: .settingsLeafing(currentIndex)) { i in
+                test(index: i)
+            }
+        }
+    }
+    
+    private func test(index: Int) {
+        currentIndex = index
+        print(index)
     }
 }
+
+
 
 #Preview {
     return ContentView()
