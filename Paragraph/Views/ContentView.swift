@@ -36,6 +36,7 @@ struct ContentView: View {
                 ZStack {
                     Image("mainTexture")
                         .resizable()
+                    
                     Color(.orange).opacity(0.1)
                     HStack(spacing: 0) {
                         ToolBar(sizeWidth: device == .pad ? 560 : 360,
