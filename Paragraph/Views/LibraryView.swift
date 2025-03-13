@@ -14,6 +14,7 @@ struct LibraryView: View {
     let cellWidth: CGFloat
     
     var body: some View {
+        
         List(books, id: \.id) { book in
             BookCell(book: book, cellWidth: cellWidth)
                 .frame(maxWidth: .infinity, alignment: .center) // Выравнивание по центру
