@@ -93,7 +93,7 @@ struct SelectorContent: View {
                     }
                     if selectedIndex != nil && selectedIndex == index {
                         Rectangle()
-                            .fill(Color.black)
+                            .fill(Color.customGray)
                             .frame(width: 20, height: 1)
                     }
                 }
@@ -115,19 +115,19 @@ struct SelectorBackground: View {
         case .toolbarProgress:
             Rectangle()
                 .fill(Color.white.opacity(0.3))
-                .cornerRadius(21)
+                .cornerRadius(14)
 
         case .toolbarControls:
             Rectangle()
                 .fill(Color(red: 193 / 255, green: 73 / 255, blue: 79 / 255))
-                .cornerRadius(21)
+                .cornerRadius(14)
             
         case .toolBarBookSort:
             Color(.clear)
         case .settingsBackAndForward, .settingsLessAndMore, .settingsCancelAndDone:
             Rectangle()
                 .fill(.clear)
-                .cornerRadius(21)
+                .cornerRadius(14)
                 .overlay(RoundedRectangle(cornerRadius: 21)
                     .stroke(Color.gray, lineWidth: 1))
         case .settingsLeafing:
