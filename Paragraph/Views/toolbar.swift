@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ToolBar: View {
+struct ToolBarView: View {
     
     let sizeWidth: CGFloat
     let sizeHeight: CGFloat
@@ -17,6 +17,8 @@ struct ToolBar: View {
     
     @AppStorage("sortMode") var sortIndex: Int = 0
     @State private var sortLabel: String = "All books"
+    
+    @Binding var toolBarIsPresented: Bool
     
     var body: some View {
         ZStack() {
@@ -31,7 +33,9 @@ struct ToolBar: View {
             HStack {
                 Selector(mode: .toolbarProgress, action: {i in })
                     .padding(.trailing, sizeWidth / 5)
-                Selector(mode: .toolbarControls, action: {i in })
+                Selector(mode: .toolbarControls, action: {i in
+                    if i == 1 { toolBarIsPresented.toggle() }
+                })
                     .padding(.leading, sizeWidth / 5)
             }
             .padding(.top, -80)
@@ -77,6 +81,6 @@ struct ToolBar: View {
 #Preview {
     ZStack {
         Color.gray
-        ToolBar(sizeWidth: 350, sizeHeight: 200, paddingEdge: .top, paddingPoint: 0)
+        ToolBarView(sizeWidth: 350, sizeHeight: 200, paddingEdge: .top, paddingPoint: 0, toolBarIsPresented: .constant(true))
     }.ignoresSafeArea()
 }
