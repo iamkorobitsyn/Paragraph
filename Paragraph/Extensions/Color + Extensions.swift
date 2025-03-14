@@ -15,4 +15,5 @@ extension Color {
     }
     
     static let customGray: Color = .init(r: 86, g: 86, b: 86)
+    static let customGold: Color = .init(r: 248, g: 166, b: 25)
 }

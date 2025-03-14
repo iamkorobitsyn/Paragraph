@@ -10,10 +10,10 @@ import SwiftUI
 enum SelectorMode {
     case toolbarProgress
     case toolbarControls
+    case toolbarQuotes
     case toolBarBookSort(Int)
     case settingsBackAndForward
     case settingsLessAndMore
-    case settingsCancelAndDone
     case settingsLeafing(Int)
 }
 
@@ -36,9 +36,10 @@ struct Selector: View {
     }
     private func getFrameSize() -> CGSize {
         switch mode {
-            
+        case .toolbarQuotes:
+            return CGSize(width: 42, height: 42)
         case .toolbarProgress, .toolbarControls,
-             .settingsBackAndForward, .settingsLessAndMore, .settingsCancelAndDone:
+             .settingsBackAndForward, .settingsLessAndMore:
             return CGSize(width: 84, height: 42)
         case .toolBarBookSort:
             return CGSize(width: 168, height: 42)
@@ -65,6 +66,9 @@ struct SelectorContent: View {
         case .toolbarControls:
             setButtons(images: ["toolbarAddBook", "toolbarOpenSettings"], selectedIndex: nil)
             
+        case .toolbarQuotes:
+            setButtons(images: ["toolbarQuotes"], selectedIndex: nil)
+            
         case .toolBarBookSort(let index):
             setButtons(images: ["toolbarBookshelf", "toolbarNewBooks", "toolbarOpenBooks", "toolbarCompletedBooks"], selectedIndex: index)
     
@@ -73,9 +77,6 @@ struct SelectorContent: View {
             
         case .settingsLessAndMore:
             setButtons(images: ["settingsMinus", "settingsPlus"], selectedIndex: nil)
-
-        case .settingsCancelAndDone:
-            setButtons(images: ["settingsCancel", "settingsCheckmark"], selectedIndex: nil)
 
         case .settingsLeafing(let index):
             setButtons(images: ["settingsSmiffling", "settingsImposition", "settingsLeaflet"], selectedIndex: index)
@@ -112,7 +113,7 @@ struct SelectorBackground: View {
     
     var body: some View {
         switch mode {
-        case .toolbarProgress:
+        case .toolbarProgress, .toolbarQuotes:
             Rectangle()
                 .fill(Color.white.opacity(0.3))
                 .cornerRadius(14)
@@ -124,7 +125,7 @@ struct SelectorBackground: View {
             
         case .toolBarBookSort:
             Color(.clear)
-        case .settingsBackAndForward, .settingsLessAndMore, .settingsCancelAndDone:
+        case .settingsBackAndForward, .settingsLessAndMore:
             Rectangle()
                 .fill(.clear)
                 .cornerRadius(14)
@@ -137,5 +138,8 @@ struct SelectorBackground: View {
 }
 
 #Preview {
-    Selector(mode: .settingsBackAndForward, action: { _ in })
+    ZStack {
+        Selector(mode: .settingsBackAndForward, action: { _ in })
+    }
+    
 }

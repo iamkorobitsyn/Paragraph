@@ -39,24 +39,23 @@ struct ContentView: View {
                         .resizable()
                     HStack(spacing: 0) {
                         if toolBarIsPresented {
-                            ToolBarView(sizeWidth: device == .pad ? 560 : 360,
-                                        sizeHeight: geometry.size.height / 2,
-                                        paddingEdge: .leading,
-                                        paddingPoint: device == .pad ? 40 : 70,
-                                        toolBarIsPresented: $toolBarIsPresented)
-                            LibraryView(books: books, cellWidth: device == .pad ? 520 : 320)
+                            ToolBarView(presented: $toolBarIsPresented,
+                                        paddingSelector: device == .pad ? 60 : 40)
+                            .frame(width: device == .pad ? 560 : 360,
+                                   height: device == .pad ? 250 : 200)
+                            .padding(.leading, device == .pad ? 20 : 70)
+                            LibraryView(books: books)
                         } else {
                             VStack() {
                                 Rectangle()
                                     .fill(.clear)
                                     .frame(width: device == .pad ? 560 : 360,
-                                           height: geometry.size.height / 4)
-                                SettingsView(sizeWidth: device == .pad ? 560 : 360,
-                                             paddingEdge: .leading,
-                                             paddingPoint: device == .pad ? 40 : 70,
-                                             toolBarIsPresented: $toolBarIsPresented)
+                                           height: geometry.size.height / 6)
+                                SettingsView(presented: $toolBarIsPresented)
+                                    .frame(width: device == .pad ? 560 : 360)
+                                    .padding(.leading, device == .pad ? 20 : 70)
                             }
-                            LibraryView(books: books, cellWidth: device == .pad ? 520 : 320)
+                            LibraryView(books: books)
                         }
                     }
                 }.ignoresSafeArea()
@@ -66,22 +65,21 @@ struct ContentView: View {
                         .resizable()
                     if toolBarIsPresented {
                         VStack(spacing: 0) {
-                            ToolBarView(sizeWidth: device == .pad ? 560 : 360,
-                                        sizeHeight: geometry.size.height / 4,
-                                        paddingEdge: .top,
-                                        paddingPoint: 150,
-                                        toolBarIsPresented: $toolBarIsPresented)
-                            LibraryView(books: books, cellWidth: device == .pad ? 520 : 320)
+                            ToolBarView(presented: $toolBarIsPresented,
+                                        paddingSelector: device == .pad ? 60 : 40)
+                                .frame(width: device == .pad ? 560 : 360,
+                                       height: device == .pad ? 250 : 200)
+                            .padding(.top, 150)
+                            LibraryView(books: books)
+                                .frame(width: device == .pad ? 560 : 360)
                         }
                     } else {
                         VStack(spacing: 0) {
-                            SettingsView(sizeWidth: device == .pad ? 560 : 360,
-                                         paddingEdge: .top,
-                                         paddingPoint: 150,
-                                         toolBarIsPresented: $toolBarIsPresented)
+                            SettingsView(presented: $toolBarIsPresented)
+                                .frame(width: device == .pad ? 560 : 360)
+                                .padding(.top, 150)
                         }
                     }
-                    
                 }.ignoresSafeArea()
             }
         }

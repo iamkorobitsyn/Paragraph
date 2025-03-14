@@ -10,77 +10,50 @@ import SwiftUI
 
 struct ToolBarView: View {
     
-    let sizeWidth: CGFloat
-    let sizeHeight: CGFloat
-    let paddingEdge: Edge.Set
-    let paddingPoint: CGFloat
-    
     @AppStorage("sortMode") var sortIndex: Int = 0
-    @State private var sortLabel: String = "All books"
+    @Binding var presented: Bool
+    let paddingSelector: CGFloat
     
-    @Binding var toolBarIsPresented: Bool
+    
     
     var body: some View {
         ZStack() {
             
             Rectangle()
                 .fill(Color.white).opacity(0.3)
-                .frame(width: sizeWidth, height: sizeHeight)
                 .cornerRadius(20)
-                
             
-            
-            HStack {
+            HStack(alignment: .top) {
                 Selector(mode: .toolbarProgress, action: {i in })
-                    .padding(.trailing, sizeWidth / 5)
+                    .padding(.leading, paddingSelector)
+                Spacer()
                 Selector(mode: .toolbarControls, action: {i in
-                    if i == 1 { toolBarIsPresented.toggle() }
+                    if i == 1 { presented.toggle() }
                 })
-                    .padding(.leading, sizeWidth / 5)
+                .padding(.trailing, paddingSelector)
             }
             .padding(.top, -80)
             
             HStack {
                 Selector(mode: .toolBarBookSort(sortIndex), action: { i in
-                    sort(index: i)
+                    sortIndex = i
                 })
-                    .padding(.trailing, 20)
-                Text(sortLabel)
-                    .foregroundStyle(Color.black).opacity(0.8)
-                    .font(.title3)
-                    .frame(width: 120, height: 50)
+                .padding(.leading, paddingSelector)
+                Spacer()
+                Selector(mode: .toolbarQuotes, action: { i in })
+                    .padding(.trailing, paddingSelector)
             }
             .padding(.top, 100)
-            
-        }
-        .padding(paddingEdge, paddingPoint)
-        
-        .onAppear() {
-            sort(index: sortIndex)
-        }
-    }
-    
-    private func sort(index: Int) {
-        sortIndex = index
-        
-        switch index {
-        case 0:
-            sortLabel = "All books"
-        case 1:
-            sortLabel = "Closed books"
-        case 2:
-            sortLabel = "Open books"
-        case 3:
-            sortLabel = "Completed books"
-        default:
-            break
         }
     }
 }
 
 #Preview {
+    
     ZStack {
         Color.gray
-        ToolBarView(sizeWidth: 350, sizeHeight: 200, paddingEdge: .top, paddingPoint: 0, toolBarIsPresented: .constant(true))
+        ToolBarView(presented: .constant(true), paddingSelector: 40)
+            .frame(width: 360, height: 200)
     }.ignoresSafeArea()
+        
 }

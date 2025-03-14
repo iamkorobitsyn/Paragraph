@@ -11,32 +11,32 @@ import SwiftUI
 struct BookCell: View {
     
     let book: Book
-    let cellWidth: CGFloat
     
     var body: some View {
-        VStack() {
+        VStack(spacing: 5) {
             Rectangle()
-                .frame(width: cellWidth, height: 4)
+                .frame(height: 4)
                 .foregroundStyle(.white).opacity(0.3)
                 .cornerRadius(2)
             
-            HStack(alignment: .top, spacing: 0) {
+            HStack(alignment: .top, spacing: 20) {
                 
                 VStack(spacing: 0) {
                     Image(book.coverImage ?? "")
                         .resizable()
                         .cornerRadius(5)
                         .frame(width: 100, height: 150)
-                    Image("libraryDetails")
+                    Image("details")
                 }
                 
                 ZStack() {
+                    Rectangle().fill(.clear)
                     VStack(spacing: 10) {
                         Text(book.title ?? "")
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                             .font(.system(size: 18, weight: .medium))
-                            .frame(width: cellWidth - 120, height: 70, alignment: .bottom)
+                            .frame(height: 70, alignment: .bottom)
                         ZStack(alignment: .leading) {
                             Rectangle()
                                 .foregroundStyle(Color.customGray)
@@ -51,12 +51,11 @@ struct BookCell: View {
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                             .font(.system(size: 18, weight: .light))
-                            .frame(width: cellWidth - 120, height: 70, alignment: .top)
+                            .frame(height: 70, alignment: .top)
                     }
-                    
-
-                }.frame(width: cellWidth - 100, height: 150)
-            }.frame(width: cellWidth)
+                }.frame(height: 150)
+                
+            }
         }
     }
 }
@@ -68,8 +67,7 @@ struct BookCell: View {
                             author: "Fredrik Backman",
                             coverImage: "Beartown Fredrik Backman",
                             status: .closed,
-                            progress: 0.78),
-                 cellWidth: 300)
+                            progress: 0.78))
     }
     
 }
