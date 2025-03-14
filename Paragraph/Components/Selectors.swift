@@ -139,7 +139,8 @@ struct SelectorBackground: View {
 
 #Preview {
     ZStack {
-        Selector(mode: .settingsBackAndForward, action: { _ in })
+        Selector(mode: .settingsBackAndForward, action: { i in
+            print(i)})
     }
     
 }

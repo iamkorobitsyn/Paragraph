@@ -26,7 +26,7 @@ struct BookCell: View {
                         .resizable()
                         .cornerRadius(5)
                         .frame(width: 100, height: 150)
-                    Image("details")
+                    Image("detailsWhite")
                 }
                 
                 ZStack() {

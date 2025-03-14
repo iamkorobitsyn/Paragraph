@@ -21,23 +21,18 @@ struct SettingsView: View {
                 .fill(Color.white).opacity(0.3)
                 .clipShape(UnevenRoundedRectangle(cornerRadii: corner))
             
-            List {
+            List() {
                 fontStyleCell()
-                    .listRowBackground(Color.clear)
                 fontScaleCell()
-                    .listRowBackground(Color.clear)
                 testSwitchCell()
-                    .listRowBackground(Color.clear)
-                fontScaleCell()
-                    .listRowBackground(Color.clear)
                 testCell()
-                    .listRowBackground(Color.clear)
             }
+            .padding(.leading, 20)
             .listStyle(.plain)
             HStack {
                 VStack {
                     Button(action: { presented.toggle() }) {
-                        Image("close")
+                        Image("closeWhite")
                     }
                     Spacer()
                 }
@@ -46,7 +41,6 @@ struct SettingsView: View {
            
         }
     }
-        
 }
 
 #Preview {
@@ -56,18 +50,3 @@ struct SettingsView: View {
     }
    
 }
-
-
-//
-//            VStack {
-//                Toggle("Aa -", isOn: $isOn)
-//                    .toggleStyle(SwitchToggleStyle(tint: .customGold))
-//                    .font(.system(size: 20, weight: .light))
-//                    .padding(100)
-//                Toggle("|Aa   Aa|", isOn: $isOn)
-//                    .toggleStyle(SwitchToggleStyle(tint: .customGold))
-//                    .font(.system(size: 20, weight: .light))
-//                    .padding(100)
-//                Selector(mode: .settingsLessAndMore, action: {i in })
-//                Selector(mode: .settingsBackAndForward, action: {i in })
-//            }
