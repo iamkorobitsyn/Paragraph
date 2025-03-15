@@ -23,9 +23,16 @@ struct SettingsView: View {
             
             List() {
                 fontStyleCell()
-                fontScaleCell()
-                testSwitchCell()
-                testCell()
+                FontSizeCell()
+                LineSpacingCell()
+                TransferOfWordsCell()
+                JustificationCell()
+                LeafingModeCell()
+                Rectangle().fill(.clear)
+                    .frame(height: 100)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .buttonStyle(.plain)
             }
             .padding(.leading, 20)
             .listStyle(.plain)
