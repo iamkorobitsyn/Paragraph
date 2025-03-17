@@ -16,36 +16,37 @@ struct SettingsView: View {
     let corner = RectangleCornerRadii(topLeading: 20, bottomLeading: 0, bottomTrailing: 0, topTrailing: 20)
 
     var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color.white).opacity(0.3)
-                .clipShape(UnevenRoundedRectangle(cornerRadii: corner))
-            
-            List() {
-                fontStyleCell()
-                FontSizeCell()
-                LineSpacingCell()
-                TransferOfWordsCell()
-                JustificationCell()
-                LeafingModeCell()
-                Rectangle().fill(.clear)
-                    .frame(height: 100)
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .buttonStyle(.plain)
-            }
-            .padding(.leading, 20)
-            .listStyle(.plain)
-            HStack {
-                VStack {
-                    Button(action: { presented.toggle() }) {
-                        Image("closeWhite")
+        if presented {
+            ZStack {
+                Rectangle()
+                    .fill(Color.white).opacity(0.3)
+                    .clipShape(UnevenRoundedRectangle(cornerRadii: corner))
+                
+                List() {
+                    fontStyleCell()
+                    FontSizeCell()
+                    LineSpacingCell()
+                    TransferOfWordsCell()
+                    JustificationCell()
+                    LeafingModeCell()
+                    Rectangle().fill(.clear)
+                        .frame(height: 100)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .buttonStyle(.plain)
+                }
+                .padding(.leading, 20)
+                .listStyle(.plain)
+                HStack {
+                    VStack {
+                        Button(action: { presented.toggle() }) {
+                            Image("closeWhite")
+                        }
+                        Spacer()
                     }
                     Spacer()
                 }
-                Spacer()
             }
-           
         }
     }
 }

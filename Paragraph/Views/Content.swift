@@ -26,60 +26,67 @@ struct ContentView: View {
              status: .completed,
              progress: 0.0)
     ]
-
-    @State private var toolBarIsPresented: Bool = true
+    
     @State private var device = UIDevice.current.userInterfaceIdiom
+
+    @State private var toolbarPresented: Bool = true
+    @State private var settingsPresented: Bool = false
+    @State private var readerPresented: Bool = false
     
     var body: some View {
-        
         GeometryReader { geometry in
             if geometry.size.width > geometry.size.height {
                 ZStack {
                     Image("mainTexture")
                         .resizable()
+                    ReaderView(readerPresented: $readerPresented)
+                        .opacity(readerPresented ? 1 : 0)
                     HStack(spacing: 0) {
-                        if toolBarIsPresented {
-                            ToolBarView(presented: $toolBarIsPresented,
-                                        paddingSelector: device == .pad ? 60 : 40)
-                            .frame(width: device == .pad ? 560 : 360,
-                                   height: device == .pad ? 250 : 200)
-                            .padding(.leading, device == .pad ? 20 : 70)
-                            LibraryView(books: books)
-                        } else {
-                            VStack() {
-                                Rectangle()
-                                    .fill(.clear)
-                                    .frame(width: device == .pad ? 560 : 360,
-                                           height: geometry.size.height / 6)
-                                SettingsView(presented: $toolBarIsPresented)
-                                    .frame(width: device == .pad ? 560 : 360)
-                                    .padding(.leading, device == .pad ? 20 : 70)
+
+                            ZStack {
+                                VStack {
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .frame(width: device == .pad ? 560 : 360,
+                                               height: geometry.size.height / 6)
+                                    SettingsView(presented: $settingsPresented)
+                                        .frame(width: device == .pad ? 560 : 360)
+                                        .padding(.leading, device == .pad ? 20 : 70)
+                                }
+                                
+                                ToolBarView(settingsPresented: $settingsPresented,
+                                            readerPresented: $readerPresented,
+                                            paddingSelector: device == .pad ? 60 : 40)
+                                .frame(width: device == .pad ? 560 : 360,
+                                       height: device == .pad ? 250 : 200)
+                                .padding(.leading, device == .pad ? 20 : 70)
+                                .opacity(settingsPresented || readerPresented ? 0 : 1)
                             }
                             LibraryView(books: books)
-                        }
+                            .opacity(readerPresented ? 0 : 1)
                     }
                 }.ignoresSafeArea()
             } else {
                 ZStack {
                     Image("mainTexture")
                         .resizable()
-                    if toolBarIsPresented {
-                        VStack(spacing: 0) {
-                            ToolBarView(presented: $toolBarIsPresented,
-                                        paddingSelector: device == .pad ? 60 : 40)
-                                .frame(width: device == .pad ? 560 : 360,
-                                       height: device == .pad ? 250 : 200)
-                            .padding(.top, 150)
-                            LibraryView(books: books)
-                                .frame(width: device == .pad ? 560 : 360)
-                        }
-                    } else {
-                        VStack(spacing: 0) {
-                            SettingsView(presented: $toolBarIsPresented)
-                                .frame(width: device == .pad ? 560 : 360)
-                                .padding(.top, 150)
-                        }
+                    ReaderView(readerPresented: $readerPresented)
+                        .opacity(readerPresented ? 1 : 0)
+                    VStack(spacing: 0) {
+                        ToolBarView(settingsPresented: $settingsPresented,
+                                    readerPresented: $readerPresented,
+                                    paddingSelector: device == .pad ? 60 : 40)
+                        .frame(width: device == .pad ? 560 : 360,
+                               height: device == .pad ? 250 : 200)
+                        .padding(.top, 150)
+                        .opacity(settingsPresented || readerPresented ? 0 : 1)
+                        LibraryView(books: books)
+                            .frame(width: device == .pad ? 560 : 360)
+                            .opacity(readerPresented || settingsPresented ? 0 : 1)
                     }
+                    SettingsView(presented: $settingsPresented)
+                        .frame(width: device == .pad ? 560 : 360)
+                        .padding(.top, 150)
                 }.ignoresSafeArea()
             }
         }

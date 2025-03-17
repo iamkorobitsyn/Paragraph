@@ -11,7 +11,8 @@ import SwiftUI
 struct ToolBarView: View {
     
     @AppStorage("sortMode") var sortIndex: Int = 0
-    @Binding var presented: Bool
+    @Binding var settingsPresented: Bool
+    @Binding var readerPresented: Bool
     let paddingSelector: CGFloat
     
     
@@ -24,11 +25,19 @@ struct ToolBarView: View {
                 .cornerRadius(20)
             
             HStack(alignment: .top) {
-                Selector(mode: .toolbarProgress, action: {i in })
+                Selector(mode: .toolbarProgress, action: {i in
+                    if i == 0 {
+                        readerPresented.toggle()
+                    }
+                })
                     .padding(.leading, paddingSelector)
                 Spacer()
                 Selector(mode: .toolbarControls, action: {i in
-                    if i == 1 { presented.toggle() }
+                    if i == 0 {
+                        
+                    } else {
+                        settingsPresented.toggle()
+                    }
                 })
                 .padding(.trailing, paddingSelector)
             }
@@ -52,7 +61,9 @@ struct ToolBarView: View {
     
     ZStack {
         Color.gray
-        ToolBarView(presented: .constant(true), paddingSelector: 40)
+        ToolBarView(settingsPresented: .constant(true),
+                    readerPresented: .constant(false),
+                    paddingSelector: 40)
             .frame(width: 360, height: 200)
     }.ignoresSafeArea()
         
