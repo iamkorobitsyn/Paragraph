@@ -5,56 +5,94 @@
 //  Created by Александр Коробицын on 07.03.2025.
 //
 
-import Foundation
 import SwiftUI
 
 struct ReaderView: View {
     
     @Binding var readerPresented: Bool
-    
-    @State private var fontSize: CGFloat = 18
-    @State private var content: String = "Начался и закончился шестичасовой наплыв гостей. Через двери кавалькадой проходили налившиеся пивом сливки общества Брисбена: от совладельцев юридических фирм до телеведущих, заправил Австралийской футбольной лиги, вышедших в тираж звезд крикета, членов парламента штата – и многие другие персонажи, но только не молодые женщины. Воцарилась тишина, единственными звуками, проникавшими сквозь гранитные стены, были приглушенный шум уличного движения, затихающее биение близившегося к концу рабочего дня и пробуждавшийся пульс ночной жизни большого города. Вестибюль опустел, покой иногда нарушали члены клуба, выходившие из него более пьяными и довольными, чем когда пришли. Как только последний из них, пошатываясь, вышел на улицу, Джейми погрузился в научно-фантастический роман, время от времени озираясь через плечо, как бы его за этим занятием не застукало начальство или кто-то из шишек Брисбена. Это, в противовес вечерней суматохе, было не таким уж плохим способом зарабатывать восемнадцать долларов в час."
-    
-    var body: some View {
-        ZStack {
-            VStack {
-                // Слайдер для изменения размера шрифта
-                Slider(value: $fontSize, in: 12...36, step: 1)
-                    .padding()
-                    .onChange(of: fontSize) {
-                        print(fontSize)
-                    }
 
-                // ScrollView для перелистывания текста
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
+    @State private var tempWidth: CGFloat = 0
+    @State private var width: CGFloat = 0
+    @State private var fontSize: CGFloat = 18
+    @State private var content: [String] = ["Начался ", "и ", "закончился ", "шестичасовой ", "наплыв", "гостей...", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей"]
+    @State private var wordsList: [String] = []
+    
+    // Функция для расчета списка слов, который помещается в одну строку
+    private func createWordList(text: [String], maxWidth: CGFloat, fontSize: CGFloat) -> [String] {
+        var tempWidth: CGFloat = 0
+        var words: [String] = []
+        
+        // Проходим по всем словам, вычисляем их ширину и добавляем в список, пока не превышен предел ширины
+        for word in text {
+            let wordWidth = word.widthOfString(usingFont: .systemFont(ofSize: fontSize))
+            if tempWidth + wordWidth <= maxWidth {
+                words.append(word)
+                tempWidth += wordWidth
+            } else {
+                break
+            }
+        }
+        return words
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                VStack {
+                    Slider(value: $fontSize, in: 12...36, step: 1)
+                        .padding()
+                        .onChange(of: fontSize) {
+                            // Когда изменяется шрифт, пересчитываем слова
+                            wordsList = createWordList(text: content, maxWidth: geometry.size.width, fontSize: fontSize)
+                        }
+
+                    VStack(alignment: .leading, spacing: 0) {
                         Text("Заголовок")
                             .font(.title)
                             .padding(.bottom, 10)
                         
-                        // TextEditor для редактирования текста
-                        TextEditor(text: $content)
-                            .font(.system(size: fontSize))
-                            .padding()
-                            .frame(height: 400)
-                            .border(Color.gray, width: 1)
-                            .cornerRadius(8)
-                            .foregroundColor(.primary)
+                        // Отображаем список слов
+                        HStack(spacing: 0) {
+
+                            ForEach(wordsList, id: \.self) { word in
+                                
+                                if word != wordsList[0] {
+                                    Spacer(minLength: 0)
+                                }
+                               
+                                Text(word)
+                                    .multilineTextAlignment(.center)
+                                    .background(.clear)
+                                    .font(.system(size: fontSize))
+                                    .lineLimit(1)
+                            }
+                        }
                     }
                 }
+                
+                // Кнопка закрытия
+                Button(action: { readerPresented.toggle() }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.white)
+                        .font(.title)
+                        .padding()
+                        .background(Color.black.opacity(0.6))
+                        .clipShape(Circle())
+                }
+                .position(x: 30, y: 30)  // Расположение кнопки
             }
-            
-            // Кнопка для закрытия
-            Button(action: { readerPresented.toggle() }) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.white)
-                    .font(.title)
-                    .padding()
-                    .background(Color.black.opacity(0.6))
-                    .clipShape(Circle())
-            }
-            .position(x: 30, y: 30)  // Расположение кнопки
         }
+    }
+}
+
+// Расширение для вычисления ширины строки
+extension String {
+    func widthOfString(usingFont font: UIFont) -> CGFloat {
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font
+        ]
+        let size = (self as NSString).size(withAttributes: attributes)
+        return size.width
     }
 }
 
