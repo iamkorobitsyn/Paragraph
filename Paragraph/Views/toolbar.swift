@@ -15,6 +15,8 @@ struct ToolBarView: View {
     @Binding var readerPresented: Bool
     let paddingSelector: CGFloat
     
+    @EnvironmentObject private var textService: TextSevice
+    
     
     
     var body: some View {
@@ -28,13 +30,13 @@ struct ToolBarView: View {
                 Selector(mode: .toolbarProgress, action: {i in
                     if i == 0 {
                         readerPresented.toggle()
+                        textService.setCurrentText()
                     }
                 })
                     .padding(.leading, paddingSelector)
                 Spacer()
                 Selector(mode: .toolbarControls, action: {i in
                     if i == 0 {
-                        
                     } else {
                         settingsPresented.toggle()
                     }
@@ -66,5 +68,6 @@ struct ToolBarView: View {
                     paddingSelector: 40)
             .frame(width: 360, height: 200)
     }.ignoresSafeArea()
+        .environmentObject(TextSevice())
         
 }

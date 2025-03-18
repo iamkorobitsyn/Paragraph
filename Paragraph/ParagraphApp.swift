@@ -10,9 +10,12 @@ import SwiftUI
 @main
 struct ParagraphApp: App {
     
+    @StateObject private var textService = TextSevice()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(textService)
         }
     }
 }

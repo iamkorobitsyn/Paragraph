@@ -97,4 +97,5 @@ struct ContentView: View {
 
 #Preview {
     return ContentView()
+        .environmentObject(TextSevice())
 }

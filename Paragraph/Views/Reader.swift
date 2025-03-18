@@ -10,12 +10,17 @@ import SwiftUI
 struct ReaderView: View {
     
     @Binding var readerPresented: Bool
+    
+    @State private var content: [String] = []
 
     @State private var tempWidth: CGFloat = 0
     @State private var width: CGFloat = 0
     @State private var fontSize: CGFloat = 18
-    @State private var content: [String] = ["Начался ", "и ", "закончился ", "шестичасовой ", "наплыв", "гостей...", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей", "Начался", "и", "закончился", "шестичасовой", "наплыв", "гостей"]
+    
     @State private var wordsList: [String] = []
+    
+    
+    @EnvironmentObject private var textService: TextSevice
     
     // Функция для расчета списка слов, который помещается в одну строку
     private func createWordList(text: [String], maxWidth: CGFloat, fontSize: CGFloat) -> [String] {
@@ -43,28 +48,40 @@ struct ReaderView: View {
                         .padding()
                         .onChange(of: fontSize) {
                             // Когда изменяется шрифт, пересчитываем слова
-                            wordsList = createWordList(text: content, maxWidth: geometry.size.width, fontSize: fontSize)
+                            textService.setCurrentText()
+                            wordsList = createWordList(text: textService.currentBookText, maxWidth: geometry.size.width, fontSize: fontSize)
                         }
 
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Заголовок")
-                            .font(.title)
-                            .padding(.bottom, 10)
+                        HStack {
+                            Text("Заголовок")
+                                .font(.title)
+                                .padding(.bottom, 10)
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                        }
+                        
                         
                         // Отображаем список слов
                         HStack(spacing: 0) {
-
-                            ForEach(wordsList, id: \.self) { word in
-                                
-                                if word != wordsList[0] {
+                            ForEach(Array(zip(wordsList.indices, wordsList)), id: \.0) { index, word in
+                                if index != 0 {
                                     Spacer(minLength: 0)
                                 }
-                               
-                                Text(word)
-                                    .multilineTextAlignment(.center)
-                                    .background(.clear)
-                                    .font(.system(size: fontSize))
-                                    .lineLimit(1)
+                                if index == wordsList.count - 1 {
+                                    Text(word)
+                                        .multilineTextAlignment(.trailing)
+                                        .background(.clear)
+                                        .font(.system(size: fontSize))
+                                        .lineLimit(1)
+                                } else {
+                                    Text(word)
+                                        .multilineTextAlignment(.leading)
+                                        .background(.clear)
+                                        .font(.system(size: fontSize))
+                                        .lineLimit(1)
+                                }
+                                
                             }
                         }
                     }
@@ -99,5 +116,6 @@ extension String {
 struct ReaderView_Previews: PreviewProvider {
     static var previews: some View {
         ReaderView(readerPresented: .constant(true))
+            .environmentObject(TextSevice())
     }
 }
