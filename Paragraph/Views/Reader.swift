@@ -11,111 +11,87 @@ struct ReaderView: View {
     
     @Binding var readerPresented: Bool
     
-    @State private var content: [String] = []
-
-    @State private var tempWidth: CGFloat = 0
-    @State private var width: CGFloat = 0
-    @State private var fontSize: CGFloat = 18
+    let content: Book = testBook
+    
+    @AppStorage("fontSizeValue") private var fontSize: Double = 20.0
     
     @State private var wordsList: [String] = []
-    
-    
-    @EnvironmentObject private var textService: TextSevice
-    
-    // Функция для расчета списка слов, который помещается в одну строку
-    private func createWordList(text: [String], maxWidth: CGFloat, fontSize: CGFloat) -> [String] {
-        var tempWidth: CGFloat = 0
-        var words: [String] = []
-        
-        // Проходим по всем словам, вычисляем их ширину и добавляем в список, пока не превышен предел ширины
-        for word in text {
-            let wordWidth = word.widthOfString(usingFont: .systemFont(ofSize: fontSize))
-            if tempWidth + wordWidth <= maxWidth {
-                words.append(word)
-                tempWidth += wordWidth
-            } else {
-                break
-            }
-        }
-        return words
-    }
 
+    @EnvironmentObject private var textService: TextService
+    
+    @State private var maxLines: CGFloat = 0
+    
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                VStack {
-                    Slider(value: $fontSize, in: 12...36, step: 1)
-                        .padding()
+            VStack() {
+                ZStack(alignment: .top) {
+                    Rectangle()
+                        .fill(.clear)
+                        .border(Color.black)
+                    
+                        .onAppear() {
+                            maxLines = (geometry.size.height / 2.4) / fontSize
+                            wordsList = textService.createWordList(text: testBook.text[2].words,
+                                                                   maxWidth: geometry.size.width - 50,
+                                                                   fontSize: fontSize) }
                         .onChange(of: fontSize) {
-                            // Когда изменяется шрифт, пересчитываем слова
-                            textService.setCurrentText()
-                            wordsList = createWordList(text: textService.currentBookText, maxWidth: geometry.size.width, fontSize: fontSize)
+                            maxLines = (geometry.size.height / 2.4) / fontSize
+                            wordsList = textService.createWordList(text: testBook.text[2].words,
+                                                                   maxWidth: geometry.size.width - 50,
+                                                                   fontSize: fontSize)
                         }
-
-                    VStack(alignment: .leading, spacing: 0) {
-                        HStack {
-                            Text("Заголовок")
-                                .font(.title)
-                                .padding(.bottom, 10)
-                                .multilineTextAlignment(.leading)
-                            Spacer()
-                        }
+                    
+                        .frame(width: geometry.size.width - 50,
+                               height: geometry.size.height / 2)
+                    
+                    LazyVStack(spacing: 0) {
+                        let linesCount = Int(maxLines)
                         
                         
-                        // Отображаем список слов
-                        HStack(spacing: 0) {
-                            ForEach(Array(zip(wordsList.indices, wordsList)), id: \.0) { index, word in
-                                if index != 0 {
-                                    Spacer(minLength: 0)
-                                }
-                                if index == wordsList.count - 1 {
-                                    Text(word)
-                                        .multilineTextAlignment(.trailing)
-                                        .background(.clear)
-                                        .font(.system(size: fontSize))
-                                        .lineLimit(1)
-                                } else {
-                                    Text(word)
-                                        .multilineTextAlignment(.leading)
-                                        .background(.clear)
-                                        .font(.system(size: fontSize))
-                                        .lineLimit(1)
-                                }
-                                
-                            }
+                        ForEach(0..<linesCount, id: \.self) { index in
+                            TextLineView(fontSize: CGFloat(fontSize), wordsList: wordsList)
                         }
                     }
-                }
+                }.frame(width: geometry.size.width - 50,
+                        height: geometry.size.height / 2)
                 
-                // Кнопка закрытия
+                SettingsView(presented: .constant(true))
+                
                 Button(action: { readerPresented.toggle() }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.white)
+                    Text("Close")
+                        .foregroundColor(.red)
                         .font(.title)
-                        .padding()
-                        .background(Color.black.opacity(0.6))
-                        .clipShape(Circle())
                 }
-                .position(x: 30, y: 30)  // Расположение кнопки
+                .opacity(1)
             }
         }
     }
 }
 
-// Расширение для вычисления ширины строки
-extension String {
-    func widthOfString(usingFont font: UIFont) -> CGFloat {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: font
-        ]
-        let size = (self as NSString).size(withAttributes: attributes)
-        return size.width
+struct TextLineView: View {
+    
+    let fontSize: CGFloat
+    let wordsList: [String]
+    
+    var body: some View {
+        HStack() {
+            ForEach(wordsList, id: \.self) { word in
+                Text(word)
+                    .font(.system(size: fontSize))
+                    .lineLimit(1)
+                    .background(.clear)
+                    .multilineTextAlignment(word == wordsList.first ? .leading : .center)
+                    .multilineTextAlignment(word == wordsList.last ? .trailing : .center)
+                
+                if word != wordsList.last {
+                    Spacer(minLength: 0)
+                }
+            }
+        }
     }
 }
 
-struct ReaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        ReaderView(readerPresented: .constant(true))
-            .environmentObject(TextSevice())
-    }
+#Preview {
+    ReaderView(readerPresented: .constant(true))
+        .environmentObject(TextService())
 }

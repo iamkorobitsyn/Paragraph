@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct ParagraphApp: App {
     
-    @StateObject private var textService = TextSevice()
+    @StateObject private var textService = TextService()
     
     var body: some Scene {
         WindowGroup {

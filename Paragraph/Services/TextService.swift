@@ -6,15 +6,25 @@
 //
 
 import Combine
+import Foundation
 
-final class TextSevice: ObservableObject {
+final class TextService: ObservableObject {
     
-    private let content: [String] = ["Начался ", "и ", "закончился ", "шестичасовой ", "наплыв ", "гостей... ", "Начался ", "и ", "закончился ", "шестичасовой ", "наплыв ", "гостей ", "Начался ", "и ", "закончился ", "шестичасовой ", "наплыв ", "гостей ", "Начался ", "и ", "закончился ", "шестичасовой ", "наплыв ", "гостей ", "Начался ", "и ", "закончился ", "шестичасовой ", "наплыв ", "гостей "]
     
-    var currentBookText: [String] = []
-    
-    func setCurrentText() {
-        currentBookText = content
+    func createWordList(text: [String], maxWidth: CGFloat, fontSize: CGFloat) -> [String] {
+        var tempWidth: CGFloat = 0
+        var words: [String] = []
+        
+        for word in text {
+            let wordWidth = word.widthOfString(usingFont: .systemFont(ofSize: fontSize))
+            
+            if tempWidth + wordWidth <= maxWidth {
+                words.append(word)
+                tempWidth += wordWidth
+            } else {
+                break
+            }
+        }
+        return words
     }
-    
 }

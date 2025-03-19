@@ -14,10 +14,7 @@ struct ToolBarView: View {
     @Binding var settingsPresented: Bool
     @Binding var readerPresented: Bool
     let paddingSelector: CGFloat
-    
-    @EnvironmentObject private var textService: TextSevice
-    
-    
+
     
     var body: some View {
         ZStack() {
@@ -30,7 +27,6 @@ struct ToolBarView: View {
                 Selector(mode: .toolbarProgress, action: {i in
                     if i == 0 {
                         readerPresented.toggle()
-                        textService.setCurrentText()
                     }
                 })
                     .padding(.leading, paddingSelector)
@@ -68,6 +64,6 @@ struct ToolBarView: View {
                     paddingSelector: 40)
             .frame(width: 360, height: 200)
     }.ignoresSafeArea()
-        .environmentObject(TextSevice())
+        .environmentObject(TextService())
         
 }

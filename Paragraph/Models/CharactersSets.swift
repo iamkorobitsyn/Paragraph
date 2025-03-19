@@ -5,7 +5,7 @@
 //  Created by Александр Коробицын on 18.03.2025.
 //
 
-import SwiftUI
+import Foundation
 
 struct CharSets {
     

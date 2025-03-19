@@ -14,24 +14,29 @@ struct ContentView: View {
              author: "Fredrik Backman",
              coverImage: "Beartown Fredrik Backman",
              status: .closed,
-             progress: 0.33),
+             progress: 0.33,
+             text: []),
         Book(title: "My grandmother asked me to tell you shes sorry",
              author: "Fredrik Backman",
              coverImage: "My grandmother asked me to tell you shes sorry   Fredrik Backman",
              status: .open,
-             progress: 0.95),
+             progress: 0.95,
+             text: []),
         Book(title: "Things my son needs to know about the world",
              author: "Fredrik Backman",
              coverImage: "Things my son needs to know about the world  Fredrik Backman",
              status: .completed,
-             progress: 0.0)
+             progress: 0.0,
+             text: [])
     ]
     
     @State private var device = UIDevice.current.userInterfaceIdiom
-
+    
     @State private var toolbarPresented: Bool = true
     @State private var settingsPresented: Bool = false
     @State private var readerPresented: Bool = false
+    
+    
     
     var body: some View {
         GeometryReader { geometry in
@@ -42,27 +47,27 @@ struct ContentView: View {
                     ReaderView(readerPresented: $readerPresented)
                         .opacity(readerPresented ? 1 : 0)
                     HStack(spacing: 0) {
-
-                            ZStack {
-                                VStack {
-                                    Rectangle()
-                                        .fill(.clear)
-                                        .frame(width: device == .pad ? 560 : 360,
-                                               height: geometry.size.height / 6)
-                                    SettingsView(presented: $settingsPresented)
-                                        .frame(width: device == .pad ? 560 : 360)
-                                        .padding(.leading, device == .pad ? 20 : 70)
-                                }
-                                
-                                ToolBarView(settingsPresented: $settingsPresented,
-                                            readerPresented: $readerPresented,
-                                            paddingSelector: device == .pad ? 60 : 40)
-                                .frame(width: device == .pad ? 560 : 360,
-                                       height: device == .pad ? 250 : 200)
-                                .padding(.leading, device == .pad ? 20 : 70)
-                                .opacity(settingsPresented || readerPresented ? 0 : 1)
+                        
+                        ZStack {
+                            VStack {
+                                Rectangle()
+                                    .fill(.clear)
+                                    .frame(width: device == .pad ? 560 : 360,
+                                           height: geometry.size.height / 6)
+                                SettingsView(presented: $settingsPresented)
+                                    .frame(width: device == .pad ? 560 : 360)
+                                    .padding(.leading, device == .pad ? 20 : 70)
                             }
-                            LibraryView(books: books)
+                            
+                            ToolBarView(settingsPresented: $settingsPresented,
+                                        readerPresented: $readerPresented,
+                                        paddingSelector: device == .pad ? 60 : 40)
+                            .frame(width: device == .pad ? 560 : 360,
+                                   height: device == .pad ? 250 : 200)
+                            .padding(.leading, device == .pad ? 20 : 70)
+                            .opacity(settingsPresented || readerPresented ? 0 : 1)
+                        }
+                        LibraryView(books: books)
                             .opacity(readerPresented ? 0 : 1)
                     }
                 }.ignoresSafeArea()
@@ -94,8 +99,7 @@ struct ContentView: View {
 }
 
 
-
 #Preview {
     return ContentView()
-        .environmentObject(TextSevice())
+        .environmentObject(TextService())
 }

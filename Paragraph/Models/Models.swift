@@ -13,6 +13,18 @@ enum BookStatus {
     case completed
 }
 
+enum TextMode {
+    case bookTitle
+    case bookAuthor
+    case chapterTitle
+    case subTitle
+    case paragraph
+    case annotation
+    case citation
+    case list
+    case verse
+}
+
 struct Book: Identifiable {
     let id = UUID()
     let title: String?
@@ -20,4 +32,13 @@ struct Book: Identifiable {
     let coverImage: String?
     let status: BookStatus
     let progress: Double
+    let text: [TextBlock]
 }
+
+struct TextBlock {
+    let words: [String]
+    let mode: TextMode
+}
+
+
+

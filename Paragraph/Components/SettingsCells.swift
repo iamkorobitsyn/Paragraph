@@ -61,8 +61,9 @@ struct fontStyleCell: View {
 
 struct FontSizeCell: View {
     
-    @State private var sizeIndex = 3
-    let size = [16, 18, 20, 20, 22, 24, 26]
+    @AppStorage("fontSizeValue") private var size: Double = 20
+    @AppStorage("fontSizeIndex") private var index: Int = 2
+    private let sizeList = [15, 20, 25, 30, 35, 40, 45]
     
     var body: some View {
         
@@ -76,10 +77,10 @@ struct FontSizeCell: View {
                     .padding(.trailing, 20)
                 HStack() {
                     
-                    TabView(selection: $sizeIndex) {
-                        ForEach(0..<size.count, id: \.self) { index in
+                    TabView(selection: $index) {
+                        ForEach(0..<sizeList.count, id: \.self) { index in
                             Text("Aa")
-                                .font(.system(size: CGFloat(size[sizeIndex]),
+                                .font(.system(size: CGFloat(size),
                                               weight: .light))
                                 .foregroundStyle(.black)
                         }
@@ -90,18 +91,21 @@ struct FontSizeCell: View {
                     Spacer()
                     
                     Selector(mode: .settingsLessAndMore, action: { i in
+                        
                         if i == 0 {
-                            if sizeIndex > 0 {
-                                sizeIndex -= 1
+                            if index > 0 {
+                                index -= 1
                             } else {
-                                sizeIndex = 0
+                                index = 0
                             }
+                            size = Double(sizeList[index])
                         } else {
-                            if sizeIndex < size.count - 1 {
-                                sizeIndex += 1
+                            if index < sizeList.count - 1 {
+                                index += 1
                             } else {
-                                sizeIndex = size.count - 1
+                                index = sizeList.count - 1
                             }
+                            size = Double(sizeList[index])
                         }
                     })
                         .padding(.trailing, 20)
