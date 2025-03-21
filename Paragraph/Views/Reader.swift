@@ -10,6 +10,7 @@ import SwiftUI
 struct ReaderView: View {
     
     @Binding var readerPresented: Bool
+    @Binding var settingsPresented: Bool
     
     let content: Book = testBook
     
@@ -23,48 +24,54 @@ struct ReaderView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            VStack() {
-                ZStack(alignment: .top) {
-                    Rectangle()
-                        .fill(.clear)
-                        .border(Color.black)
-                    
-                        .onAppear() {
-                            maxLines = (geometry.size.height / 2.4) / fontSize
-                            wordsList = textService.createWordList(text: testBook.text[2].words,
-                                                                   maxWidth: geometry.size.width - 50,
-                                                                   fontSize: fontSize) }
-                        .onChange(of: fontSize) {
-                            maxLines = (geometry.size.height / 2.4) / fontSize
-                            wordsList = textService.createWordList(text: testBook.text[2].words,
-                                                                   maxWidth: geometry.size.width - 50,
-                                                                   fontSize: fontSize)
-                        }
-                    
-                        .frame(width: geometry.size.width - 50,
-                               height: geometry.size.height / 2)
-                    
+            Color(.white)
+                .ignoresSafeArea()
+            
+            HStack {
+                Button(action: {readerPresented.toggle()}) {
+                    Image("closeGray")
+                }
+                .padding(.leading, 20)
+                
+                Spacer()
+                
+                Button(action: {settingsPresented.toggle()}) {
+                    Image("settingsGray")
+                }
+                .padding(.trailing, 20)
+            }
+            
+                .onAppear() {
+                    maxLines = (geometry.size.height / 2.4) / fontSize
+                    wordsList = textService.createWordList(text: testBook.text[2].words,
+                                                           maxWidth: geometry.size.width - 50,
+                                                           fontSize: fontSize) }
+                .onChange(of: fontSize) {
+                    maxLines = (geometry.size.height / 2.4) / fontSize
+                    wordsList = textService.createWordList(text: testBook.text[2].words,
+                                                           maxWidth: geometry.size.width - 50,
+                                                           fontSize: fontSize)
+                }
+            ZStack(alignment: .top) {
+//                Color(.blue)
+
                     LazyVStack(spacing: 0) {
                         let linesCount = Int(maxLines)
                         
                         
                         ForEach(0..<linesCount, id: \.self) { index in
                             TextLineView(fontSize: CGFloat(fontSize), wordsList: wordsList)
+                                
                         }
+                        
                     }
-                }.frame(width: geometry.size.width - 50,
-                        height: geometry.size.height / 2)
-                
-                SettingsView(presented: .constant(true))
-                
-                Button(action: { readerPresented.toggle() }) {
-                    Text("Close")
-                        .foregroundColor(.red)
-                        .font(.title)
-                }
-                .opacity(1)
+                    
+            }.padding([.top, .bottom], 50)
+                .padding([.leading, .trailing], 20)
+            
             }
-        }
+        
+        
     }
 }
 
@@ -78,6 +85,7 @@ struct TextLineView: View {
             ForEach(wordsList, id: \.self) { word in
                 Text(word)
                     .font(.system(size: fontSize))
+                    .foregroundStyle(Color.customGray)
                     .lineLimit(1)
                     .background(.clear)
                     .multilineTextAlignment(word == wordsList.first ? .leading : .center)
@@ -92,6 +100,6 @@ struct TextLineView: View {
 }
 
 #Preview {
-    ReaderView(readerPresented: .constant(true))
+    ReaderView(readerPresented: .constant(true), settingsPresented: .constant(true))
         .environmentObject(TextService())
 }

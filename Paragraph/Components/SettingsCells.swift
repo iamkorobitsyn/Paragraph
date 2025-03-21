@@ -22,7 +22,7 @@ struct fontStyleCell: View {
                 TabView(selection: $selectedPage) {
                     ForEach(0..<pages.count, id: \.self) { index in
                         Text(pages[index])
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.white)
                     }
                 }
                 .disabled(true)
@@ -82,7 +82,7 @@ struct FontSizeCell: View {
                             Text("Aa")
                                 .font(.system(size: CGFloat(size),
                                               weight: .light))
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.white)
                         }
                     }
                     .disabled(true)
@@ -144,7 +144,7 @@ struct LineSpacingCell: View {
                         ForEach(0..<spacing.count, id: \.self) { index in
                             Text("Aa\nAa\n")
                                 .lineSpacing(CGFloat(spacing[spacingIndex]))
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.white)
                         }
                     }
                     .disabled(true)
@@ -197,7 +197,7 @@ struct TransferOfWordsCell: View {
                 HStack() {
                     Spacer()
                     Text("Aa -")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.white)
                     Spacer()
                     Toggle("", isOn: $isOn)
                         .toggleStyle(SwitchToggleStyle(tint: .customGold))
@@ -232,7 +232,7 @@ struct JustificationCell: View {
                 HStack() {
                     Spacer()
                     Text("|Aa     Aa|")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.white)
                     Spacer()
                     Toggle("", isOn: $isOn)
                         .toggleStyle(SwitchToggleStyle(tint: .customGold))
@@ -298,7 +298,7 @@ struct testCell: View {
 #Preview {
     ZStack {
         Color(.gray)
-        LeafingModeCell()
+        fontStyleCell()
     }
     .frame(height: 100)
 }

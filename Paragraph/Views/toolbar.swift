@@ -20,7 +20,7 @@ struct ToolBarView: View {
         ZStack() {
             
             Rectangle()
-                .fill(Color.white).opacity(0.3)
+                .fill(.white).opacity(0.3)
                 .cornerRadius(20)
             
             HStack(alignment: .top) {

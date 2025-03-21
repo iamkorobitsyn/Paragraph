@@ -15,6 +15,7 @@ enum SelectorMode {
     case settingsBackAndForward
     case settingsLessAndMore
     case settingsLeafing(Int)
+    case readerControls
 }
 
 //MARK: - Selector
@@ -45,6 +46,8 @@ struct Selector: View {
             return CGSize(width: 168, height: 42)
         case .settingsLeafing:
             return CGSize(width: 210, height: 60)
+        case .readerControls:
+            return CGSize(width: 84, height: 42)
         }
     }
 }
@@ -80,6 +83,8 @@ struct SelectorContent: View {
 
         case .settingsLeafing(let index):
             setButtons(images: ["settingsSmiffling", "settingsImposition", "settingsLeaflet"], selectedIndex: index)
+        case .readerControls:
+            setButtons(images: ["closeGray", "settingsGray"], selectedIndex: nil)
         }
     }
     
@@ -92,6 +97,7 @@ struct SelectorContent: View {
                     Button(action: {action(index)}) {
                         Image(images[index])
                     }
+                    
                     if selectedIndex != nil && selectedIndex == index {
                         Rectangle()
                             .fill(Color.customGray)
@@ -113,7 +119,7 @@ struct SelectorBackground: View {
     
     var body: some View {
         switch mode {
-        case .toolbarProgress, .toolbarQuotes:
+        case .toolbarProgress, .toolbarQuotes, .readerControls:
             Rectangle()
                 .fill(Color.white.opacity(0.3))
                 .cornerRadius(14)
@@ -139,7 +145,7 @@ struct SelectorBackground: View {
 
 #Preview {
     ZStack {
-        Selector(mode: .settingsBackAndForward, action: { i in
+        Selector(mode: .readerControls, action: { i in
             print(i)})
     }
     

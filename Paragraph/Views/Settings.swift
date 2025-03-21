@@ -13,14 +13,13 @@ struct SettingsView: View {
     @Binding var presented: Bool
     
 
-    let corner = RectangleCornerRadii(topLeading: 20, bottomLeading: 0, bottomTrailing: 0, topTrailing: 20)
 
     var body: some View {
         if presented {
             ZStack {
                 Rectangle()
-                    .fill(Color.white).opacity(0.3)
-                    .clipShape(UnevenRoundedRectangle(cornerRadii: corner))
+                    .fill(Color.customGray)
+                    .cornerRadius(14)
                 
                 List() {
                     fontStyleCell()
