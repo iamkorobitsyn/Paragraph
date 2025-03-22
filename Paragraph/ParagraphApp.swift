@@ -11,11 +11,13 @@ import SwiftUI
 struct ParagraphApp: App {
     
     @StateObject private var textService = TextService()
+    @StateObject private var colorService = ColorService()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(textService)
+                .environmentObject(colorService)
         }
     }
 }

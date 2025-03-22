@@ -12,45 +12,49 @@ struct SettingsView: View {
     
     @Binding var presented: Bool
     
-
-
     var body: some View {
         if presented {
-            ZStack {
-                Rectangle()
-                    .fill(Color.customGrayDeep).opacity(0.9)
-                    .cornerRadius(20)
-                    
-                
-                List() {
-                    fontStyleCell()
-                    FontSizeCell()
-                    LineSpacingCell()
-                    TransferOfWordsCell()
-                    JustificationCell()
-                    LeafingModeCell()
-                    Rectangle().fill(.clear)
-                        .frame(height: 100)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                        .buttonStyle(.plain)
-                }
-                .padding(.leading, 20)
-                .listStyle(.plain)
-          
+            VStack() {
+                Spacer()
                 HStack {
-                    Button(action: { presented.toggle() }) {
-                        Image("closeWhite")
-                    }
                     Spacer()
+                    List() {
+                        Rectangle().fill(.clear)
+                            .frame(height: 100)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                            .buttonStyle(.plain)
+                        ColorThemeCell()
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
+                            .buttonStyle(.plain)
+                            .padding([.top, .bottom], 2)
+                            .listRowBackground(Color.clear)
+                        fontStyleCell()
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
+                            .buttonStyle(.plain)
+                            .padding([.top, .bottom], 2)
+                            .listRowBackground(Color.clear)
+                        FontSizeCell()
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
+                            .buttonStyle(.plain)
+                            .padding([.top, .bottom], 2)
+                            .listRowBackground(Color.clear)
+                    }
+                    .frame(width: 300, height: 400)
+                    .padding(.trailing, 10)
+                    .listStyle(PlainListStyle())
                 }
+                
             }
         }
     }
 }
 
 #Preview {
-    ZStack {
+    ZStack() {
         Color(.gray).ignoresSafeArea()
         SettingsView(presented: .constant(true))
     }

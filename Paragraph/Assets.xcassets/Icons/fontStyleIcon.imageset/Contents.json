@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "fontStyleIcon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

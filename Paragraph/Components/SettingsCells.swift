@@ -8,94 +8,129 @@
 import Foundation
 import SwiftUI
 
+//MARK: - ColorThemeCell
+
+struct ColorThemeCell: View {
+    
+    @AppStorage("colorThemeIndex") private var index = 0
+    
+    var body: some View {
+        
+        ZStack {
+            Rectangle()
+                .fill(Color.customGrayLight)
+                .cornerRadius(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 0.3)
+                )
+                
+            HStack() {
+                
+                Selector(mode: .settingsColorTheme(index), action: { i in
+                    index = i
+                })
+            }
+        }
+        .frame(width: 210, height: 50)
+    }
+}
+
+
+
 //MARK: - FontStyle
 
 struct fontStyleCell: View {
     
-    @State private var selectedPage = 2
-    let pages = ["Times new roman", "Helvetica", "Arial", "Verdana"]
+    @AppStorage("fontStyleIndex") private var i: Int = 0
     
     var body: some View {
-        ZStack(alignment: .top) {
-            HStack {
+        
+        ZStack {
+            Rectangle()
+                .fill(Color.customGrayLight)
+                .cornerRadius(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 0.3)
+                )
                 
-                TabView(selection: $selectedPage) {
-                    ForEach(0..<pages.count, id: \.self) { index in
-                        Text(pages[index])
-                            .foregroundStyle(.white)
-                    }
-                }
-                .disabled(true)
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+            HStack() {
+                Image("fontStyleIcon")
+                    .padding(.leading, 10)
                 
                 Spacer()
                 
-                Selector(mode: .settingsPrevAndNext, action: { i in
-                    if i == 0 {
-                        if selectedPage > 0 {
-                            selectedPage -= 1
-                        } else {
-                            selectedPage = 0
-                        }
+                ForEach(0..<7, id: \.self) { circleIndex in
+                    Circle()
+                        .fill(circleIndex == i ? Color.customRed : .gray.opacity(0.5))
+                        .frame(width: 5, height: 5)
+                }
+                
+                Spacer()
+                
+                Selector(mode: .settingsPrevAndNext, action: { buttonIndex in
+                    
+                    if buttonIndex == 0 {
+                        if i > 0 { i -= 1 } else { i = 0 }
                     } else {
-                        if selectedPage < pages.count - 1 {
-                            selectedPage += 1
-                        } else {
-                            selectedPage = pages.count - 1
-                        }
+                        if i < 6 { i += 1 } else { i = 6 }
                     }
                 })
-                    .padding(.trailing, 20)
-            }.frame(height: 100)
-            
+                .padding(.trailing, 10)
+            }
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .buttonStyle(.plain)
-            
+        .frame(width: 300, height: 50)
     }
 }
+
+
+
 
 
 //MARK: - FontSize
 
 struct FontSizeCell: View {
-    
-    @AppStorage("fontSizeValue") private var size: Double = 20
-    @AppStorage("fontSizeIndex") private var index: Int = 2
-    private let sizeList = [15, 20, 25, 30, 35, 40, 45]
+
+    @AppStorage("fontSizeIndex") private var i: Int = 0
     
     var body: some View {
         
-        HStack() {
-            ForEach(sizeList, id: \.self) { sizeValue in
-                Circle()
-                    .fill(sizeValue == sizeList[index] ? .red : .white)
-                    .frame(width: 6, height: 6)
-            }
-            
-            Selector(mode: .settingsMinusAndPlus, action: { i in
+        ZStack {
+            Rectangle()
+                .fill(Color.customGrayLight)
+                .cornerRadius(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 0.3)
+                )
                 
-                if i == 0 {
-                    if index > 0 {
-                        index -= 1
-                    } else {
-                        index = 0
-                    }
-                    size = Double(sizeList[index])
-                } else {
-                    if index < sizeList.count - 1 {
-                        index += 1
-                    } else {
-                        index = sizeList.count - 1
-                    }
-                    size = Double(sizeList[index])
+            HStack() {
+                Image("fontSizeIcon")
+                    .padding(.leading, 10)
+                
+                Spacer()
+                
+                ForEach(0..<7, id: \.self) { circleIndex in
+                    Circle()
+                        .fill(circleIndex == i ? Color.customRed : .gray.opacity(0.5))
+                        .frame(width: 5, height: 5)
                 }
-            })
+                
+                Spacer()
+                
+                Selector(mode: .settingsMinusAndPlus, action: { buttonIndex in
+                    
+                    if buttonIndex == 0 {
+                        if i > 0 { i -= 1 } else { i = 0 }
+                    } else {
+                        if i < 6 { i += 1 } else { i = 6 }
+                    }
+                })
+                .padding(.trailing, 10)
+            }
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .buttonStyle(.plain)
+        .frame(width: 300, height: 50)
     }
 }
 
@@ -234,7 +269,7 @@ struct JustificationCell: View {
 
 struct LeafingModeCell: View {
     
-    @State private var leafingIndex: Int = 0
+    @State private var index: Int = 0
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -246,8 +281,8 @@ struct LeafingModeCell: View {
                     .padding(.top, -4.5)
                     .padding(.trailing, 20)
                 HStack() {
-                    Selector(mode: .settingsLeafing(leafingIndex), action: { i in
-                        leafingIndex = i
+                    Selector(mode: .settingsColorTheme(index), action: { i in
+                        index = i
                     })
                 }.frame(height: 100)
                     .listRowSeparator(.hidden)
@@ -267,7 +302,7 @@ struct testCell: View {
     var body: some View {
         HStack {
             Spacer()
-            Selector(mode: .settingsLeafing(0), action: { i in })
+            Selector(mode: .settingsColorTheme(0), action: { i in })
         }.frame(height: 100)
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
@@ -278,7 +313,7 @@ struct testCell: View {
 #Preview {
     ZStack {
         Color(.gray)
-        FontSizeCell()
+        fontStyleCell()
     }
-    .frame(height: 100)
+    .frame(height: 50)
 }

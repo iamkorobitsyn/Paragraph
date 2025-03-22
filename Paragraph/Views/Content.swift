@@ -85,7 +85,6 @@ struct ContentView: View {
                                settingsPresented: $settingsPresented)
                         .opacity(readerPresented ? 1 : 0)
                     SettingsView(presented: $settingsPresented)
-                        .ignoresSafeArea()
                     VStack(spacing: 0) {
                         ZStack() {
                             ToolBarView(settingsPresented: $settingsPresented,
@@ -114,4 +113,5 @@ struct ContentView: View {
 #Preview {
     return ContentView()
         .environmentObject(TextService())
+        .environmentObject(ColorService())
 }

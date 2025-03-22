@@ -24,8 +24,10 @@
 		65EA64A62D89783500B1B66B /* TextService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64A52D89783500B1B66B /* TextService.swift */; };
 		65EA64A92D89C14300B1B66B /* CharactersSets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64A82D89C14300B1B66B /* CharactersSets.swift */; };
 		65EA64AB2D89F03C00B1B66B /* TestBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64AA2D89F03C00B1B66B /* TestBook.swift */; };
-		65EA64AE2D8B043A00B1B66B /* String + Extansions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64AD2D8B043A00B1B66B /* String + Extansions.swift */; };
+		65EA64AE2D8B043A00B1B66B /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64AD2D8B043A00B1B66B /* String + Extensions.swift */; };
 		65EA64B22D8E343600B1B66B /* BookMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64B12D8E343600B1B66B /* BookMenu.swift */; };
+		65EA64B42D8ECA1700B1B66B /* ColorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64B32D8ECA1700B1B66B /* ColorService.swift */; };
+		65EA64B62D8F272D00B1B66B /* Font + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64B52D8F272D00B1B66B /* Font + Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,8 +51,10 @@
 		65EA64A52D89783500B1B66B /* TextService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextService.swift; sourceTree = "<group>"; };
 		65EA64A82D89C14300B1B66B /* CharactersSets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharactersSets.swift; sourceTree = "<group>"; };
 		65EA64AA2D89F03C00B1B66B /* TestBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBook.swift; sourceTree = "<group>"; };
-		65EA64AD2D8B043A00B1B66B /* String + Extansions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extansions.swift"; sourceTree = "<group>"; };
+		65EA64AD2D8B043A00B1B66B /* String + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
 		65EA64B12D8E343600B1B66B /* BookMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMenu.swift; sourceTree = "<group>"; };
+		65EA64B32D8ECA1700B1B66B /* ColorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorService.swift; sourceTree = "<group>"; };
+		65EA64B52D8F272D00B1B66B /* Font + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font + Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +115,8 @@
 			isa = PBXGroup;
 			children = (
 				6569E4602D82D86B006A36E6 /* Color + Extensions.swift */,
-				65EA64AD2D8B043A00B1B66B /* String + Extansions.swift */,
+				65EA64AD2D8B043A00B1B66B /* String + Extensions.swift */,
+				65EA64B52D8F272D00B1B66B /* Font + Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -152,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				65EA64A52D89783500B1B66B /* TextService.swift */,
+				65EA64B32D8ECA1700B1B66B /* ColorService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -237,6 +243,7 @@
 				6569E4662D82F0CF006A36E6 /* BookCell.swift in Sources */,
 				6569E4642D82EF2A006A36E6 /* Models.swift in Sources */,
 				658283E62D7B30050026FD75 /* toolbar.swift in Sources */,
+				65EA64B42D8ECA1700B1B66B /* ColorService.swift in Sources */,
 				658283ED2D7B35780026FD75 /* Reader.swift in Sources */,
 				65EA64B22D8E343600B1B66B /* BookMenu.swift in Sources */,
 				65EA64AB2D89F03C00B1B66B /* TestBook.swift in Sources */,
@@ -247,7 +254,8 @@
 				658283E82D7B32DA0026FD75 /* Library.swift in Sources */,
 				6569E4612D82D86B006A36E6 /* Color + Extensions.swift in Sources */,
 				652BC7462BEBA6A300BFB528 /* ParagraphApp.swift in Sources */,
-				65EA64AE2D8B043A00B1B66B /* String + Extansions.swift in Sources */,
+				65EA64B62D8F272D00B1B66B /* Font + Extensions.swift in Sources */,
+				65EA64AE2D8B043A00B1B66B /* String + Extensions.swift in Sources */,
 				658283F02D7B35BA0026FD75 /* Selectors.swift in Sources */,
 				658283F22D7B371B0026FD75 /* Settings.swift in Sources */,
 				65EA64A92D89C14300B1B66B /* CharactersSets.swift in Sources */,

@@ -14,7 +14,7 @@ enum SelectorMode {
     case toolBarBookSort(Int)
     case settingsPrevAndNext
     case settingsMinusAndPlus
-    case settingsLeafing(Int)
+    case settingsColorTheme(Int)
     case readerControls
 }
 
@@ -44,8 +44,8 @@ struct Selector: View {
             return CGSize(width: 84, height: 42)
         case .toolBarBookSort:
             return CGSize(width: 168, height: 42)
-        case .settingsLeafing:
-            return CGSize(width: 210, height: 60)
+        case .settingsColorTheme:
+            return CGSize(width: 210, height: 42)
         case .readerControls:
             return CGSize(width: 84, height: 42)
         }
@@ -81,8 +81,11 @@ struct SelectorContent: View {
         case .settingsMinusAndPlus:
             setButtons(images: ["minusIcon", "plusIcon"], selectedIndex: nil)
 
-        case .settingsLeafing(let index):
-            setButtons(images: ["settingsSmiffling", "settingsImposition", "settingsLeaflet"], selectedIndex: index)
+        case .settingsColorTheme(let index):
+            setButtons(images: ["colorTheme0Icon", "colorTheme1Icon",
+                                "colorTheme2Icon", "colorTheme3Icon",
+                                "colorTheme4Icon"],
+                       selectedIndex: index)
         case .readerControls:
             setButtons(images: ["textStyleIcon", "closeWhiteIcon"], selectedIndex: nil)
         }
@@ -101,7 +104,7 @@ struct SelectorContent: View {
                     if selectedIndex != nil && selectedIndex == index {
                         Rectangle()
                             .fill(Color.customGrayDeep)
-                            .frame(width: 20, height: 1)
+                            .frame(width: 12, height: 1)
                     }
                 }
             }
@@ -133,15 +136,10 @@ struct SelectorBackground: View {
                 .fill(Color(red: 193 / 255, green: 73 / 255, blue: 79 / 255))
                 .cornerRadius(14)
             
-        case .toolBarBookSort:
+        case .toolBarBookSort, .settingsPrevAndNext, .settingsMinusAndPlus:
             Color(.clear)
-        case .settingsPrevAndNext, .settingsMinusAndPlus:
-            Rectangle()
-                .fill(.gray)
-                .cornerRadius(14)
-//                .overlay(RoundedRectangle(cornerRadius: 21)
-//                    .stroke(Color.gray, lineWidth: 1))
-        case .settingsLeafing:
+
+        case .settingsColorTheme:
             Color(.clear)
         }
     }
@@ -149,7 +147,8 @@ struct SelectorBackground: View {
 
 #Preview {
     ZStack {
-        Selector(mode: .readerControls, action: { i in
+        Color(.white)
+        Selector(mode: .settingsColorTheme(0), action: { i in
             print(i)})
     }
     

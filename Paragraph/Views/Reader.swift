@@ -14,17 +14,16 @@ struct ReaderView: View {
     
     let content: Book = testBook
     
-    @AppStorage("fontSizeValue") private var fontSize: Double = 20.0
-    
     @State private var wordsList: [String] = []
 
     @EnvironmentObject private var textService: TextService
+    @EnvironmentObject private var colorService: ColorService
     
     @State private var maxLines: CGFloat = 0
     
     var body: some View {
         GeometryReader { geometry in
-            Color(.white)
+            Color(colorService.theme().background)
                 .ignoresSafeArea()
             
             HStack {
@@ -40,28 +39,28 @@ struct ReaderView: View {
             }
             
                 .onAppear() {
-                    maxLines = (geometry.size.height / 2.4) / fontSize
+                    maxLines = (geometry.size.height / 2.4) / textService.getSize()
                     wordsList = textService.createWordList(text: testBook.text[2].words,
                                                            maxWidth: geometry.size.width - 50,
-                                                           fontSize: fontSize) }
-                .onChange(of: fontSize) {
-                    maxLines = (geometry.size.height / 2.4) / fontSize
+                                                           font: textService.getUIFont()) }
+                .onChange(of: textService.getSize()) {
+                    maxLines = (geometry.size.height / 2.4) / textService.getSize()
                     wordsList = textService.createWordList(text: testBook.text[2].words,
                                                            maxWidth: geometry.size.width - 50,
-                                                           fontSize: fontSize)
+                                                           font: textService.getUIFont())
+                    print("work")
                 }
             ZStack(alignment: .top) {
-//                Color(.blue)
-
                     LazyVStack(spacing: 0) {
                         let linesCount = Int(maxLines)
                         
                         
                         ForEach(0..<linesCount, id: \.self) { index in
-                            TextLineView(fontSize: CGFloat(fontSize), wordsList: wordsList)
+                            TextLineView(font: textService.getFont(),
+                                         fontColor: colorService.theme().text,
+                                         wordsList: wordsList)
                                 
                         }
-                        
                     }
                     
             }.padding([.top, .bottom], 50)
@@ -78,15 +77,16 @@ struct ReaderView: View {
 
 struct TextLineView: View {
     
-    let fontSize: CGFloat
+    let font: Font
+    let fontColor: Color
     let wordsList: [String]
     
     var body: some View {
         HStack() {
             ForEach(wordsList, id: \.self) { word in
                 Text(word)
-                    .font(.system(size: fontSize))
-                    .foregroundStyle(Color.customGrayDeep)
+                    .font(font)
+                    .foregroundStyle(fontColor)
                     .lineLimit(1)
                     .background(.clear)
                     .multilineTextAlignment(word == wordsList.first ? .leading : .center)
@@ -103,4 +103,5 @@ struct TextLineView: View {
 #Preview {
     ReaderView(readerPresented: .constant(true), settingsPresented: .constant(true))
         .environmentObject(TextService())
+        .environmentObject(ColorService())
 }
