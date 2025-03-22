@@ -25,6 +25,7 @@
 		65EA64A92D89C14300B1B66B /* CharactersSets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64A82D89C14300B1B66B /* CharactersSets.swift */; };
 		65EA64AB2D89F03C00B1B66B /* TestBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64AA2D89F03C00B1B66B /* TestBook.swift */; };
 		65EA64AE2D8B043A00B1B66B /* String + Extansions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64AD2D8B043A00B1B66B /* String + Extansions.swift */; };
+		65EA64B22D8E343600B1B66B /* BookMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64B12D8E343600B1B66B /* BookMenu.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		65EA64A82D89C14300B1B66B /* CharactersSets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharactersSets.swift; sourceTree = "<group>"; };
 		65EA64AA2D89F03C00B1B66B /* TestBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBook.swift; sourceTree = "<group>"; };
 		65EA64AD2D8B043A00B1B66B /* String + Extansions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extansions.swift"; sourceTree = "<group>"; };
+		65EA64B12D8E343600B1B66B /* BookMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMenu.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 				658283EF2D7B35BA0026FD75 /* Selectors.swift */,
 				6569E4652D82F0CF006A36E6 /* BookCell.swift */,
 				65A70E562D84A8AD009B9312 /* SettingsCells.swift */,
+				65EA64B12D8E343600B1B66B /* BookMenu.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 				6569E4642D82EF2A006A36E6 /* Models.swift in Sources */,
 				658283E62D7B30050026FD75 /* toolbar.swift in Sources */,
 				658283ED2D7B35780026FD75 /* Reader.swift in Sources */,
+				65EA64B22D8E343600B1B66B /* BookMenu.swift in Sources */,
 				65EA64AB2D89F03C00B1B66B /* TestBook.swift in Sources */,
 				65EA64A62D89783500B1B66B /* TextService.swift in Sources */,
 				652BC7482BEBA6A300BFB528 /* Content.swift in Sources */,

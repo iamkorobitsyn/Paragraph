@@ -30,7 +30,7 @@ struct fontStyleCell: View {
                 
                 Spacer()
                 
-                Selector(mode: .settingsBackAndForward, action: { i in
+                Selector(mode: .settingsPrevAndNext, action: { i in
                     if i == 0 {
                         if selectedPage > 0 {
                             selectedPage -= 1
@@ -67,51 +67,31 @@ struct FontSizeCell: View {
     
     var body: some View {
         
-        ZStack(alignment: .top) {
-            VStack() {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.white).opacity(0.3)
-                    .cornerRadius(0.5)
-                    .padding(.top, -4.5)
-                    .padding(.trailing, 20)
-                HStack() {
-                    
-                    TabView(selection: $index) {
-                        ForEach(0..<sizeList.count, id: \.self) { index in
-                            Text("Aa")
-                                .font(.system(size: CGFloat(size),
-                                              weight: .light))
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .disabled(true)
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
-                    
-                    Spacer()
-                    
-                    Selector(mode: .settingsLessAndMore, action: { i in
-                        
-                        if i == 0 {
-                            if index > 0 {
-                                index -= 1
-                            } else {
-                                index = 0
-                            }
-                            size = Double(sizeList[index])
-                        } else {
-                            if index < sizeList.count - 1 {
-                                index += 1
-                            } else {
-                                index = sizeList.count - 1
-                            }
-                            size = Double(sizeList[index])
-                        }
-                    })
-                        .padding(.trailing, 20)
-                }.frame(height: 100)
+        HStack() {
+            ForEach(sizeList, id: \.self) { sizeValue in
+                Circle()
+                    .fill(sizeValue == sizeList[index] ? .red : .white)
+                    .frame(width: 6, height: 6)
             }
             
+            Selector(mode: .settingsMinusAndPlus, action: { i in
+                
+                if i == 0 {
+                    if index > 0 {
+                        index -= 1
+                    } else {
+                        index = 0
+                    }
+                    size = Double(sizeList[index])
+                } else {
+                    if index < sizeList.count - 1 {
+                        index += 1
+                    } else {
+                        index = sizeList.count - 1
+                    }
+                    size = Double(sizeList[index])
+                }
+            })
         }
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
@@ -152,7 +132,7 @@ struct LineSpacingCell: View {
                     
                     Spacer()
                     
-                    Selector(mode: .settingsLessAndMore, action: { i in
+                    Selector(mode: .settingsMinusAndPlus, action: { i in
                         if i == 0 {
                             if spacingIndex > 0 {
                                 spacingIndex -= 1
@@ -298,7 +278,7 @@ struct testCell: View {
 #Preview {
     ZStack {
         Color(.gray)
-        fontStyleCell()
+        FontSizeCell()
     }
     .frame(height: 100)
 }

@@ -39,7 +39,7 @@ struct BookCell: View {
                             .frame(height: 70, alignment: .bottom)
                         ZStack(alignment: .leading) {
                             Rectangle()
-                                .foregroundStyle(Color.customGray)
+                                .foregroundStyle(Color.customGrayDeep)
                                 .frame(width: 100, height: 1)
                             Rectangle()
                                 .foregroundStyle(.white)

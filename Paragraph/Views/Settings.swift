@@ -18,8 +18,9 @@ struct SettingsView: View {
         if presented {
             ZStack {
                 Rectangle()
-                    .fill(Color.customGray)
-                    .cornerRadius(14)
+                    .fill(Color.customGrayDeep).opacity(0.9)
+                    .cornerRadius(20)
+                    
                 
                 List() {
                     fontStyleCell()
@@ -36,12 +37,10 @@ struct SettingsView: View {
                 }
                 .padding(.leading, 20)
                 .listStyle(.plain)
+          
                 HStack {
-                    VStack {
-                        Button(action: { presented.toggle() }) {
-                            Image("closeWhite")
-                        }
-                        Spacer()
+                    Button(action: { presented.toggle() }) {
+                        Image("closeWhite")
                     }
                     Spacer()
                 }

@@ -12,8 +12,8 @@ enum SelectorMode {
     case toolbarControls
     case toolbarQuotes
     case toolBarBookSort(Int)
-    case settingsBackAndForward
-    case settingsLessAndMore
+    case settingsPrevAndNext
+    case settingsMinusAndPlus
     case settingsLeafing(Int)
     case readerControls
 }
@@ -40,7 +40,7 @@ struct Selector: View {
         case .toolbarQuotes:
             return CGSize(width: 42, height: 42)
         case .toolbarProgress, .toolbarControls,
-             .settingsBackAndForward, .settingsLessAndMore:
+             .settingsPrevAndNext, .settingsMinusAndPlus:
             return CGSize(width: 84, height: 42)
         case .toolBarBookSort:
             return CGSize(width: 168, height: 42)
@@ -64,27 +64,27 @@ struct SelectorContent: View {
         switch mode {
             
         case .toolbarProgress:
-            setButtons(images: ["toolbarBookmark", "toolbarProgress"], selectedIndex: nil)
+            setButtons(images: ["bookmarkIcon", "progressIcon"], selectedIndex: nil)
             
         case .toolbarControls:
-            setButtons(images: ["toolbarAddBook", "toolbarOpenSettings"], selectedIndex: nil)
+            setButtons(images: ["addIcon", "cloudIcon"], selectedIndex: nil)
             
         case .toolbarQuotes:
-            setButtons(images: ["toolbarQuotes"], selectedIndex: nil)
+            setButtons(images: ["quotesIcon"], selectedIndex: nil)
             
         case .toolBarBookSort(let index):
-            setButtons(images: ["toolbarBookshelf", "toolbarNewBooks", "toolbarOpenBooks", "toolbarCompletedBooks"], selectedIndex: index)
+            setButtons(images: ["bookshelfIcon", "newBooksIcon", "openBooksIcon", "completedBooksIcon"], selectedIndex: index)
     
-        case .settingsBackAndForward:
-            setButtons(images: ["settingsPrevious", "settingtNext"], selectedIndex: nil)
+        case .settingsPrevAndNext:
+            setButtons(images: ["prevIcon", "nextIcon"], selectedIndex: nil)
             
-        case .settingsLessAndMore:
-            setButtons(images: ["settingsMinus", "settingsPlus"], selectedIndex: nil)
+        case .settingsMinusAndPlus:
+            setButtons(images: ["minusIcon", "plusIcon"], selectedIndex: nil)
 
         case .settingsLeafing(let index):
             setButtons(images: ["settingsSmiffling", "settingsImposition", "settingsLeaflet"], selectedIndex: index)
         case .readerControls:
-            setButtons(images: ["closeGray", "settingsGray"], selectedIndex: nil)
+            setButtons(images: ["textStyleIcon", "closeWhiteIcon"], selectedIndex: nil)
         }
     }
     
@@ -100,7 +100,7 @@ struct SelectorContent: View {
                     
                     if selectedIndex != nil && selectedIndex == index {
                         Rectangle()
-                            .fill(Color.customGray)
+                            .fill(Color.customGrayDeep)
                             .frame(width: 20, height: 1)
                     }
                 }
@@ -119,9 +119,13 @@ struct SelectorBackground: View {
     
     var body: some View {
         switch mode {
-        case .toolbarProgress, .toolbarQuotes, .readerControls:
+        case .toolbarProgress, .toolbarQuotes:
             Rectangle()
                 .fill(Color.white.opacity(0.3))
+                .cornerRadius(14)
+        case .readerControls:
+            Rectangle()
+                .fill(Color.customGold)
                 .cornerRadius(14)
 
         case .toolbarControls:
@@ -131,12 +135,12 @@ struct SelectorBackground: View {
             
         case .toolBarBookSort:
             Color(.clear)
-        case .settingsBackAndForward, .settingsLessAndMore:
+        case .settingsPrevAndNext, .settingsMinusAndPlus:
             Rectangle()
-                .fill(.clear)
+                .fill(.gray)
                 .cornerRadius(14)
-                .overlay(RoundedRectangle(cornerRadius: 21)
-                    .stroke(Color.gray, lineWidth: 1))
+//                .overlay(RoundedRectangle(cornerRadius: 21)
+//                    .stroke(Color.gray, lineWidth: 1))
         case .settingsLeafing:
             Color(.clear)
         }

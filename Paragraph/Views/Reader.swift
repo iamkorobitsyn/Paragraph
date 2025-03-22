@@ -28,15 +28,13 @@ struct ReaderView: View {
                 .ignoresSafeArea()
             
             HStack {
-                Button(action: {readerPresented.toggle()}) {
-                    Image("closeGray")
-                }
-                .padding(.leading, 20)
-                
                 Spacer()
-                
-                Button(action: {settingsPresented.toggle()}) {
-                    Image("settingsGray")
+                Selector(mode: .readerControls) { i in
+                    if i == 0 {
+                        settingsPresented.toggle()
+                    } else {
+                        readerPresented.toggle()
+                    }
                 }
                 .padding(.trailing, 20)
             }
@@ -69,7 +67,10 @@ struct ReaderView: View {
             }.padding([.top, .bottom], 50)
                 .padding([.leading, .trailing], 20)
             
+           
+            
             }
+        
         
         
     }
@@ -85,7 +86,7 @@ struct TextLineView: View {
             ForEach(wordsList, id: \.self) { word in
                 Text(word)
                     .font(.system(size: fontSize))
-                    .foregroundStyle(Color.customGray)
+                    .foregroundStyle(Color.customGrayDeep)
                     .lineLimit(1)
                     .background(.clear)
                     .multilineTextAlignment(word == wordsList.first ? .leading : .center)

@@ -48,7 +48,7 @@ struct ContentView: View {
                     ReaderView(readerPresented: $readerPresented,
                                settingsPresented: $settingsPresented)
                         .opacity(readerPresented ? 1 : 0)
-                    SettingsView(presented: $settingsPresented)
+                    
                         .ignoresSafeArea()
                         .padding(.top, geometry.size.height / 2.5)
                     HStack(spacing: 0) {
@@ -59,9 +59,9 @@ struct ContentView: View {
                                     .fill(.clear)
                                     .frame(width: device == .pad ? 560 : 360,
                                            height: geometry.size.height / 6)
-                                
-//                                    .frame(width: device == .pad ? 560 : 360)
-//                                    .padding(.leading, device == .pad ? 20 : 70)
+                                SettingsView(presented: $settingsPresented)
+                                    .frame(width: device == .pad ? 560 : 360)
+                                    .padding(.leading, device == .pad ? 20 : 70)
                             }
                             
                             ToolBarView(settingsPresented: $settingsPresented,
@@ -84,21 +84,26 @@ struct ContentView: View {
                     ReaderView(readerPresented: $readerPresented,
                                settingsPresented: $settingsPresented)
                         .opacity(readerPresented ? 1 : 0)
+                    SettingsView(presented: $settingsPresented)
+                        .ignoresSafeArea()
                     VStack(spacing: 0) {
-                        ToolBarView(settingsPresented: $settingsPresented,
-                                    readerPresented: $readerPresented,
-                                    paddingSelector: device == .pad ? 60 : 40)
-                        .frame(width: device == .pad ? 560 : 360,
-                               height: device == .pad ? 250 : 200)
-                        .padding(.top, 120)
-                        .opacity(settingsPresented || readerPresented ? 0 : 1)
+                        ZStack() {
+                            ToolBarView(settingsPresented: $settingsPresented,
+                                        readerPresented: $readerPresented,
+                                        paddingSelector: device == .pad ? 60 : 40)
+                            .frame(width: device == .pad ? 560 : 360,
+                                   height: device == .pad ? 250 : 200)
+                            .padding(.top, 120)
+                            .opacity(settingsPresented || readerPresented ? 0 : 1)
+                            
+//                                .frame(width: device == .pad ? 560 : 360)
+//                                .padding(.top, 120)
+                                
+                        }
                         LibraryView(books: books)
                             .frame(width: device == .pad ? 560 : 360)
                             .opacity(readerPresented || settingsPresented ? 0 : 1)
                     }
-                    SettingsView(presented: $settingsPresented)
-                        .padding(.top, geometry.size.height / 2)
-                        .ignoresSafeArea()
                 }
             }
         }
