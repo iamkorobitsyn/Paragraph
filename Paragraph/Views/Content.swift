@@ -31,7 +31,6 @@ struct ContentView: View {
     ]
     
     @State private var device = UIDevice.current.userInterfaceIdiom
-    
     @State private var toolbarPresented: Bool = true
     @State private var settingsPresented: Bool = false
     @State private var readerPresented: Bool = false
@@ -40,6 +39,8 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader { geometry in
+            Color(.clear)
+                .onAppear()
             if geometry.size.width > geometry.size.height {
                 ZStack {
                     Image("mainTexture")
@@ -111,7 +112,7 @@ struct ContentView: View {
 
 
 #Preview {
-    return ContentView()
+    ContentView()
         .environmentObject(TextService())
         .environmentObject(ColorService())
 }
