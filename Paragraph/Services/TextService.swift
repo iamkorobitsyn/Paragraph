@@ -10,66 +10,89 @@ import SwiftUI
 
 final class TextService: ObservableObject {
     
-    @AppStorage("fontStyleIndex") private var fontStyleIndex = 0
+    @AppStorage("fontStyleIndex") private var fontIndex = 0
+    @AppStorage("fontSizeIndex") private var sizeIndex = 0
+    @AppStorage("lineIntervalIndex") private var intervalIndex = 0
+    @AppStorage("paddingSizeIndex") private var paddingIndex = 0
     
-    @AppStorage("fontSizeIndex") private var fontSizeIndex = 0
-    private let sizeList: [CGFloat] = [15, 20, 25, 30, 35, 40, 45]
     
-    
-    func getSize() -> CGFloat { return sizeList[fontSizeIndex] }
-    
-    func getFont() -> Font {
-        return FontStyle(rawValue: fontStyleIndex)?.getFont(size: getSize()) ?? FontStyle.timesNewRoman.getFont(size: 15)
-    }
-    
-    func getUIFont() -> UIFont {
-        return FontStyle(rawValue: fontStyleIndex)?.getUIFont(size: getSize()) ?? FontStyle.timesNewRoman.getUIFont(size: 15)
-    }
+    let fontList: [FontStyle] = [.charter, .palatino, .baskerville, .courierNew, .helveticaNeue, .helveticaNeueBold]
+    let sizeList: [CGFloat] = [15, 20, 25, 30, 35, 40, 45]
+    let intervalList: [CGFloat] = [0, 4, 8, 12, 16]
+    var paddingList: [CGFloat] = [20, 30, 40, 50, 60]
     
     enum FontStyle: Int {
-        case timesNewRoman, georgia, palatino, serifSistem, sanFrancisco, helveticaNeue, Avenir
+        case charter, palatino, baskerville, courierNew, helveticaNeue, helveticaNeueBold
         
         func getFont(size: CGFloat) -> Font {
             switch self {
-            case .timesNewRoman:
-                return .custom("Times New Roman", size: size)
-            case .georgia:
-                return .custom("Georgia", size: size)
+            case .charter:
+                return .custom("Charter", size: size)
             case .palatino:
                 return .custom("Palatino", size: size)
-            case .serifSistem:
+            case .baskerville:
                 return .custom("Baskerville", size: size)
-            case .sanFrancisco:
-                return .custom("Helvetica Neue", size: size)
+            case .courierNew:
+                return .custom("Courier New", size: size)
             case .helveticaNeue:
-                return .custom("Verdana", size: size)
-            case .Avenir:
-                return .custom("Roboto", size: size)
+                return .custom("Helvetica Neue", size: size)
+            case .helveticaNeueBold:
+                return .custom("Helvetica Neue Bold", size: size)
             }
         }
         
         func getUIFont(size: CGFloat) -> UIFont {
             switch self {
-            case .timesNewRoman:
-                return  UIFont(name: "Times New Roman", size: size) ?? .systemFont(ofSize: size)
-            case .georgia:
-                return  UIFont(name: "Georgia", size: size) ?? .systemFont(ofSize: size)
+            case .charter:
+                return  UIFont(name: "Charter", size: size) ?? .systemFont(ofSize: size)
             case .palatino:
                 return  UIFont(name: "Palatino", size: size) ?? .systemFont(ofSize: size)
-            case .serifSistem:
+            case .baskerville:
                 return  UIFont(name: "Baskerville", size: size) ?? .systemFont(ofSize: size)
-            case .sanFrancisco:
-                return  UIFont(name: "Helvetica Neue", size: size) ?? .systemFont(ofSize: size)
+            case .courierNew:
+                return  UIFont(name: "Courier New", size: size) ?? .systemFont(ofSize: size)
             case .helveticaNeue:
-                return  UIFont(name: "Verdana", size: size) ?? .systemFont(ofSize: size)
-            case .Avenir:
-                return  UIFont(name: "Roboto", size: size) ?? .systemFont(ofSize: size)
+                return  UIFont(name: "Helvetica Neue", size: size) ?? .systemFont(ofSize: size)
+            case .helveticaNeueBold:
+                return  UIFont(name: "Helvetica Neue Bold", size: size) ?? .systemFont(ofSize: size)
             }
         }
     }
     
+    func setPaddingList(device: UIUserInterfaceIdiom) {
+        if device == .pad {
+            paddingList = [60, 90, 120, 150, 180]
+        } else {
+            paddingList = [30, 40, 50, 60, 70]
+        }
+    }
+    
+    func getPadding() -> CGFloat
+    { return paddingList[paddingIndex] }
+    
+    func getInterval() -> CGFloat
+    { return intervalList[intervalIndex] }
+    
+    func getSize() -> CGFloat
+    { return sizeList[sizeIndex] }
+    
+    func getFont() -> Font
+    { return FontStyle(rawValue: fontIndex)?.getFont(size: getSize()) ?? FontStyle.charter.getFont(size: getSize()) }
+    
+    func getUIFont() -> UIFont
+    { return FontStyle(rawValue: fontIndex)?.getUIFont(size: getSize()) ?? FontStyle.charter.getUIFont(size: getSize()) }
 
 
+    func heightOfString(font: UIFont) -> CGFloat {
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let text = "EnglishtextРусскийтекст中文文本العربية نصहिंदी पाठ한국어 텍스트日本語のテキスト"
+        let boundingRect = text.boundingRect(with: CGSize(),
+                                             options: .usesLineFragmentOrigin,
+                                             attributes: attributes,
+                                             context: nil)
+        
+        return boundingRect.height
+    }
     
     
     func createWordList(text: [String], maxWidth: CGFloat, font: UIFont) -> [String] {

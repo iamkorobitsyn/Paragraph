@@ -27,7 +27,6 @@
 		65EA64AE2D8B043A00B1B66B /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64AD2D8B043A00B1B66B /* String + Extensions.swift */; };
 		65EA64B22D8E343600B1B66B /* BookMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64B12D8E343600B1B66B /* BookMenu.swift */; };
 		65EA64B42D8ECA1700B1B66B /* ColorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64B32D8ECA1700B1B66B /* ColorService.swift */; };
-		65EA64B62D8F272D00B1B66B /* Font + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64B52D8F272D00B1B66B /* Font + Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,7 +53,6 @@
 		65EA64AD2D8B043A00B1B66B /* String + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
 		65EA64B12D8E343600B1B66B /* BookMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMenu.swift; sourceTree = "<group>"; };
 		65EA64B32D8ECA1700B1B66B /* ColorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorService.swift; sourceTree = "<group>"; };
-		65EA64B52D8F272D00B1B66B /* Font + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font + Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +114,6 @@
 			children = (
 				6569E4602D82D86B006A36E6 /* Color + Extensions.swift */,
 				65EA64AD2D8B043A00B1B66B /* String + Extensions.swift */,
-				65EA64B52D8F272D00B1B66B /* Font + Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -254,7 +251,6 @@
 				658283E82D7B32DA0026FD75 /* Library.swift in Sources */,
 				6569E4612D82D86B006A36E6 /* Color + Extensions.swift in Sources */,
 				652BC7462BEBA6A300BFB528 /* ParagraphApp.swift in Sources */,
-				65EA64B62D8F272D00B1B66B /* Font + Extensions.swift in Sources */,
 				65EA64AE2D8B043A00B1B66B /* String + Extensions.swift in Sources */,
 				658283F02D7B35BA0026FD75 /* Selectors.swift in Sources */,
 				658283F22D7B371B0026FD75 /* Settings.swift in Sources */,

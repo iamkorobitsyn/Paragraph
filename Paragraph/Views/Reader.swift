@@ -9,10 +9,11 @@ import SwiftUI
 
 struct ReaderView: View {
     
+    let device: UIUserInterfaceIdiom
     let content: Book = testBook
     
-    @Binding var readerPresented: Bool
-    @Binding var settingsPresented: Bool
+    @Binding var presented: Bool
+    @State private var settingsPresented: Bool = false
     
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
@@ -21,50 +22,82 @@ struct ReaderView: View {
     @State private var maxLines: Int = 0
     
     var body: some View {
-        GeometryReader { geometry in
-            Color(.clear)
-                .onAppear() { contentUpdate(geometry: geometry) }
-                .onChange(of: textService.getSize()) { contentUpdate(geometry: geometry) }
-                .onChange(of: textService.getUIFont()) { contentUpdate(geometry: geometry) }
-            
-            ZStack(alignment: .top) {
-                
-                Color(colorService.theme().background)
-                    .ignoresSafeArea()
-                
-                HStack() {
-                    Spacer()
-                    Selector(mode: .readerControls) { i in
-                        if i == 0 {
-                            settingsPresented.toggle()
-                        } else {
-                            readerPresented.toggle()
-                        }
-                    }
-                    .padding(.trailing, 20)
-                }
-                
+        if presented {
+            GeometryReader { geometry in
+                Color(.clear)
+                    .onAppear() { contentUpdate(geometry: geometry) }
+                    .onChange(of: textService.getSize()) { contentUpdate(geometry: geometry) }
+                    .onChange(of: textService.getUIFont()) { contentUpdate(geometry: geometry) }
+                    .onChange(of: textService.getInterval()) { contentUpdate(geometry: geometry) }
+                    .onChange(of: textService.getPadding()) { contentUpdate(geometry: geometry) }
                 
                 ZStack(alignment: .top) {
-                    LazyVStack(spacing: 0) {
-                        ForEach(0..<maxLines, id: \.self) { index in
-                            TextLineView(font: textService.getFont(),
-                                         fontColor: colorService.theme().text,
-                                         wordsList: wordsList)
-                        }
-                        
+                    Color(colorService.theme().background)
+                        .ignoresSafeArea()
+                    
+                    HStack() {
+                        Text("Цирк семьи пайло")
+                            .foregroundStyle(Color.gray)
+                            .lineLimit(1)
+                            .multilineTextAlignment(.center)
+                            .padding([.leading, .trailing], textService.getPadding())
+                            .padding(.top, 20)
                     }
+   
+                    VStack() {
+                        
+                        HStack() {
+                            
+                            Spacer()
+                            Selector(mode: .readerControls) { i in
+                                if i == 0 {
+                                    settingsPresented.toggle()
+                                } else {
+                                    presented.toggle()
+                                    settingsPresented = false
+                                }
+                            }
+                            .padding(.trailing, 20)
+                        }
+                        .frame(height: 50)
+                        
+                        ZStack(alignment: .top) {
+                            LazyVStack(spacing: 0) {
+                                ForEach(0..<maxLines, id: \.self) { index in
+                                    TextLineView(font: textService.getFont(),
+                                                 fontColor: colorService.theme().text,
+                                                 wordsList: wordsList,
+                                                 interval: textService.getInterval(),
+                                                 padding: textService.getPadding())
+                                }
+                            }
+                        }
+                        Spacer()
+                    }
+                    
+                    VStack {
+                        Spacer()
+                        Text("58 %")
+                            .foregroundStyle(Color.gray)
+                        .frame(height: 50)
+                        .padding(.bottom, 10)
+                    }
+                    .ignoresSafeArea()
                 }
-                .padding([.top, .bottom], 50)
-                .padding([.leading, .trailing], 20)
+                VStack {
+                    Spacer()
+                    SettingsView(presented: $settingsPresented)
+                }
             }
         }
     }
     
     private func contentUpdate(geometry: GeometryProxy) {
-        maxLines = Int((geometry.size.height / 1.25) / textService.getSize())
+        textService.setPaddingList(device: device)
+        let lineHight = textService.heightOfString(font: textService.getUIFont()) + textService.getInterval()
+        maxLines = Int((geometry.size.height - 100) / lineHight)
         wordsList = textService.createWordList(text: testBook.text[2].words,
-                                               maxWidth: geometry.size.width - 40,
+                                               maxWidth: geometry.size.width - (textService.getPadding() * 2),
                                                font: textService.getUIFont())
     }
 }
@@ -74,6 +107,8 @@ struct TextLineView: View {
     let font: Font
     let fontColor: Color
     let wordsList: [String]
+    let interval: CGFloat
+    let padding: CGFloat
     
     var body: some View {
         HStack() {
@@ -85,17 +120,18 @@ struct TextLineView: View {
                     .background(.clear)
                     .multilineTextAlignment(word == wordsList.first ? .leading : .center)
                     .multilineTextAlignment(word == wordsList.last ? .trailing : .center)
-                
+                    .padding(.top, interval)
                 if word != wordsList.last {
                     Spacer(minLength: 0)
                 }
             }
         }
+        .padding([.leading, .trailing], padding)
     }
 }
 
 #Preview {
-    ReaderView(readerPresented: .constant(true), settingsPresented: .constant(true))
+    ReaderView(device: .phone, presented: .constant(true))
         .environmentObject(TextService())
         .environmentObject(ColorService())
 }

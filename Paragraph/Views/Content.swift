@@ -31,11 +31,7 @@ struct ContentView: View {
     ]
     
     @State private var device = UIDevice.current.userInterfaceIdiom
-    @State private var toolbarPresented: Bool = true
-    @State private var settingsPresented: Bool = false
     @State private var readerPresented: Bool = false
-    
-    
     
     var body: some View {
         GeometryReader { geometry in
@@ -46,35 +42,17 @@ struct ContentView: View {
                     Image("mainTexture")
                         .resizable()
                         .ignoresSafeArea()
-                    ReaderView(readerPresented: $readerPresented,
-                               settingsPresented: $settingsPresented)
-                        .opacity(readerPresented ? 1 : 0)
                     
-                        .ignoresSafeArea()
-                        .padding(.top, geometry.size.height / 2.5)
+                    ReaderView(device: device, presented: $readerPresented)
+                    
                     HStack(spacing: 0) {
                         
-                        ZStack {
-                            VStack {
-                                Rectangle()
-                                    .fill(.clear)
-                                    .frame(width: device == .pad ? 560 : 360,
-                                           height: geometry.size.height / 6)
-                                SettingsView(presented: $settingsPresented)
-                                    .frame(width: device == .pad ? 560 : 360)
-                                    .padding(.leading, device == .pad ? 20 : 70)
-                            }
-                            
-                            ToolBarView(settingsPresented: $settingsPresented,
-                                        readerPresented: $readerPresented,
-                                        paddingSelector: device == .pad ? 60 : 40)
+                        ToolBarView(readerPresented: $readerPresented, device: device)
                             .frame(width: device == .pad ? 560 : 360,
                                    height: device == .pad ? 250 : 200)
                             .padding(.leading, 20)
-                            .opacity(settingsPresented || readerPresented ? 0 : 1)
-                        }
-                        LibraryView(books: books)
-                            .opacity(readerPresented || settingsPresented ? 0 : 1)
+                        
+                        LibraryView(readerPresented: $readerPresented, books: books)
                     }
                 }
             } else {
@@ -82,27 +60,17 @@ struct ContentView: View {
                     Image("mainTexture")
                         .resizable()
                         .ignoresSafeArea()
-                    ReaderView(readerPresented: $readerPresented,
-                               settingsPresented: $settingsPresented)
-                        .opacity(readerPresented ? 1 : 0)
-                    SettingsView(presented: $settingsPresented)
+                    
+                    ReaderView(device: device, presented: $readerPresented)
+                    
                     VStack(spacing: 0) {
-                        ZStack() {
-                            ToolBarView(settingsPresented: $settingsPresented,
-                                        readerPresented: $readerPresented,
-                                        paddingSelector: device == .pad ? 60 : 40)
-                            .frame(width: device == .pad ? 560 : 360,
-                                   height: device == .pad ? 250 : 200)
-                            .padding(.top, 120)
-                            .opacity(settingsPresented || readerPresented ? 0 : 1)
-                            
-//                                .frame(width: device == .pad ? 560 : 360)
-//                                .padding(.top, 120)
-                                
-                        }
-                        LibraryView(books: books)
+                        ToolBarView(readerPresented: $readerPresented, device: device)
+                        .frame(width: device == .pad ? 560 : 360,
+                               height: device == .pad ? 250 : 200)
+                        .padding(.top, 100)
+                        
+                        LibraryView(readerPresented: $readerPresented, books: books)
                             .frame(width: device == .pad ? 560 : 360)
-                            .opacity(readerPresented || settingsPresented ? 0 : 1)
                     }
                 }
             }

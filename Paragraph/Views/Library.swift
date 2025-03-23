@@ -10,25 +10,28 @@ import SwiftUI
 
 struct LibraryView: View {
     
+    @Binding var readerPresented: Bool
     let books: [Book]
 
     var body: some View {
-        
-        List(books, id: \.id) { book in
-            BookCell(book: book)
-                .listRowInsets(.none) // Убираем отступы у ячейки
-                .listRowSeparator(.hidden) // Скрываем разделитель
-                .listRowBackground(Color.clear) // Прозрачный фон ячейки
+        if !readerPresented {
+            List(books, id: \.id) { book in
+                BookCell(book: book)
+                    .listRowInsets(.none) // Убираем отступы у ячейки
+                    .listRowSeparator(.hidden) // Скрываем разделитель
+                    .listRowBackground(Color.clear) // Прозрачный фон ячейки
+            }
+            .listStyle(.plain) // Убираем стиль списка по умолчанию
+                    .padding(.horizontal, 0) // Убираем горизонтальные отступы у списка
         }
-        .listStyle(.plain) // Убираем стиль списка по умолчанию
-                .padding(.horizontal, 0) // Убираем горизонтальные отступы у списка
     }
 }
 
 #Preview {
     ZStack {
         Color(.gray)
-        LibraryView(books: [
+        LibraryView(readerPresented: .constant(false),
+                    books: [
             Book(title: "Beartown",
                  author: "Fredrik Backman",
                  coverImage: "Beartown Fredrik Backman",

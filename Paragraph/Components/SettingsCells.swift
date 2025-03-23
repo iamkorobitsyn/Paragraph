@@ -43,6 +43,7 @@ struct ColorThemeCell: View {
 struct fontStyleCell: View {
     
     @AppStorage("fontStyleIndex") private var i: Int = 0
+    @EnvironmentObject private var service: TextService
     
     var body: some View {
         
@@ -61,7 +62,7 @@ struct fontStyleCell: View {
                 
                 Spacer()
                 
-                ForEach(0..<7, id: \.self) { circleIndex in
+                ForEach(0..<service.fontList.count, id: \.self) { circleIndex in
                     Circle()
                         .fill(circleIndex == i ? Color.customRed : .gray.opacity(0.5))
                         .frame(width: 5, height: 5)
@@ -74,7 +75,8 @@ struct fontStyleCell: View {
                     if buttonIndex == 0 {
                         if i > 0 { i -= 1 } else { i = 0 }
                     } else {
-                        if i < 6 { i += 1 } else { i = 6 }
+                        if i < service.fontList.count - 1 { i += 1 }
+                        else { i = service.fontList.count - 1 }
                     }
                 })
                 .padding(.trailing, 10)
@@ -93,6 +95,7 @@ struct fontStyleCell: View {
 struct FontSizeCell: View {
 
     @AppStorage("fontSizeIndex") private var i: Int = 0
+    @EnvironmentObject private var service: TextService
     
     var body: some View {
         
@@ -124,7 +127,8 @@ struct FontSizeCell: View {
                     if buttonIndex == 0 {
                         if i > 0 { i -= 1 } else { i = 0 }
                     } else {
-                        if i < 6 { i += 1 } else { i = 6 }
+                        if i < service.sizeList.count - 1 { i += 1 }
+                        else { i = service.sizeList.count - 1 }
                     }
                 })
                 .padding(.trailing, 10)
@@ -136,60 +140,99 @@ struct FontSizeCell: View {
 
 
 
-//MARK: - LineSpacing
+//MARK: - LineInterval
 
-struct LineSpacingCell: View {
+struct LineIntervalCell: View {
     
-    @State private var spacingIndex = 0
-    let spacing = [1, 3, 5, 7, 9, 11, 13]
+    @AppStorage("lineIntervalIndex") private var i: Int = 0
+    @EnvironmentObject private var service: TextService
     
     var body: some View {
         
-        ZStack(alignment: .top) {
-            VStack() {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.white).opacity(0.3)
-                    .cornerRadius(0.5)
-                    .padding(.top, -4.5)
-                    .padding(.trailing, 20)
-                HStack() {
+        ZStack {
+            Rectangle()
+                .fill(Color.customGrayLight)
+                .cornerRadius(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 0.3)
+                )
+                
+            HStack() {
+                Image("lineIntervalIcon")
+                    .padding(.leading, 10)
+                
+                Spacer()
+                
+                ForEach(0..<service.intervalList.count, id: \.self) { circleIndex in
+                    Circle()
+                        .fill(circleIndex == i ? Color.customRed : .gray.opacity(0.5))
+                        .frame(width: 5, height: 5)
+                }
+                
+                Spacer()
+                
+                Selector(mode: .settingsMinusAndPlus, action: { buttonIndex in
                     
-                    TabView(selection: $spacingIndex) {
-                        ForEach(0..<spacing.count, id: \.self) { index in
-                            Text("Aa\nAa\n")
-                                .lineSpacing(CGFloat(spacing[spacingIndex]))
-                                .foregroundStyle(.white)
-                        }
+                    if buttonIndex == 0 {
+                        if i > 0 { i -= 1 } else { i = 0 }
+                    } else {
+                        if i < service.intervalList.count - 1 { i += 1 }
+                        else { i = service.intervalList.count - 1 }
                     }
-                    .disabled(true)
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
-                    
-                    Spacer()
-                    
-                    Selector(mode: .settingsMinusAndPlus, action: { i in
-                        if i == 0 {
-                            if spacingIndex > 0 {
-                                spacingIndex -= 1
-                            } else {
-                                spacingIndex = 0
-                            }
-                        } else {
-                            if spacingIndex < spacing.count - 1 {
-                                spacingIndex += 1
-                            } else {
-                                spacingIndex = spacing.count - 1
-                            }
-                        }
-                    })
-                        .padding(.trailing, 20)
-                }.frame(height: 100)
+                })
+                .padding(.trailing, 10)
             }
-            
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .buttonStyle(.plain)
+        .frame(width: 300, height: 50)
+    }
+}
+
+// MARK: - LineInterval
+
+struct PaddingSizeCell: View {
+    
+    @AppStorage("paddingSizeIndex") private var i: Int = 0
+    @EnvironmentObject private var service: TextService
+    
+    var body: some View {
+        
+        ZStack {
+            Rectangle()
+                .fill(Color.customGrayLight)
+                .cornerRadius(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 0.3)
+                )
+                
+            HStack() {
+                Image("paddingIcon")
+                    .padding(.leading, 10)
+                
+                Spacer()
+                
+                ForEach(0..<service.paddingList.count, id: \.self) { circleIndex in
+                    Circle()
+                        .fill(circleIndex == i ? Color.customRed : .gray.opacity(0.5))
+                        .frame(width: 5, height: 5)
+                }
+                
+                Spacer()
+                
+                Selector(mode: .settingsMinusAndPlus, action: { buttonIndex in
+                    
+                    if buttonIndex == 0 {
+                        if i > 0 { i -= 1 } else { i = 0 }
+                    } else {
+                        if i < service.paddingList.count - 1 { i += 1 }
+                        else { i = service.paddingList.count - 1 }
+                    }
+                })
+                .padding(.trailing, 10)
+            }
+        }
+        .frame(width: 300, height: 50)
     }
 }
 
@@ -198,122 +241,40 @@ struct LineSpacingCell: View {
 
 struct TransferOfWordsCell: View {
     
-    @State private var isOn: Bool = true
+    @AppStorage("wordsTransfer") private var transferIs: Bool = true
     
     var body: some View {
-        ZStack(alignment: .top) {
-            VStack() {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.white).opacity(0.3)
-                    .cornerRadius(0.5)
-                    .padding(.top, -4.5)
-                    .padding(.trailing, 20)
-                HStack() {
-                    Spacer()
-                    Text("Aa -")
-                        .foregroundStyle(.white)
-                    Spacer()
-                    Toggle("", isOn: $isOn)
-                        .toggleStyle(SwitchToggleStyle(tint: .customGold))
-                        .padding(.trailing, 35)
-                        .frame(width: 100)
-                }.frame(height: 100)
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-            }
-        }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .buttonStyle(.plain)
-    }
-}
-
-//MARK: - Justification
-
-struct JustificationCell: View {
-    
-    @State private var isOn: Bool = true
-    
-    var body: some View {
-        ZStack(alignment: .top) {
-            VStack() {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.white).opacity(0.3)
-                    .cornerRadius(0.5)
-                    .padding(.top, -4.5)
-                    .padding(.trailing, 20)
-                HStack() {
-                    Spacer()
-                    Text("|Aa     Aa|")
-                        .foregroundStyle(.white)
-                    Spacer()
-                    Toggle("", isOn: $isOn)
-                        .toggleStyle(SwitchToggleStyle(tint: .customGold))
-                        .padding(.trailing, 35)
-                        .frame(width: 100)
-                }.frame(height: 100)
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-            }
-        }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .buttonStyle(.plain)
-    }
-}
-
-//MARK: - LeafingMode
-
-
-struct LeafingModeCell: View {
-    
-    @State private var index: Int = 0
-    
-    var body: some View {
-        ZStack(alignment: .top) {
-            VStack() {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.white).opacity(0.3)
-                    .cornerRadius(0.5)
-                    .padding(.top, -4.5)
-                    .padding(.trailing, 20)
-                HStack() {
-                    Selector(mode: .settingsColorTheme(index), action: { i in
-                        index = i
-                    })
-                }.frame(height: 100)
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-            }
-        }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .buttonStyle(.plain)
-    }
-}
-
-struct testCell: View {
-    
-    @State private var isOn: Bool = true
-    
-    var body: some View {
-        HStack {
-            Spacer()
-            Selector(mode: .settingsColorTheme(0), action: { i in })
-        }.frame(height: 100)
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-    }
         
+        ZStack {
+            Rectangle()
+                .fill(Color.customGrayLight)
+                .cornerRadius(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 0.3)
+                )
+            
+            HStack() {
+                Image("wordTransferIcon")
+                    .padding(.leading, 10)
+                
+                Spacer()
+                Toggle("", isOn: $transferIs)
+                    .toggleStyle(SwitchToggleStyle(tint: .customGold))
+                    .padding(.trailing, 25)
+            }
+        }
+        .frame(width: 150, height: 50)
+    }
 }
+
+
 
 #Preview {
     ZStack {
         Color(.gray)
-        fontStyleCell()
+        TransferOfWordsCell()
+            .environmentObject(TextService())
     }
     .frame(height: 50)
 }

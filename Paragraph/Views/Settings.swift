@@ -14,40 +14,29 @@ struct SettingsView: View {
     
     var body: some View {
         if presented {
-            VStack() {
-                Spacer()
+            VStack {
+//                Spacer()
                 HStack {
                     Spacer()
-                    List() {
-                        Rectangle().fill(.clear)
-                            .frame(height: 100)
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
-                            .buttonStyle(.plain)
-                        ColorThemeCell()
-                            .listRowInsets(EdgeInsets())
-                            .listRowSeparator(.hidden)
-                            .buttonStyle(.plain)
-                            .padding([.top, .bottom], 2)
-                            .listRowBackground(Color.clear)
+                    VStack(spacing: 2) {
+                        HStack {
+                            ColorThemeCell()
+                            Spacer()
+                        }
                         fontStyleCell()
-                            .listRowInsets(EdgeInsets())
-                            .listRowSeparator(.hidden)
-                            .buttonStyle(.plain)
-                            .padding([.top, .bottom], 2)
-                            .listRowBackground(Color.clear)
                         FontSizeCell()
-                            .listRowInsets(EdgeInsets())
-                            .listRowSeparator(.hidden)
-                            .buttonStyle(.plain)
-                            .padding([.top, .bottom], 2)
-                            .listRowBackground(Color.clear)
+                        LineIntervalCell()
+                        PaddingSizeCell()
+                        HStack {
+                            Spacer()
+                            TransferOfWordsCell()
+                        }
                     }
-                    .frame(width: 300, height: 400)
+                    .frame(width: 300, height: 350)
                     .padding(.trailing, 10)
+//                    .padding(.bottom, 50)
                     .listStyle(PlainListStyle())
                 }
-                
             }
         }
     }
@@ -57,6 +46,7 @@ struct SettingsView: View {
     ZStack() {
         Color(.gray).ignoresSafeArea()
         SettingsView(presented: .constant(true))
+            .environmentObject(TextService())
     }
-   
+    
 }
