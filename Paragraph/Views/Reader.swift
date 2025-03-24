@@ -11,6 +11,7 @@ struct ReaderView: View {
     
     let device: UIUserInterfaceIdiom
     let content: Book = testBook
+    @State private var pageContent: [TextBlock] = []
     
     @Binding var presented: Bool
     @State private var settingsPresented: Bool = false
@@ -18,18 +19,21 @@ struct ReaderView: View {
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
     
-    @State private var wordsList: [String] = []
-    @State private var maxLines: Int = 0
     
     var body: some View {
         if presented {
             GeometryReader { geometry in
                 Color(.clear)
-                    .onAppear() { contentUpdate(geometry: geometry) }
-                    .onChange(of: textService.getSize()) { contentUpdate(geometry: geometry) }
-                    .onChange(of: textService.getUIFont()) { contentUpdate(geometry: geometry) }
-                    .onChange(of: textService.getInterval()) { contentUpdate(geometry: geometry) }
-                    .onChange(of: textService.getPadding()) { contentUpdate(geometry: geometry) }
+                    .onAppear()
+                { contentUpdate(content: testBook, geometry: geometry) }
+                    .onChange(of: textService.getSize())
+                { contentUpdate(content: testBook, geometry: geometry) }
+                    .onChange(of: textService.getUIFont())
+                { contentUpdate(content: testBook, geometry: geometry) }
+                    .onChange(of: textService.getInterval())
+                { contentUpdate(content: testBook, geometry: geometry) }
+                    .onChange(of: textService.getPadding())
+                { contentUpdate(content: testBook, geometry: geometry) }
                 
                 ZStack(alignment: .top) {
                     Color(colorService.theme().background)
@@ -63,10 +67,10 @@ struct ReaderView: View {
                         
                         ZStack(alignment: .top) {
                             LazyVStack(spacing: 0) {
-                                ForEach(0..<maxLines, id: \.self) { index in
+                                ForEach(0..<pageContent.count, id: \.self) { index in
                                     TextLineView(font: textService.getFont(),
                                                  fontColor: colorService.theme().text,
-                                                 wordsList: wordsList,
+                                                 wordsList: pageContent[index].words,
                                                  interval: textService.getInterval(),
                                                  padding: textService.getPadding())
                                 }
@@ -92,13 +96,26 @@ struct ReaderView: View {
         }
     }
     
-    private func contentUpdate(geometry: GeometryProxy) {
+    private func contentUpdate(content: Book, geometry: GeometryProxy) {
+        pageContent = []
         textService.setPaddingList(device: device)
-        let lineHight = textService.heightOfString(font: textService.getUIFont()) + textService.getInterval()
-        maxLines = Int((geometry.size.height - 100) / lineHight)
-        wordsList = textService.createWordList(text: testBook.text[2].words,
-                                               maxWidth: geometry.size.width - (textService.getPadding() * 2),
-                                               font: textService.getUIFont())
+        
+        let uIFont = textService.getUIFont()
+        let interval = textService.getInterval()
+        let stringHight = textService.heightOfString(font: uIFont)
+        let lineHight = stringHight + interval
+        
+        let padding = textService.getPadding() * 2
+        let maxWidht = geometry.size.width - padding
+        let maxHeight = geometry.size.height - 100
+        let maxLines = Int(maxHeight / lineHight)
+        
+        textService.updateProgress(content: content)
+        
+        for _ in 0..<maxLines {
+            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, font: uIFont)
+            pageContent.append(TextBlock(words: wordsLine, mode: .paragraph))
+        }
     }
 }
 
@@ -112,7 +129,7 @@ struct TextLineView: View {
     
     var body: some View {
         HStack() {
-            ForEach(wordsList, id: \.self) { word in
+            ForEach(Array(wordsList.enumerated()), id: \.offset) {i, word in
                 Text(word)
                     .font(font)
                     .foregroundStyle(fontColor)

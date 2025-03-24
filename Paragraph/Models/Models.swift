@@ -33,12 +33,15 @@ struct Book: Identifiable {
     let status: BookStatus
     let progress: Double
     let text: [TextBlock]
+    let progressBlock: Int
+    let progressWord: Int
 }
 
 struct TextBlock {
     let words: [String]
     let mode: TextMode
 }
+
 
 
 

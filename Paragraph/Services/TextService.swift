@@ -15,6 +15,8 @@ final class TextService: ObservableObject {
     @AppStorage("lineIntervalIndex") private var intervalIndex = 0
     @AppStorage("paddingSizeIndex") private var paddingIndex = 0
     
+    @Published private var currentBlockIndex: Int = 0
+    @Published private var currentWordIndex: Int = 0
     
     let fontList: [FontStyle] = [.charter, .palatino, .baskerville, .courierNew, .helveticaNeue, .helveticaNeueBold]
     let sizeList: [CGFloat] = [15, 20, 25, 30, 35, 40, 45]
@@ -94,19 +96,38 @@ final class TextService: ObservableObject {
         return boundingRect.height
     }
     
+
+    func updateProgress(content: Book) {
+        currentBlockIndex = content.progressBlock
+        currentWordIndex = content.progressWord
+    }
     
-    func createWordList(text: [String], maxWidth: CGFloat, font: UIFont) -> [String] {
+    func getLine(content: Book, maxWidth: CGFloat, font: UIFont) -> [String] {
         var tempWidth: CGFloat = 0
         var words: [String] = []
         
-        for word in text {
-            let wordWidth = word.widthOfString(usingFont: font)
+        
+        for blockIndex in currentBlockIndex..<content.text.count {
+            let block = content.text[blockIndex]
+            currentBlockIndex = blockIndex
             
-            if tempWidth + wordWidth <= maxWidth {
-                words.append(word)
-                tempWidth += wordWidth
-            } else {
-                break
+            for wordIndex in currentWordIndex..<block.words.count {
+                let wordWidth = block.words[wordIndex].widthOfString(usingFont: font)
+                
+                if tempWidth + wordWidth <= maxWidth {
+                    words.append(block.words[wordIndex])
+                    tempWidth += wordWidth
+                    if wordIndex != block.words.count - 1 {
+                        currentWordIndex = wordIndex
+                        currentWordIndex += 1
+                    } else {
+                        currentWordIndex = 0
+                    }
+                    
+                } else {
+                    
+                    return words
+                }
             }
         }
         return words
