@@ -38,8 +38,16 @@ struct Book: Identifiable {
 }
 
 struct TextBlock {
-    let words: [String]
+    let text: [String]
     let mode: TextMode
+}
+
+struct TextLine {
+    let text: [String]
+    let mode: TextMode
+    let textHight: CGFloat
+    let isStartOfBlock: Bool
+    let isEndOfBlock: Bool
 }
 
 

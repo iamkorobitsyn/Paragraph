@@ -102,34 +102,31 @@ final class TextService: ObservableObject {
         currentWordIndex = content.progressWord
     }
     
-    func getLine(content: Book, maxWidth: CGFloat, font: UIFont) -> [String] {
+    func getLine(content: Book, maxWidth: CGFloat, font: UIFont) -> TextLine {
         var tempWidth: CGFloat = 0
         var words: [String] = []
+        var mode: TextMode = .paragraph
+        let height = heightOfString(font: font)
         
-        
-        for blockIndex in currentBlockIndex..<content.text.count {
-            let block = content.text[blockIndex]
-            currentBlockIndex = blockIndex
+        let block = content.text[currentBlockIndex]
+            mode = block.mode
             
-            for wordIndex in currentWordIndex..<block.words.count {
-                let wordWidth = block.words[wordIndex].widthOfString(usingFont: font)
+            for wordIndex in currentWordIndex..<block.text.count {
+                let wordWidth = block.text[wordIndex].widthOfString(usingFont: font)
                 
                 if tempWidth + wordWidth <= maxWidth {
-                    words.append(block.words[wordIndex])
+                    words.append(block.text[wordIndex])
                     tempWidth += wordWidth
-                    if wordIndex != block.words.count - 1 {
-                        currentWordIndex = wordIndex
-                        currentWordIndex += 1
+                    if wordIndex != block.text.count - 1 {
+                        currentWordIndex = wordIndex + 1
                     } else {
                         currentWordIndex = 0
                     }
                     
                 } else {
-                    
-                    return words
+                    return TextLine(text: words, mode: mode, textHight: height, isStartOfBlock: false, isEndOfBlock: false)
                 }
             }
-        }
-        return words
+        return TextLine(text: words, mode: mode, textHight: height, isStartOfBlock: false, isEndOfBlock: false)
     }
 }

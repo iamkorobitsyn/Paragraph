@@ -11,7 +11,7 @@ struct ReaderView: View {
     
     let device: UIUserInterfaceIdiom
     let content: Book = testBook
-    @State private var pageContent: [TextBlock] = []
+    @State private var pageContent: [TextLine] = []
     
     @Binding var presented: Bool
     @State private var settingsPresented: Bool = false
@@ -21,19 +21,25 @@ struct ReaderView: View {
     
     
     var body: some View {
+        
+        let interval = textService.getInterval()
+        let padding = textService.getPadding()
+        let font = textService.getFont()
+        let uIFont = textService.getUIFont()
+        
         if presented {
             GeometryReader { geometry in
                 Color(.clear)
                     .onAppear()
-                { contentUpdate(content: testBook, geometry: geometry) }
+                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
                     .onChange(of: textService.getSize())
-                { contentUpdate(content: testBook, geometry: geometry) }
+                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
                     .onChange(of: textService.getUIFont())
-                { contentUpdate(content: testBook, geometry: geometry) }
+                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
                     .onChange(of: textService.getInterval())
-                { contentUpdate(content: testBook, geometry: geometry) }
+                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
                     .onChange(of: textService.getPadding())
-                { contentUpdate(content: testBook, geometry: geometry) }
+                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
                 
                 ZStack(alignment: .top) {
                     Color(colorService.theme().background)
@@ -64,15 +70,17 @@ struct ReaderView: View {
                             .padding(.trailing, 20)
                         }
                         .frame(height: 50)
+                       
                         
                         ZStack(alignment: .top) {
                             LazyVStack(spacing: 0) {
+                                
                                 ForEach(0..<pageContent.count, id: \.self) { index in
-                                    TextLineView(font: textService.getFont(),
+                                    TextLineView(font: font,
                                                  fontColor: colorService.theme().text,
-                                                 wordsList: pageContent[index].words,
-                                                 interval: textService.getInterval(),
-                                                 padding: textService.getPadding())
+                                                 wordsList: pageContent[index].text,
+                                                 interval: interval,
+                                                 padding: padding)
                                 }
                             }
                         }
@@ -96,25 +104,27 @@ struct ReaderView: View {
         }
     }
     
-    private func contentUpdate(content: Book, geometry: GeometryProxy) {
+    private func contentUpdate(content: Book, geometry: GeometryProxy, uiFont: UIFont) {
         pageContent = []
+        
         textService.setPaddingList(device: device)
-        
-        let uIFont = textService.getUIFont()
-        let interval = textService.getInterval()
-        let stringHight = textService.heightOfString(font: uIFont)
-        let lineHight = stringHight + interval
-        
         let padding = textService.getPadding() * 2
         let maxWidht = geometry.size.width - padding
+        
+        
         let maxHeight = geometry.size.height - 100
-        let maxLines = Int(maxHeight / lineHight)
+        var tempHeight: CGFloat = 0
+        let interval = textService.getInterval()
+        
+       
         
         textService.updateProgress(content: content)
         
-        for _ in 0..<maxLines {
-            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, font: uIFont)
-            pageContent.append(TextBlock(words: wordsLine, mode: .paragraph))
+        while tempHeight < maxHeight {
+            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, font: uiFont)
+            if maxHeight < tempHeight + wordsLine.textHight { break }
+            pageContent.append(wordsLine)
+            tempHeight += wordsLine.textHight + interval
         }
     }
 }
