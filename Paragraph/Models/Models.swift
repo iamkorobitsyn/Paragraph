@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum BookStatus {
     case closed
@@ -46,7 +47,6 @@ struct TextLine {
     let text: [String]
     let mode: TextMode
     let textHight: CGFloat
-    let isStartOfBlock: Bool
     let isEndOfBlock: Bool
 }
 

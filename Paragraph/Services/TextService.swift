@@ -23,6 +23,7 @@ final class TextService: ObservableObject {
     let intervalList: [CGFloat] = [0, 4, 8, 12, 16]
     var paddingList: [CGFloat] = [20, 30, 40, 50, 60]
     
+    
     enum FontStyle: Int {
         case charter, palatino, baskerville, courierNew, helveticaNeue, helveticaNeueBold
         
@@ -69,21 +70,21 @@ final class TextService: ObservableObject {
         }
     }
     
-    func getPadding() -> CGFloat
-    { return paddingList[paddingIndex] }
     
     func getInterval() -> CGFloat
     { return intervalList[intervalIndex] }
     
-    func getSize() -> CGFloat
-    { return sizeList[sizeIndex] }
+    func getPadding() -> CGFloat
+    { return paddingList[paddingIndex] }
     
     func getFont() -> Font
-    { return FontStyle(rawValue: fontIndex)?.getFont(size: getSize()) ?? FontStyle.charter.getFont(size: getSize()) }
+    { return FontStyle(rawValue: fontIndex)?.getFont(size: getFontSize()) ?? FontStyle.charter.getFont(size: getFontSize()) }
     
     func getUIFont() -> UIFont
-    { return FontStyle(rawValue: fontIndex)?.getUIFont(size: getSize()) ?? FontStyle.charter.getUIFont(size: getSize()) }
-
+    {return FontStyle(rawValue: fontIndex)?.getUIFont(size: getFontSize()) ?? FontStyle.charter.getUIFont(size: getFontSize()) }
+    
+    func getFontSize() -> CGFloat
+    { return sizeList[sizeIndex] }
 
     func heightOfString(font: UIFont) -> CGFloat {
         let attributes: [NSAttributedString.Key: Any] = [.font: font]
@@ -102,17 +103,31 @@ final class TextService: ObservableObject {
         currentWordIndex = content.progressWord
     }
     
-    func getLine(content: Book, maxWidth: CGFloat, font: UIFont) -> TextLine {
+    func getLine(content: Book, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
         var tempWidth: CGFloat = 0
         var words: [String] = []
         var mode: TextMode = .paragraph
-        let height = heightOfString(font: font)
+        let height = heightOfString(font: uIFont)
+        
+        var isEndOfBlock = false
         
         let block = content.text[currentBlockIndex]
             mode = block.mode
             
             for wordIndex in currentWordIndex..<block.text.count {
-                let wordWidth = block.text[wordIndex].widthOfString(usingFont: font)
+                
+                //adding spacer
+                
+                if wordIndex == 0 && block.mode == .paragraph {
+                    let spacer = "   "
+                    let spacerWidth = spacer.widthOfString(usingFont: uIFont)
+                    words.append(spacer)
+                    tempWidth += spacerWidth
+                }
+                
+                //adding word
+                
+                let wordWidth = block.text[wordIndex].widthOfString(usingFont: uIFont)
                 
                 if tempWidth + wordWidth <= maxWidth {
                     words.append(block.text[wordIndex])
@@ -121,12 +136,13 @@ final class TextService: ObservableObject {
                         currentWordIndex = wordIndex + 1
                     } else {
                         currentWordIndex = 0
+                        isEndOfBlock = true
                     }
                     
                 } else {
-                    return TextLine(text: words, mode: mode, textHight: height, isStartOfBlock: false, isEndOfBlock: false)
+                    return TextLine(text: words, mode: mode, textHight: height, isEndOfBlock: isEndOfBlock)
                 }
             }
-        return TextLine(text: words, mode: mode, textHight: height, isStartOfBlock: false, isEndOfBlock: false)
+        return TextLine(text: words, mode: mode, textHight: height, isEndOfBlock: isEndOfBlock)
     }
 }

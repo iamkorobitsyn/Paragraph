@@ -10,8 +10,13 @@ import SwiftUI
 struct ReaderView: View {
     
     let device: UIUserInterfaceIdiom
+    
     let content: Book = testBook
-    @State private var pageContent: [TextLine] = []
+    
+    @State private var textLines: [TextLine] = []
+    private enum Indent {
+        case min, mid, max
+    }
     
     @Binding var presented: Bool
     @State private var settingsPresented: Bool = false
@@ -22,27 +27,34 @@ struct ReaderView: View {
     
     var body: some View {
         
-        let interval = textService.getInterval()
-        let padding = textService.getPadding()
         let font = textService.getFont()
         let uIFont = textService.getUIFont()
+        
+        let interval = textService.getInterval()
+        let padding = textService.getPadding()
+        
+        let backgroundColor = colorService.theme().background
+        let textColor = colorService.theme().text
+        
         
         if presented {
             GeometryReader { geometry in
                 Color(.clear)
-                    .onAppear()
-                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
-                    .onChange(of: textService.getSize())
-                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
-                    .onChange(of: textService.getUIFont())
-                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
-                    .onChange(of: textService.getInterval())
-                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
-                    .onChange(of: textService.getPadding())
-                { contentUpdate(content: testBook, geometry: geometry, uiFont: uIFont) }
+                    .onAppear() {
+                        contentUpdate(testBook, geometry, uIFont, interval, padding)
+                    }
+        
+                    .onChange(of: font) {
+                        contentUpdate(testBook, geometry, uIFont, interval, padding)
+                    }
+                
+                    .onChange(of: [interval, padding]) {
+                        contentUpdate(testBook, geometry, uIFont, interval, padding)
+                    }
+
                 
                 ZStack(alignment: .top) {
-                    Color(colorService.theme().background)
+                    Color(backgroundColor)
                         .ignoresSafeArea()
                     
                     HStack() {
@@ -50,7 +62,7 @@ struct ReaderView: View {
                             .foregroundStyle(Color.gray)
                             .lineLimit(1)
                             .multilineTextAlignment(.center)
-                            .padding([.leading, .trailing], textService.getPadding())
+                            .padding([.leading, .trailing], padding)
                             .padding(.top, 20)
                     }
    
@@ -75,12 +87,13 @@ struct ReaderView: View {
                         ZStack(alignment: .top) {
                             LazyVStack(spacing: 0) {
                                 
-                                ForEach(0..<pageContent.count, id: \.self) { index in
+                                ForEach(0..<textLines.count, id: \.self) { index in
                                     TextLineView(font: font,
-                                                 fontColor: colorService.theme().text,
-                                                 wordsList: pageContent[index].text,
+                                                 fontColor: textColor,
+                                                 wordsList: textLines[index].text,
                                                  interval: interval,
-                                                 padding: padding)
+                                                 padding: padding,
+                                                 endBlock: textLines[index].isEndOfBlock)
                                 }
                             }
                         }
@@ -104,26 +117,25 @@ struct ReaderView: View {
         }
     }
     
-    private func contentUpdate(content: Book, geometry: GeometryProxy, uiFont: UIFont) {
-        pageContent = []
-        
-        textService.setPaddingList(device: device)
-        let padding = textService.getPadding() * 2
-        let maxWidht = geometry.size.width - padding
-        
-        
+    private func contentUpdate(_ content: Book,
+                               _ geometry: GeometryProxy,
+                               _ uIFont: UIFont,
+                               _ interval: CGFloat,
+                               _ padding: CGFloat) {
+        print("update")
+        textLines = []
+
+        let maxWidht = geometry.size.width - padding * 2
         let maxHeight = geometry.size.height - 100
+        
         var tempHeight: CGFloat = 0
-        let interval = textService.getInterval()
-        
-       
-        
+
         textService.updateProgress(content: content)
         
         while tempHeight < maxHeight {
-            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, font: uiFont)
+            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
             if maxHeight < tempHeight + wordsLine.textHight { break }
-            pageContent.append(wordsLine)
+            textLines.append(wordsLine)
             tempHeight += wordsLine.textHight + interval
         }
     }
@@ -136,22 +148,37 @@ struct TextLineView: View {
     let wordsList: [String]
     let interval: CGFloat
     let padding: CGFloat
+    let endBlock: Bool
     
     var body: some View {
         HStack() {
-            ForEach(Array(wordsList.enumerated()), id: \.offset) {i, word in
-                Text(word)
-                    .font(font)
-                    .foregroundStyle(fontColor)
-                    .lineLimit(1)
-                    .background(.clear)
-                    .multilineTextAlignment(word == wordsList.first ? .leading : .center)
-                    .multilineTextAlignment(word == wordsList.last ? .trailing : .center)
-                    .padding(.top, interval)
-                if word != wordsList.last {
-                    Spacer(minLength: 0)
+            if !endBlock {
+                ForEach(Array(wordsList.enumerated()), id: \.offset) { i, word in
+                    Text(word)
+                        .font(font)
+                        .foregroundStyle(fontColor)
+                        .lineLimit(1)
+                        .background(.clear)
+                        .multilineTextAlignment(word == wordsList.first ? .leading : .center)
+                        .multilineTextAlignment(word == wordsList.last ? .trailing : .center)
+                        .padding(.top, interval)
+                    if word != wordsList.last {
+                        Spacer(minLength: 0)
+                    }
+                }
+            } else {
+                ForEach(Array(wordsList.enumerated()), id: \.offset) { i, word in
+                    Text(word)
+                        .font(font)
+                        .foregroundStyle(fontColor)
+                        .lineLimit(1)
+                        .background(.clear)
+                        .multilineTextAlignment(word == wordsList.first ? .leading : .center)
+                        .multilineTextAlignment(word == wordsList.last ? .trailing : .center)
+                        .padding(.top, interval)
                 }
             }
+            
         }
         .padding([.leading, .trailing], padding)
     }
