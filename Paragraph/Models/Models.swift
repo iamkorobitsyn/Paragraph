@@ -44,9 +44,19 @@ struct TextBlock {
 }
 
 struct TextLine {
+    
+    init(_ text: [String], _ mode: TextMode, _ textHight: CGFloat, _ isStartOfBlock: Bool, _ isEndOfBlock: Bool) {
+        self.text = text
+        self.mode = mode
+        self.textHight = textHight
+        self.isStartOfBlock = isStartOfBlock
+        self.isEndOfBlock = isEndOfBlock
+    }
+    
     let text: [String]
     let mode: TextMode
     let textHight: CGFloat
+    let isStartOfBlock: Bool
     let isEndOfBlock: Bool
 }
 

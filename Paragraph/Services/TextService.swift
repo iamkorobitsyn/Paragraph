@@ -23,7 +23,6 @@ final class TextService: ObservableObject {
     let intervalList: [CGFloat] = [0, 4, 8, 12, 16]
     var paddingList: [CGFloat] = [20, 30, 40, 50, 60]
     
-    
     enum FontStyle: Int {
         case charter, palatino, baskerville, courierNew, helveticaNeue, helveticaNeueBold
         
@@ -109,7 +108,9 @@ final class TextService: ObservableObject {
         var mode: TextMode = .paragraph
         let height = heightOfString(font: uIFont)
         
+        var isStartOfBlock = false
         var isEndOfBlock = false
+        
         
         let block = content.text[currentBlockIndex]
             mode = block.mode
@@ -119,30 +120,27 @@ final class TextService: ObservableObject {
                 //adding spacer
                 
                 if wordIndex == 0 && block.mode == .paragraph {
-                    let spacer = "   "
-                    let spacerWidth = spacer.widthOfString(usingFont: uIFont)
-                    words.append(spacer)
-                    tempWidth += spacerWidth
+                    tempWidth += 20
+                    isStartOfBlock = true
                 }
                 
                 //adding word
                 
                 let wordWidth = block.text[wordIndex].widthOfString(usingFont: uIFont)
                 
-                if tempWidth + wordWidth <= maxWidth {
-                    words.append(block.text[wordIndex])
-                    tempWidth += wordWidth
-                    if wordIndex != block.text.count - 1 {
-                        currentWordIndex = wordIndex + 1
-                    } else {
-                        currentWordIndex = 0
-                        isEndOfBlock = true
-                    }
-                    
+                if tempWidth + wordWidth <= maxWidth || words.count == 0 {
+                        words.append(block.text[wordIndex])
+                        tempWidth += wordWidth
+                        if wordIndex != block.text.count - 1 {
+                            currentWordIndex = wordIndex + 1
+                        } else {
+                            currentWordIndex = 0
+                            isEndOfBlock = true
+                        }
                 } else {
-                    return TextLine(text: words, mode: mode, textHight: height, isEndOfBlock: isEndOfBlock)
+                    return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock)
                 }
             }
-        return TextLine(text: words, mode: mode, textHight: height, isEndOfBlock: isEndOfBlock)
+        return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock)
     }
 }

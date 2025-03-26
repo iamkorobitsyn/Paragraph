@@ -89,11 +89,11 @@ struct ReaderView: View {
                                 
                                 ForEach(0..<textLines.count, id: \.self) { index in
                                     TextLineView(font: font,
-                                                 fontColor: textColor,
-                                                 wordsList: textLines[index].text,
-                                                 interval: interval,
-                                                 padding: padding,
-                                                 endBlock: textLines[index].isEndOfBlock)
+                                                  fontColor: textColor,
+                                                 textLine: textLines[index],
+                                                  interval: interval,
+                                                  padding: padding,
+                                                  endBlock: textLines[index].isEndOfBlock)
                                 }
                             }
                         }
@@ -122,7 +122,7 @@ struct ReaderView: View {
                                _ uIFont: UIFont,
                                _ interval: CGFloat,
                                _ padding: CGFloat) {
-        print("update")
+
         textLines = []
 
         let maxWidht = geometry.size.width - padding * 2
@@ -145,42 +145,61 @@ struct TextLineView: View {
     
     let font: Font
     let fontColor: Color
-    let wordsList: [String]
+    let textLine: TextLine
     let interval: CGFloat
     let padding: CGFloat
     let endBlock: Bool
     
     var body: some View {
-        HStack() {
-            if !endBlock {
-                ForEach(Array(wordsList.enumerated()), id: \.offset) { i, word in
-                    Text(word)
-                        .font(font)
-                        .foregroundStyle(fontColor)
-                        .lineLimit(1)
-                        .background(.clear)
-                        .multilineTextAlignment(word == wordsList.first ? .leading : .center)
-                        .multilineTextAlignment(word == wordsList.last ? .trailing : .center)
-                        .padding(.top, interval)
-                    if word != wordsList.last {
-                        Spacer(minLength: 0)
+        HStack(spacing: 0) {
+            if textLine.isStartOfBlock && textLine.mode == .paragraph {
+                Rectangle().fill(.clear)
+                    .frame(width: 20)
+            }
+            
+                ForEach(Array(textLine.text.enumerated()), id: \.offset) { i, word in
+                    
+                    if !endBlock {
+
+                        Word(text: word, font: font, color: fontColor, interval: interval)
+                            .multilineTextAlignment(word == textLine.text.first ? .leading : .center)
+                            .multilineTextAlignment(word == textLine.text.last ? .trailing : .center)
+                        
+                        if word != textLine.text.last || textLine.text.count == 1 {
+                            Spacer(minLength: 0)
+                        }
+                  
+                        
+                        
+                    } else {
+                        Word(text: word, font: font, color: fontColor, interval: interval)
+                            .multilineTextAlignment(.leading)
+                            
+                        if word == textLine.text.last {
+                            Spacer(minLength: 0)
+                        }
                     }
                 }
-            } else {
-                ForEach(Array(wordsList.enumerated()), id: \.offset) { i, word in
-                    Text(word)
-                        .font(font)
-                        .foregroundStyle(fontColor)
-                        .lineLimit(1)
-                        .background(.clear)
-                        .multilineTextAlignment(word == wordsList.first ? .leading : .center)
-                        .multilineTextAlignment(word == wordsList.last ? .trailing : .center)
-                        .padding(.top, interval)
-                }
-            }
             
         }
         .padding([.leading, .trailing], padding)
+    }
+}
+
+struct Word: View {
+    
+    let text: String
+    let font: Font
+    let color: Color
+    let interval: CGFloat
+    
+    var body: some View {
+        Text(text)
+            .font(font)
+            .foregroundStyle(color)
+            .background(.clear)
+            .lineLimit(1)
+            .padding(.top, interval)
     }
 }
 
