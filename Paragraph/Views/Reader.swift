@@ -24,6 +24,9 @@ struct ReaderView: View {
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
     
+    @State private var selectedText: String?
+    @State private var globalFrame: CGPoint = .zero
+    
     
     var body: some View {
         
@@ -37,9 +40,14 @@ struct ReaderView: View {
         let textColor = colorService.theme().text
         
         
+        
+        
         if presented {
             GeometryReader { geometry in
                 Color(.clear)
+                
+                    
+                
                     .onAppear() {
                         contentUpdate(testBook, geometry, uIFont, interval, padding)
                     }
@@ -51,11 +59,17 @@ struct ReaderView: View {
                     .onChange(of: [interval, padding]) {
                         contentUpdate(testBook, geometry, uIFont, interval, padding)
                     }
+                
+                
 
                 
                 ZStack(alignment: .top) {
                     Color(backgroundColor)
                         .ignoresSafeArea()
+
+                        
+                    
+                        
                     
                     HStack() {
                         Text("Цирк семьи пайло")
@@ -93,10 +107,20 @@ struct ReaderView: View {
                                                  textLine: textLines[index],
                                                   interval: interval,
                                                   padding: padding,
-                                                  endBlock: textLines[index].isEndOfBlock)
+                                                 endBlock: textLines[index].isEndOfBlock,
+                                                 globalFrame: $globalFrame)
                                 }
                             }
                         }
+                        .contentShape(Rectangle())
+                        .gesture(
+                            DragGesture(minimumDistance: 0, coordinateSpace: .global)
+                            
+                                .onChanged { value in
+                                    print("work")
+                                    globalFrame = value.location
+                                }
+                        )
                         Spacer()
                     }
                     
@@ -150,6 +174,8 @@ struct TextLineView: View {
     let padding: CGFloat
     let endBlock: Bool
     
+    @Binding var globalFrame: CGPoint
+    
     var body: some View {
         HStack(spacing: 0) {
             if textLine.isStartOfBlock && textLine.mode == .paragraph {
@@ -158,50 +184,78 @@ struct TextLineView: View {
             }
             
                 ForEach(Array(textLine.text.enumerated()), id: \.offset) { i, word in
-                    
-                    if !endBlock {
+                        if !endBlock {
+     
+                            Word(text: word, font: font, color: fontColor, interval: interval, globalFrame: $globalFrame)
+                                .multilineTextAlignment(word == textLine.text.first ? .leading : .center)
+                                .multilineTextAlignment(word == textLine.text.last ? .trailing : .center)
 
-                        Word(text: word, font: font, color: fontColor, interval: interval)
-                            .multilineTextAlignment(word == textLine.text.first ? .leading : .center)
-                            .multilineTextAlignment(word == textLine.text.last ? .trailing : .center)
-                        
-                        if word != textLine.text.last || textLine.text.count == 1 {
-                            Spacer(minLength: 0)
-                        }
-                  
-                        
-                        
-                    } else {
-                        Word(text: word, font: font, color: fontColor, interval: interval)
-                            .multilineTextAlignment(.leading)
+                            if word != textLine.text.last || textLine.text.count == 1 {
+                                Spacer(minLength: 0)
+                            }
                             
-                        if word == textLine.text.last {
-                            Spacer(minLength: 0)
+                            
+                            
+                        } else {
+                            Word(text: word, font: font, color: fontColor, interval: interval, globalFrame: $globalFrame)
+                                .multilineTextAlignment(.leading)
+                            
+                            if word == textLine.text.last {
+                                Spacer(minLength: 0)
+                            }
                         }
-                    }
                 }
             
         }
+        
         .padding([.leading, .trailing], padding)
     }
 }
 
 struct Word: View {
-    
     let text: String
     let font: Font
     let color: Color
     let interval: CGFloat
     
+    @State private var isHighlighted: Bool = false
+    @Binding var globalFrame: CGPoint
+    @State private var localFrame: CGRect = .zero
+    
     var body: some View {
         Text(text)
             .font(font)
-            .foregroundStyle(color)
-            .background(.clear)
+            .foregroundStyle(isHighlighted ? Color.white : color)
+            .background(isHighlighted ? Color.blue : .clear)
+            .cornerRadius(4)
             .lineLimit(1)
             .padding(.top, interval)
+            .background(
+                GeometryReader { geometry in
+                    Color.clear.ignoresSafeArea()
+                        .onAppear {
+                            // Получаем фрейм в глобальных координатах
+                            self.localFrame = geometry.frame(in: .global)
+                        }
+                        .onChange(of: geometry.frame(in: .global)) {
+                            self.localFrame = geometry.frame(in: .global)
+                        }
+                }
+            )
+        
+            .onTapGesture {
+                isHighlighted.toggle()
+            }
+
+            .onChange(of: globalFrame) {
+                let touchZone = localFrame.insetBy(dx: -50, dy: 0) // Добавляем зону допуска
+                if touchZone.contains(globalFrame) {
+                    isHighlighted = true
+                }
+            }
     }
 }
+
 
 #Preview {
     ReaderView(device: .phone, presented: .constant(true))
