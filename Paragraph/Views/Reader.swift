@@ -248,7 +248,7 @@ struct Word: View {
             }
 
             .onChange(of: globalFrame) {
-                let touchZone = localFrame.insetBy(dx: -50, dy: 0) // Добавляем зону допуска
+                let touchZone = localFrame.insetBy(dx: 0, dy: 0) // Добавляем зону допуска
                 if touchZone.contains(globalFrame) {
                     isHighlighted = true
                 }
