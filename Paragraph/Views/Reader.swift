@@ -196,6 +196,7 @@ struct TextLineView: View {
                             
                             
                             
+                            
                         } else {
                             Word(text: word, font: font, color: fontColor, interval: interval, globalFrame: $globalFrame)
                                 .multilineTextAlignment(.leading)
@@ -207,6 +208,7 @@ struct TextLineView: View {
                 }
             
         }
+        .background(.red)
         
         .padding([.leading, .trailing], padding)
     }
@@ -227,7 +229,7 @@ struct Word: View {
             .font(font)
             .foregroundStyle(isHighlighted ? Color.white : color)
             .background(isHighlighted ? Color.blue : .clear)
-            .cornerRadius(4)
+            
             .lineLimit(1)
             .padding(.top, interval)
             .background(
