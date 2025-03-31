@@ -39,13 +39,18 @@ struct Book: Identifiable {
 }
 
 struct TextBlock {
-    let text: [String]
+    let text: [Word]
     let mode: TextMode
+}
+
+struct Word {
+    let id: Int
+    let text: String
 }
 
 struct TextLine {
     
-    init(_ text: [String], _ mode: TextMode, _ textHight: CGFloat, _ isStartOfBlock: Bool, _ isEndOfBlock: Bool) {
+    init(_ text: [Word], _ mode: TextMode, _ textHight: CGFloat, _ isStartOfBlock: Bool, _ isEndOfBlock: Bool) {
         self.text = text
         self.mode = mode
         self.textHight = textHight
@@ -53,7 +58,7 @@ struct TextLine {
         self.isEndOfBlock = isEndOfBlock
     }
     
-    let text: [String]
+    let text: [Word]
     let mode: TextMode
     let textHight: CGFloat
     let isStartOfBlock: Bool

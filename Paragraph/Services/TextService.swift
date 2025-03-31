@@ -10,6 +10,26 @@ import SwiftUI
 
 final class TextService: ObservableObject {
     
+    var wordID: Int = 0
+    
+    func textConvert(text: String) -> [Word] {
+        var wordList: [Word] = []
+        var tempText: [Character] = []
+        
+        text.forEach { char in
+            if char != " " {
+                tempText.append(char)
+            } else {
+                tempText.append(char)
+                let word = Word(id: wordID, text: String(tempText))
+                wordList.append(word)
+                wordID += 1
+                tempText = []
+            }
+        }
+        return wordList
+    }
+    
     @AppStorage("fontStyleIndex") private var fontIndex = 0
     @AppStorage("fontSizeIndex") private var sizeIndex = 0
     @AppStorage("lineIntervalIndex") private var intervalIndex = 0
@@ -104,7 +124,7 @@ final class TextService: ObservableObject {
     
     func getLine(content: Book, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
         var tempWidth: CGFloat = 0
-        var words: [String] = []
+        var words: [Word] = []
         var mode: TextMode = .paragraph
         let height = heightOfString(font: uIFont)
         
@@ -126,16 +146,20 @@ final class TextService: ObservableObject {
                 
                 //adding word
                 
-                let wordWidth = block.text[wordIndex].widthOfString(usingFont: uIFont)
+                let wordWidth = block.text[wordIndex].text.widthOfString(usingFont: uIFont)
                 
                 if tempWidth + wordWidth <= maxWidth || words.count == 0 {
-                        words.append(block.text[wordIndex])
+                    words.append(block.text[wordIndex])
                         tempWidth += wordWidth
                         if wordIndex != block.text.count - 1 {
                             currentWordIndex = wordIndex + 1
                         } else {
                             currentWordIndex = 0
                             isEndOfBlock = true
+                            if currentBlockIndex < content.text.count - 1 {
+                                currentBlockIndex += 1
+                            }
+                            
                         }
                 } else {
                     return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock)

@@ -11,8 +11,6 @@ struct ReaderView: View {
     
     let device: UIUserInterfaceIdiom
     
-    let content: Book = testBook
-    
     @State private var textLines: [TextLine] = []
     private enum Indent {
         case min, mid, max
@@ -24,11 +22,28 @@ struct ReaderView: View {
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
     
-    @State private var selectedText: String?
-    @State private var globalFrame: CGPoint = .zero
+    @State private var previousPage = 0
+    @State private var currentPage = 1
+    @State private var nextPage = 2
     
     
     var body: some View {
+        
+        let content = Book(title: "Цирк семьи Пайло",
+                           author: "Уилл Элиот",
+                           coverImage: "",
+                           status: .open,
+                           progress: 58.5,
+                           text: [TextBlock(text: textService.textConvert(text: "Что может быть страшнее клоуна за пределами цирка? Только сам цирк, в котором клоуны-убийцы воюют с акробатами, а хозяева ставят эксперименты на своих артистах. И только такой мир, полный кошмаров и гротеска, может заставить обычного недотепу-консьержа в буквальном смысле бороться с самим собой – воевать со своим клоунским альтер-эго не на жизнь, а на смерть. Автор романа – Уилл Эллиотт – не понаслышке знает, что такое раздвоение личности, хотя и не считает роман автобиографическим. Тем не менее щупальца шизофрении так тихо, но властно проникают в сознание, что читателю следует быть уверенным в собственном душевном равновесии, прежде чем приниматься за книгу."),
+                                            mode: .paragraph),
+                                  TextBlock(text: textService.textConvert(text: "Что сразу насторожило Джейми – так это взгляд клоуна, изумленный блеск, будто он впервые очутился в этом мире, словно машина Джейми – первое, что он увидел. Казалось, существо только-только вылупилось из огромного яйца, доковыляло до дороги и застыло там, как манекен в витрине магазина. Цветастая рубаха, заправленная в штаны, едва удерживала обвисший живот, руки плотно прижаты к бокам, а ладони, обтянутые белыми перчатками, сжаты в кулаки. Под мышками расплывались пятна от пота. Клоун таращился на него через ветровое стекло нелепыми удивленными глазами, потом интерес пропал, и он отвернулся от машины, едва не задавившей его насмерть."),
+                                            mode: .paragraph),
+                                  TextBlock(text: textService.textConvert(text: "Часы на приборной панели отсчитали десятую секунду с того момента, как Джейми вдарил по тормозам. Он чувствовал запах жженой резины. За все время, что он провел за рулем, мир лишился двух кошек, одного фазана, и вот теперь к этому списку едва не добавился совершенно одуревший человек. В голове у Джейми пронеслись все те напасти, что могли бы свалиться на него, не затормози он вовремя: судебные процессы, обвинения, бессонные ночи и чувство вины до конца жизни. На него накатил приступ гнева, как это бывает у водителей, – он опустил стекло и заорал:"),
+                                            mode: .paragraph)],
+                           progressBlock: 0,
+                           progressWord: 0)
+        
+        
         
         let font = textService.getFont()
         let uIFont = textService.getUIFont()
@@ -38,26 +53,21 @@ struct ReaderView: View {
         
         let backgroundColor = colorService.theme().background
         let textColor = colorService.theme().text
-        
-        
-        
-        
+  
         if presented {
             GeometryReader { geometry in
                 Color(.clear)
-                
-                    
-                
+  
                     .onAppear() {
-                        contentUpdate(testBook, geometry, uIFont, interval, padding)
+                        contentUpdate(content, geometry, uIFont, interval, padding)
                     }
         
                     .onChange(of: font) {
-                        contentUpdate(testBook, geometry, uIFont, interval, padding)
+                        contentUpdate(content, geometry, uIFont, interval, padding)
                     }
                 
                     .onChange(of: [interval, padding]) {
-                        contentUpdate(testBook, geometry, uIFont, interval, padding)
+                        contentUpdate(content, geometry, uIFont, interval, padding)
                     }
                 
                 
@@ -67,10 +77,6 @@ struct ReaderView: View {
                     Color(backgroundColor)
                         .ignoresSafeArea()
 
-                        
-                    
-                        
-                    
                     HStack() {
                         Text("Цирк семьи пайло")
                             .foregroundStyle(Color.gray)
@@ -97,30 +103,24 @@ struct ReaderView: View {
                         }
                         .frame(height: 50)
                        
-                        
-                        ZStack(alignment: .top) {
-                            LazyVStack(spacing: 0) {
-                                
-                                ForEach(0..<textLines.count, id: \.self) { index in
-                                    TextLineView(font: font,
-                                                  fontColor: textColor,
-                                                 textLine: textLines[index],
-                                                  interval: interval,
-                                                  padding: padding,
-                                                 endBlock: textLines[index].isEndOfBlock,
-                                                 globalFrame: $globalFrame)
+                        TabView(selection: $currentPage) {
+                            
+                            ForEach([previousPage, currentPage, nextPage], id: \.self) { page in
+                                LazyVStack(spacing: 0) {
+                                    
+                                    ForEach(0..<textLines.count, id: \.self) { index in
+                                        TextLineView(font: font,
+                                                     fontColor: textColor,
+                                                     textLine: textLines[index],
+                                                     interval: interval,
+                                                     padding: padding,
+                                                     endBlock: textLines[index].isEndOfBlock)
+                                    }
                                 }
                             }
                         }
-                        .contentShape(Rectangle())
-                        .gesture(
-                            DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                            
-                                .onChanged { value in
-                                    print("work")
-                                    globalFrame = value.location
-                                }
-                        )
+                        .tabViewStyle(.page)
+                        
                         Spacer()
                     }
                     
@@ -174,8 +174,6 @@ struct TextLineView: View {
     let padding: CGFloat
     let endBlock: Bool
     
-    @Binding var globalFrame: CGPoint
-    
     var body: some View {
         HStack(spacing: 0) {
             if textLine.isStartOfBlock && textLine.mode == .paragraph {
@@ -186,43 +184,36 @@ struct TextLineView: View {
                 ForEach(Array(textLine.text.enumerated()), id: \.offset) { i, word in
                         if !endBlock {
      
-                            Word(text: word, font: font, color: fontColor, interval: interval, globalFrame: $globalFrame)
-                                .multilineTextAlignment(word == textLine.text.first ? .leading : .center)
-                                .multilineTextAlignment(word == textLine.text.last ? .trailing : .center)
+                            WordView(i: word.id, text: word.text, font: font, color: fontColor, interval: interval)
 
-                            if word != textLine.text.last || textLine.text.count == 1 {
+                            if i != textLine.text.count - 1 || textLine.text.count == 1 {
                                 Spacer(minLength: 0)
                             }
                             
-                            
-                            
-                            
                         } else {
-                            Word(text: word, font: font, color: fontColor, interval: interval, globalFrame: $globalFrame)
-                                .multilineTextAlignment(.leading)
+                            WordView(i: word.id, text: word.text, font: font, color: fontColor, interval: interval)
                             
-                            if word == textLine.text.last {
+                            
+                            if i == textLine.text.count - 1 {
                                 Spacer(minLength: 0)
                             }
                         }
                 }
             
         }
-        .background(.red)
         
         .padding([.leading, .trailing], padding)
     }
 }
 
-struct Word: View {
+struct WordView: View {
+    let i: Int
     let text: String
     let font: Font
     let color: Color
     let interval: CGFloat
     
     @State private var isHighlighted: Bool = false
-    @Binding var globalFrame: CGPoint
-    @State private var localFrame: CGRect = .zero
     
     var body: some View {
         Text(text)
@@ -232,28 +223,10 @@ struct Word: View {
             
             .lineLimit(1)
             .padding(.top, interval)
-            .background(
-                GeometryReader { geometry in
-                    Color.clear.ignoresSafeArea()
-                        .onAppear {
-                            // Получаем фрейм в глобальных координатах
-                            self.localFrame = geometry.frame(in: .global)
-                        }
-                        .onChange(of: geometry.frame(in: .global)) {
-                            self.localFrame = geometry.frame(in: .global)
-                        }
-                }
-            )
         
             .onTapGesture {
                 isHighlighted.toggle()
-            }
-
-            .onChange(of: globalFrame) {
-                let touchZone = localFrame.insetBy(dx: 0, dy: 0) // Добавляем зону допуска
-                if touchZone.contains(globalFrame) {
-                    isHighlighted = true
-                }
+                print(i)
             }
     }
 }
