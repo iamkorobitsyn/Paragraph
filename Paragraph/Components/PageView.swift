@@ -3,35 +3,46 @@
 //  Paragraph
 //
 //  Created by Александр Коробицын on 01.04.2025.
-//
-
 import SwiftUI
 
-struct PageView<Content: View>: View {
-    let pages: [Content]
-    @State private var currentIndex = 0
+struct BookReader: View {
+    @State private var selectedPage = 1
+    @State private var pageOffset: CGFloat = 0
+    let pages = [Color.green, Color.blue, .clear]
     
     var body: some View {
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                ForEach(0..<pages.count, id: \.self) { index in
+        TabView(selection: $selectedPage) {
+            ForEach(pages.indices, id: \.self) { index in
+                GeometryReader { geometry in
                     pages[index]
-                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .overlay(
+                            VStack {
+                                Text("Страница \(index + 1)")
+                                Text("Смещение: \(Int(geometry.frame(in: .global).minX))")
+                            }
+                        )
+                        .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
+                            pageOffset = newValue
+                            print("Страница \(index): смещение \(newValue)")
+                        }
+                }
+                .onAppear { print("Страница \(index) стала видимой") }
+                .onDisappear {
+                    print("Страница \(index) скрылась")
+                    selectedPage = 1
                 }
             }
-            .offset(x: -CGFloat(currentIndex) * geometry.size.width)
-            .animation(.easeInOut, value: currentIndex)
-            .gesture(
-                DragGesture()
-                    .onEnded { value in
-                        if value.translation.width < -50 && currentIndex < pages.count - 1 {
-                            currentIndex += 1
-                        } else if value.translation.width > 50 && currentIndex > 0 {
-                            currentIndex -= 1
-                        }
-                    }
-            )
         }
-        .ignoresSafeArea()
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .overlay(
+            Text("Текущее смещение: \(Int(pageOffset))")
+                .padding()
+                .background(.white)
+                .padding(.top, 50)
+        )
     }
+}
+
+#Preview {
+    BookReader()
 }

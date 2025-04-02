@@ -22,9 +22,8 @@ struct ReaderView: View {
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
     
-    @State private var previousPage = 0
-    @State private var currentPage = 1
-    @State private var nextPage = 2
+    @State private var pages = [0, 1]
+    @State private var currentPage = 0
     
     
     var body: some View {
@@ -102,12 +101,11 @@ struct ReaderView: View {
                             .padding(.trailing, 20)
                         }
                         .frame(height: 50)
-                       
-                        TabView(selection: $currentPage) {
+                        
+                        ZStack {
                             
-                            ForEach([previousPage, currentPage, nextPage], id: \.self) { page in
+                            TabView(selection: $currentPage) {
                                 LazyVStack(spacing: 0) {
-                                    
                                     ForEach(0..<textLines.count, id: \.self) { index in
                                         TextLineView(font: font,
                                                      fontColor: textColor,
@@ -117,9 +115,78 @@ struct ReaderView: View {
                                                      endBlock: textLines[index].isEndOfBlock)
                                     }
                                 }
+                                
+                                Rectangle().fill(.clear)
                             }
+                            .tabViewStyle(.page)
+                            .onChange(of: currentPage) {
+                                pages.append(2)
+                                pages.removeFirst()
+                            }
+                            
+                            TabView(selection: $currentPage) {
+                                LazyVStack(spacing: 0) {
+                                    ForEach(0..<textLines.count, id: \.self) { index in
+                                        TextLineView(font: font,
+                                                     fontColor: textColor,
+                                                     textLine: textLines[index],
+                                                     interval: interval,
+                                                     padding: padding,
+                                                     endBlock: textLines[index].isEndOfBlock)
+                                    }
+                                }
+                                
+                                Rectangle().fill(.clear)
+                            }
+                            .tabViewStyle(.page)
+                            .onChange(of: currentPage) {
+                                pages.append(2)
+                                pages.removeFirst()
+                            }
+                            
                         }
-                        .tabViewStyle(.page)
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+//                        GeometryReader { geometry in
+//                            ScrollView(.horizontal, showsIndicators: true) {
+//                                        HStack(spacing: 0) {
+//                                            ForEach(0..<pages.count, id: \.self) { page in
+//                                                LazyVStack(spacing: 0) {
+//                                                    ForEach(0..<textLines.count, id: \.self) { index in
+//                                                        TextLineView(font: font,
+//                                                                     fontColor: textColor,
+//                                                                     textLine: textLines[index],
+//                                                                     interval: interval,
+//                                                                     padding: padding,
+//                                                                     endBlock: textLines[index].isEndOfBlock)
+//                                                    }
+//                                                }
+//                                                .tag(page)
+//                                            }
+//                                        }
+//                                        .offset(x: -CGFloat(currentPage) * geometry.size.width) // Перемещение страниц
+//                                        .animation(.linear, value: currentPage) // Анимация перелистывания
+//                                    }
+//                            .scrollDisabled(true)
+//                                    .gesture(
+//                                        DragGesture()
+//                                            .onEnded { value in
+//                                                let threshold = geometry.size.width / 3
+//                                                if value.translation.width < -threshold {
+//                                                    currentPage = min(currentPage + 1, pages.count - 1)
+//                                                } else if value.translation.width > threshold {
+//                                                    currentPage = max(currentPage - 1, 0)
+//                                                }
+//                                            }
+//                                    )
+//                                }
+                        
+                        
                         
                         Spacer()
                     }
@@ -140,6 +207,7 @@ struct ReaderView: View {
             }
         }
     }
+
     
     private func contentUpdate(_ content: Book,
                                _ geometry: GeometryProxy,
