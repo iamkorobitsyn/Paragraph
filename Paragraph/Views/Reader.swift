@@ -76,20 +76,18 @@ struct ReaderView: View {
                     Color(backgroundColor)
                         .ignoresSafeArea()
 
-                    HStack() {
-                        Text("Цирк семьи пайло")
-                            .foregroundStyle(Color.gray)
-                            .lineLimit(1)
-                            .multilineTextAlignment(.center)
-                            .padding([.leading, .trailing], padding)
-                            .padding(.top, 20)
-                    }
-   
-                    VStack() {
+                    VStack(spacing: 0) {
                         
                         HStack() {
+                            Text("Цирк семьи пайло")
+                                .foregroundStyle(Color.gray)
+                                .lineLimit(1)
+                                .multilineTextAlignment(.center)
+                                .padding([.leading, .trailing], 40)
+                                .padding(.bottom, 9)
                             
                             Spacer()
+                              
                             Selector(mode: .readerControls) { i in
                                 if i == 0 {
                                     settingsPresented.toggle()
@@ -99,12 +97,16 @@ struct ReaderView: View {
                                 }
                             }
                             .padding(.trailing, 20)
+                            .padding([.top, .bottom], 9)
                         }
-                        .frame(height: 50)
+                        .frame(height: 60)
+                      
+                        
+                        
                         
                         ZStack {
                             
-                            TabView(selection: $currentPage) {
+                        
                                 LazyVStack(spacing: 0) {
                                     ForEach(0..<textLines.count, id: \.self) { index in
                                         TextLineView(font: font,
@@ -116,89 +118,21 @@ struct ReaderView: View {
                                     }
                                 }
                                 
-                                Rectangle().fill(.clear)
-                            }
-                            .tabViewStyle(.page)
-                            .onChange(of: currentPage) {
-                                pages.append(2)
-                                pages.removeFirst()
-                            }
                             
-                            TabView(selection: $currentPage) {
-                                LazyVStack(spacing: 0) {
-                                    ForEach(0..<textLines.count, id: \.self) { index in
-                                        TextLineView(font: font,
-                                                     fontColor: textColor,
-                                                     textLine: textLines[index],
-                                                     interval: interval,
-                                                     padding: padding,
-                                                     endBlock: textLines[index].isEndOfBlock)
-                                    }
-                                }
-                                
-                                Rectangle().fill(.clear)
-                            }
-                            .tabViewStyle(.page)
-                            .onChange(of: currentPage) {
-                                pages.append(2)
-                                pages.removeFirst()
-                            }
+                         
                             
                         }
+                        .frame(height: geometry.size.height - 100)
+                 
                         
-                        
-                        
-                        
-                        
-                        
-                        
-//                        GeometryReader { geometry in
-//                            ScrollView(.horizontal, showsIndicators: true) {
-//                                        HStack(spacing: 0) {
-//                                            ForEach(0..<pages.count, id: \.self) { page in
-//                                                LazyVStack(spacing: 0) {
-//                                                    ForEach(0..<textLines.count, id: \.self) { index in
-//                                                        TextLineView(font: font,
-//                                                                     fontColor: textColor,
-//                                                                     textLine: textLines[index],
-//                                                                     interval: interval,
-//                                                                     padding: padding,
-//                                                                     endBlock: textLines[index].isEndOfBlock)
-//                                                    }
-//                                                }
-//                                                .tag(page)
-//                                            }
-//                                        }
-//                                        .offset(x: -CGFloat(currentPage) * geometry.size.width) // Перемещение страниц
-//                                        .animation(.linear, value: currentPage) // Анимация перелистывания
-//                                    }
-//                            .scrollDisabled(true)
-//                                    .gesture(
-//                                        DragGesture()
-//                                            .onEnded { value in
-//                                                let threshold = geometry.size.width / 3
-//                                                if value.translation.width < -threshold {
-//                                                    currentPage = min(currentPage + 1, pages.count - 1)
-//                                                } else if value.translation.width > threshold {
-//                                                    currentPage = max(currentPage - 1, 0)
-//                                                }
-//                                            }
-//                                    )
-//                                }
-                        
-                        
-                        
-                        Spacer()
-                    }
                     
-                    VStack {
-                        Spacer()
                         Text("58 %")
                             .foregroundStyle(Color.gray)
-                        .frame(height: 50)
-                        .padding(.bottom, 10)
+                            .frame(height: 40)
+                            .padding(.top, 10)
                     }
-                    .ignoresSafeArea()
+                    
+                    
                 }
                 VStack {
                     Spacer()
