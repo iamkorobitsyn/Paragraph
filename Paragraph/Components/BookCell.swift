@@ -68,9 +68,7 @@ struct BookCell: View {
                             coverImage: "Beartown Fredrik Backman",
                             status: .closed,
                             progress: 0.78,
-                            text: [],
-                            progressBlock: 2,
-                            progressWord: 10))
+                            text: []))
     }
     
 }

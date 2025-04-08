@@ -22,6 +22,8 @@ struct PageView: View {
     let currentPage: [TextLine]
     let nextPage: [TextLine]
     
+    let onPageTurn: (_ withReverse: Bool) -> Void
+    
     var body: some View {
         
         let pages = [previousPage, currentPage, nextPage]
@@ -31,13 +33,13 @@ struct PageView: View {
         ZStack() {
  
             LazyVStack(spacing: 0) {
-                ForEach(0..<currentPage.count, id: \.self) { index in
+                ForEach(0..<nextPage.count, id: \.self) { index in
                     TextLineView(font: font,
                                  textColor: textColor,
-                                 textLine: currentPage[index],
+                                 textLine: nextPage[index],
                                  interval: interval,
                                  padding: padding,
-                                 endBlock: currentPage[index].isEndOfBlock)
+                                 endBlock: nextPage[index].isEndOfBlock)
                 }
             }
             .opacity(calculateOpacity(isReversed: reversedOpacity))
@@ -65,6 +67,9 @@ struct PageView: View {
                                     }
                                 }
                                 .opacity(tabViewOpacity)
+                            }
+                            .onDisappear() {
+                                onPageTurn(false)
                             }
                             
                             

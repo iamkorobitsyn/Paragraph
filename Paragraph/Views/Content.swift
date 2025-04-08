@@ -15,25 +15,19 @@ struct ContentView: View {
              coverImage: "Beartown Fredrik Backman",
              status: .closed,
              progress: 0.33,
-             text: [],
-             progressBlock: 2,
-             progressWord: 10),
+             text: []),
         Book(title: "My grandmother asked me to tell you shes sorry",
              author: "Fredrik Backman",
              coverImage: "My grandmother asked me to tell you shes sorry   Fredrik Backman",
              status: .open,
              progress: 0.95,
-             text: [],
-             progressBlock: 2,
-             progressWord: 10),
+             text: []),
         Book(title: "Things my son needs to know about the world",
              author: "Fredrik Backman",
              coverImage: "Things my son needs to know about the world  Fredrik Backman",
              status: .completed,
              progress: 0.0,
-             text: [],
-             progressBlock: 2,
-             progressWord: 10)
+             text: [])
     ]
     
     @State private var device = UIDevice.current.userInterfaceIdiom

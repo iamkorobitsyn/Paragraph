@@ -35,8 +35,8 @@ final class TextService: ObservableObject {
     @AppStorage("lineIntervalIndex") private var intervalIndex = 0
     @AppStorage("paddingSizeIndex") private var paddingIndex = 0
     
-    @Published private var currentBlockIndex: Int = 0
-    @Published private var currentWordIndex: Int = 0
+    @Published var currentBlockIndex: Int = 0
+    @Published var currentWordIndex: Int = 0
     
     let fontList: [FontStyle] = [.charter, .palatino, .baskerville, .courierNew, .helveticaNeue, .helveticaNeueBold]
     let sizeList: [CGFloat] = [15, 20, 25, 30, 35, 40, 45]
@@ -116,11 +116,6 @@ final class TextService: ObservableObject {
         return boundingRect.height
     }
     
-
-    func updateProgress(content: Book) {
-        currentBlockIndex = content.progressBlock
-        currentWordIndex = content.progressWord
-    }
     
     func getLine(content: Book, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
         var tempWidth: CGFloat = 0

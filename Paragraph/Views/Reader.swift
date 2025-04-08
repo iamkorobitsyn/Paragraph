@@ -11,10 +11,8 @@ struct ReaderView: View {
     
     let device: UIUserInterfaceIdiom
     
-    @State private var textLines: [TextLine] = []
-    private enum Indent {
-        case min, mid, max
-    }
+    @State private var textLinesOfCurrentPage: [TextLine] = []
+    @State private var textLinesOfNextPage: [TextLine] = []
     
     @Binding var presented: Bool
     @State private var settingsPresented: Bool = false
@@ -22,11 +20,17 @@ struct ReaderView: View {
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
     
-    @State private var pages = [0, 1]
-    @State private var currentPage = 0
+    @State private var progressBlock: Int = 0
+    @State private var progressWord: Int = 0
+    
+    @State private var nextPageBlockIndex = 0
+    @State private var nextPageWordIndex = 0
+    
     
     
     var body: some View {
+        
+        
         
         let content = Book(title: "Цирк семьи Пайло",
                            author: "Уилл Элиот",
@@ -38,9 +42,7 @@ struct ReaderView: View {
                                   TextBlock(text: textService.textConvert(text: "Что сразу насторожило Джейми – так это взгляд клоуна, изумленный блеск, будто он впервые очутился в этом мире, словно машина Джейми – первое, что он увидел. Казалось, существо только-только вылупилось из огромного яйца, доковыляло до дороги и застыло там, как манекен в витрине магазина. Цветастая рубаха, заправленная в штаны, едва удерживала обвисший живот, руки плотно прижаты к бокам, а ладони, обтянутые белыми перчатками, сжаты в кулаки. Под мышками расплывались пятна от пота. Клоун таращился на него через ветровое стекло нелепыми удивленными глазами, потом интерес пропал, и он отвернулся от машины, едва не задавившей его насмерть."),
                                             mode: .paragraph),
                                   TextBlock(text: textService.textConvert(text: "Часы на приборной панели отсчитали десятую секунду с того момента, как Джейми вдарил по тормозам. Он чувствовал запах жженой резины. За все время, что он провел за рулем, мир лишился двух кошек, одного фазана, и вот теперь к этому списку едва не добавился совершенно одуревший человек. В голове у Джейми пронеслись все те напасти, что могли бы свалиться на него, не затормози он вовремя: судебные процессы, обвинения, бессонные ночи и чувство вины до конца жизни. На него накатил приступ гнева, как это бывает у водителей, – он опустил стекло и заорал:"),
-                                            mode: .paragraph)],
-                           progressBlock: 0,
-                           progressWord: 0)
+                                            mode: .paragraph)])
         
         
         
@@ -70,7 +72,6 @@ struct ReaderView: View {
                     }
                 
                 
-
                 
                 ZStack(alignment: .top) {
                     Color(backgroundColor)
@@ -110,9 +111,13 @@ struct ReaderView: View {
                                      padding: padding,
                                      backgroundColor: backgroundColor,
                                      textColor: textColor,
-                                     previousPage: textLines,
-                                     currentPage: textLines,
-                                     nextPage: textLines)
+                                     previousPage: textLinesOfNextPage,
+                                     currentPage: textLinesOfCurrentPage,
+                                     nextPage: textLinesOfNextPage) { withReverse in
+                                progressBlock = nextPageBlockIndex
+                                progressWord = nextPageWordIndex
+                                contentUpdate(content, geometry, uIFont, interval, padding)
+                            }
                         }
                         .frame(height: geometry.size.height - 100)
                  
@@ -133,6 +138,8 @@ struct ReaderView: View {
             }
         }
     }
+    
+    //MARK: - ContentUpdate
 
     
     private func contentUpdate(_ content: Book,
@@ -140,49 +147,45 @@ struct ReaderView: View {
                                _ uIFont: UIFont,
                                _ interval: CGFloat,
                                _ padding: CGFloat) {
+        
+        
 
-        textLines = []
+        textLinesOfCurrentPage = []
+        
+        
+        textLinesOfNextPage = []
 
         let maxWidht = geometry.size.width - padding * 2
         let maxHeight = geometry.size.height - 100
         
         var tempHeight: CGFloat = 0
 
-        textService.updateProgress(content: content)
+        textService.currentBlockIndex = progressBlock
+        textService.currentWordIndex = progressWord
         
         while tempHeight < maxHeight {
             let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
             if maxHeight < tempHeight + wordsLine.textHight { break }
-            textLines.append(wordsLine)
+            textLinesOfCurrentPage.append(wordsLine)
+            tempHeight += wordsLine.textHight + interval
+            nextPageBlockIndex = textService.currentBlockIndex
+            nextPageWordIndex = textService.currentWordIndex
+        }
+        
+        tempHeight = 0
+        textService.currentBlockIndex = nextPageBlockIndex
+        textService.currentWordIndex = nextPageWordIndex
+        
+        while tempHeight < maxHeight {
+            
+            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
+            if maxHeight < tempHeight + wordsLine.textHight { break }
+            textLinesOfNextPage.append(wordsLine)
             tempHeight += wordsLine.textHight + interval
         }
+        
     }
 }
-
-//struct WordView: View {
-//    let i: Int
-//    let text: String
-//    let font: Font
-//    let color: Color
-//    let interval: CGFloat
-//    
-//    @State private var isHighlighted: Bool = false
-//    
-//    var body: some View {
-//        Text(text)
-//            .font(font)
-//            .foregroundStyle(isHighlighted ? Color.white : color)
-//            .background(isHighlighted ? Color.blue : .clear)
-//            
-//            .lineLimit(1)
-//            .padding(.top, interval)
-//        
-//            .onTapGesture {
-//                isHighlighted.toggle()
-//                print(i)
-//            }
-//    }
-//}
 
 
 #Preview {
