@@ -105,22 +105,14 @@ struct ReaderView: View {
                         
                         
                         ZStack {
-                            
-                        
-                                LazyVStack(spacing: 0) {
-                                    ForEach(0..<textLines.count, id: \.self) { index in
-                                        TextLineView(font: font,
-                                                     fontColor: textColor,
-                                                     textLine: textLines[index],
-                                                     interval: interval,
-                                                     padding: padding,
-                                                     endBlock: textLines[index].isEndOfBlock)
-                                    }
-                                }
-                                
-                            
-                         
-                            
+                            PageView(font: font,
+                                     interval: interval,
+                                     padding: padding,
+                                     backgroundColor: backgroundColor,
+                                     textColor: textColor,
+                                     previousPage: textLines,
+                                     currentPage: textLines,
+                                     nextPage: textLines)
                         }
                         .frame(height: geometry.size.height - 100)
                  
@@ -167,71 +159,30 @@ struct ReaderView: View {
     }
 }
 
-struct TextLineView: View {
-    
-    let font: Font
-    let fontColor: Color
-    let textLine: TextLine
-    let interval: CGFloat
-    let padding: CGFloat
-    let endBlock: Bool
-    
-    var body: some View {
-        HStack(spacing: 0) {
-            if textLine.isStartOfBlock && textLine.mode == .paragraph {
-                Rectangle().fill(.clear)
-                    .frame(width: 20)
-            }
-            
-                ForEach(Array(textLine.text.enumerated()), id: \.offset) { i, word in
-                        if !endBlock {
-     
-                            WordView(i: word.id, text: word.text, font: font, color: fontColor, interval: interval)
-
-                            if i != textLine.text.count - 1 || textLine.text.count == 1 {
-                                Spacer(minLength: 0)
-                            }
-                            
-                        } else {
-                            WordView(i: word.id, text: word.text, font: font, color: fontColor, interval: interval)
-                            
-                            
-                            if i == textLine.text.count - 1 {
-                                Spacer(minLength: 0)
-                            }
-                        }
-                }
-            
-        }
-        
-        .padding([.leading, .trailing], padding)
-    }
-}
-
-struct WordView: View {
-    let i: Int
-    let text: String
-    let font: Font
-    let color: Color
-    let interval: CGFloat
-    
-    @State private var isHighlighted: Bool = false
-    
-    var body: some View {
-        Text(text)
-            .font(font)
-            .foregroundStyle(isHighlighted ? Color.white : color)
-            .background(isHighlighted ? Color.blue : .clear)
-            
-            .lineLimit(1)
-            .padding(.top, interval)
-        
-            .onTapGesture {
-                isHighlighted.toggle()
-                print(i)
-            }
-    }
-}
+//struct WordView: View {
+//    let i: Int
+//    let text: String
+//    let font: Font
+//    let color: Color
+//    let interval: CGFloat
+//    
+//    @State private var isHighlighted: Bool = false
+//    
+//    var body: some View {
+//        Text(text)
+//            .font(font)
+//            .foregroundStyle(isHighlighted ? Color.white : color)
+//            .background(isHighlighted ? Color.blue : .clear)
+//            
+//            .lineLimit(1)
+//            .padding(.top, interval)
+//        
+//            .onTapGesture {
+//                isHighlighted.toggle()
+//                print(i)
+//            }
+//    }
+//}
 
 
 #Preview {
