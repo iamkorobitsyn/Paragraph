@@ -81,9 +81,9 @@ final class TextService: ObservableObject {
         }
     }
     
-    func setPaddingList(device: UIUserInterfaceIdiom) {
-        if device == .pad {
-            paddingList = [60, 90, 120, 150, 180]
+    func setPaddingList(landscape: Bool) {
+        if landscape {
+            paddingList = [60, 80, 100, 120, 140]
         } else {
             paddingList = [30, 40, 50, 60, 70]
         }
@@ -125,9 +125,10 @@ final class TextService: ObservableObject {
         
         var isStartOfBlock = false
         var isEndOfBlock = false
+        var isEndOfContent = false
         
         
-        let block = content.text[currentBlockIndex]
+        let block = content.textBlocks[currentBlockIndex]
             mode = block.mode
             
             for wordIndex in currentWordIndex..<block.text.count {
@@ -151,15 +152,17 @@ final class TextService: ObservableObject {
                         } else {
                             currentWordIndex = 0
                             isEndOfBlock = true
-                            if currentBlockIndex < content.text.count - 1 {
+                            if currentBlockIndex != content.textBlocks.count - 1 {
                                 currentBlockIndex += 1
+                            } else {
+                                isEndOfContent = true
                             }
                             
                         }
                 } else {
-                    return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock)
+                    return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent)
                 }
             }
-        return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock)
+        return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent)
     }
 }

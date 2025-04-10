@@ -33,7 +33,7 @@ struct Book: Identifiable {
     let coverImage: String?
     let status: BookStatus
     let progress: Double
-    let text: [TextBlock]
+    let textBlocks: [TextBlock]
 }
 
 struct TextBlock {
@@ -48,12 +48,13 @@ struct Word {
 
 struct TextLine {
     
-    init(_ text: [Word], _ mode: TextMode, _ textHight: CGFloat, _ isStartOfBlock: Bool, _ isEndOfBlock: Bool) {
+    init(_ text: [Word], _ mode: TextMode, _ textHight: CGFloat, _ isStartOfBlock: Bool, _ isEndOfBlock: Bool, _ isEndOfContent: Bool) {
         self.text = text
         self.mode = mode
         self.textHight = textHight
         self.isStartOfBlock = isStartOfBlock
         self.isEndOfBlock = isEndOfBlock
+        self.isEndOfContent = isEndOfContent
     }
     
     let text: [Word]
@@ -61,6 +62,7 @@ struct TextLine {
     let textHight: CGFloat
     let isStartOfBlock: Bool
     let isEndOfBlock: Bool
+    let isEndOfContent: Bool
 }
 
 

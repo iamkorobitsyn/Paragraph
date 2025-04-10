@@ -8,8 +8,8 @@ import SwiftUI
 struct PageView: View {
     @State private var selectedPage = 1
     @State private var pageOffset: CGFloat = 0
-    @State private var tabViewOpacity: CGFloat = 1
-    @State private var reversedOpacity: Bool = false
+    @State private var frontPageOpacity: CGFloat = 1
+    @State private var fadingReverse: Bool = false
     
     let font: Font
     let interval: CGFloat
@@ -24,13 +24,11 @@ struct PageView: View {
     
     let onPageTurn: (_ withReverse: Bool) -> Void
     
+    @State private var pages = 3
+    
     var body: some View {
         
-        let pages = [previousPage, currentPage, nextPage]
-        
-        Color(backgroundColor)
-
-        ZStack() {
+        ZStack {
  
             VStack(spacing: 0) {
                 ForEach(0..<nextPage.count, id: \.self) { index in
@@ -39,13 +37,15 @@ struct PageView: View {
                                  textLine: nextPage[index],
                                  interval: interval,
                                  padding: padding,
-                                 endBlock: nextPage[index].isEndOfBlock)
+                                 endBlock: nextPage[index].isEndOfBlock,
+                                 endContent: nextPage[index].isEndOfContent)
                 }
+                Spacer()
             }
-            .opacity(calculateOpacity(isReversed: reversedOpacity))
+            .opacity(calculateFading(isReversed: fadingReverse))
                 
             TabView(selection: $selectedPage) {
-                ForEach(0..<pages.count, id: \.self) { index in
+                ForEach(0..<pages, id: \.self) { index in
                     GeometryReader { geometry in
                         if index == 1 {
                             ZStack {
@@ -57,14 +57,30 @@ struct PageView: View {
                                                      textLine: currentPage[index],
                                                      interval: interval,
                                                      padding: padding,
-                                                     endBlock: currentPage[index].isEndOfBlock)
+                                                     endBlock: currentPage[index].isEndOfBlock,
+                                                     endContent: currentPage[index].isEndOfContent)
+                                        .onAppear() {
+                                            if currentPage[index].isEndOfContent {
+                                                print("checkEnd")
+                                                pages = 1
+                                            }
+                                        }
                                     }
+                                    Spacer()
                                 }
-
                             }
-                            .opacity(tabViewOpacity)
+                            .opacity(frontPageOpacity)
                             .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
+                                let threshold = 0.01
                                 pageOffset = newValue
+//                                print(newValue)
+                                if newValue > threshold {
+                                    frontPageOpacity = 0
+                                    fadingReverse = true
+                                } else if newValue < -threshold {
+                                    frontPageOpacity = 1
+                                    fadingReverse = false
+                                }
                             }
                             .onDisappear() {
                                 onPageTurn(false)
@@ -82,22 +98,11 @@ struct PageView: View {
                                                      textLine: currentPage[index],
                                                      interval: interval,
                                                      padding: padding,
-                                                     endBlock: currentPage[index].isEndOfBlock)
+                                                     endBlock: currentPage[index].isEndOfBlock,
+                                                     endContent: nextPage[index].isEndOfContent)
                                     }
+                                    Spacer()
                                 }
-                            }
-                            
-                            .onAppear {
-                          
-                                    tabViewOpacity = 0
-                                    reversedOpacity = true
-                          
-                            }
-                            .onDisappear() {
-                                tabViewOpacity = 1
-                                selectedPage = 1
-                                reversedOpacity = false
-                                
                             }
                         }
                     }
@@ -105,11 +110,11 @@ struct PageView: View {
                 }
           
             }
-            .tabViewStyle(.page)
+            .tabViewStyle(.page(indexDisplayMode: .never))
         }
     }
     
-    private func calculateOpacity(isReversed: Bool = false) -> Double {
+    private func calculateFading(isReversed: Bool = false) -> Double {
         let screenWidth = UIScreen.main.bounds.width
         let normalizedOffset = abs(pageOffset / screenWidth)
         let rawOpacity = min(1, normalizedOffset)
@@ -127,12 +132,13 @@ struct TextLineView: View {
     let interval: CGFloat
     let padding: CGFloat
     let endBlock: Bool
+    let endContent: Bool
     
     var body: some View {
         HStack(spacing: 0) {
             if textLine.isStartOfBlock && textLine.mode == .paragraph {
                 Rectangle().fill(.clear)
-                    .frame(width: 20)
+                    .frame(width: 20, height: 5)
             }
             
                 ForEach(Array(textLine.text.enumerated()), id: \.offset) { i, word in

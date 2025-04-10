@@ -15,36 +15,41 @@ struct ContentView: View {
              coverImage: "Beartown Fredrik Backman",
              status: .closed,
              progress: 0.33,
-             text: []),
+             textBlocks: []),
         Book(title: "My grandmother asked me to tell you shes sorry",
              author: "Fredrik Backman",
              coverImage: "My grandmother asked me to tell you shes sorry   Fredrik Backman",
              status: .open,
              progress: 0.95,
-             text: []),
+             textBlocks: []),
         Book(title: "Things my son needs to know about the world",
              author: "Fredrik Backman",
              coverImage: "Things my son needs to know about the world  Fredrik Backman",
              status: .completed,
              progress: 0.0,
-             text: [])
+             textBlocks: [])
     ]
     
     @State private var device = UIDevice.current.userInterfaceIdiom
     @State private var readerPresented: Bool = false
+    @EnvironmentObject private var textService: TextService
     
     var body: some View {
         GeometryReader { geometry in
             Color(.clear)
-                .onAppear()
+             
             if geometry.size.width > geometry.size.height {
+                
                 ZStack {
                     Image("mainTexture")
                         .resizable()
-                        .ignoresSafeArea()
+                      
                     
-                    ReaderView(device: device, presented: $readerPresented)
-                    
+                    ReaderView(presented: $readerPresented)
+                      
+                        .onAppear() {
+                            textService.setPaddingList(landscape: true)
+                        }
                     HStack(spacing: 0) {
                         
                         ToolBarView(readerPresented: $readerPresented, device: device)
@@ -55,14 +60,18 @@ struct ContentView: View {
                         LibraryView(readerPresented: $readerPresented, books: books)
                     }
                 }
+                .ignoresSafeArea()
             } else {
+                
                 ZStack {
                     Image("mainTexture")
                         .resizable()
                         .ignoresSafeArea()
                     
-                    ReaderView(device: device, presented: $readerPresented)
-                    
+                    ReaderView(presented: $readerPresented)
+                        .onAppear() {
+                            textService.setPaddingList(landscape: false)
+                        }
                     VStack(spacing: 0) {
                         ToolBarView(readerPresented: $readerPresented, device: device)
                         .frame(width: device == .pad ? 560 : 360,
