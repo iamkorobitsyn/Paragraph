@@ -102,9 +102,7 @@ struct ReaderView: View {
                         }
                         .frame(height: 60)
                       
-                        
-                        
-                        
+         
                         ZStack {
                             PageView(font: font,
                                      interval: interval,

@@ -32,7 +32,7 @@ struct PageView: View {
 
         ZStack() {
  
-            LazyVStack(spacing: 0) {
+            VStack(spacing: 0) {
                 ForEach(0..<nextPage.count, id: \.self) { index in
                     TextLineView(font: font,
                                  textColor: textColor,
@@ -48,15 +48,9 @@ struct PageView: View {
                 ForEach(0..<pages.count, id: \.self) { index in
                     GeometryReader { geometry in
                         if index == 1 {
-                            
                             ZStack {
                                 Color(backgroundColor)
-                                   
-                                    .opacity(tabViewOpacity)
-                                    .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
-                                        pageOffset = newValue
-                                    }
-                                LazyVStack(spacing: 0) {
+                                VStack(spacing: 0) {
                                     ForEach(0..<currentPage.count, id: \.self) { index in
                                         TextLineView(font: font,
                                                      textColor: textColor,
@@ -66,18 +60,22 @@ struct PageView: View {
                                                      endBlock: currentPage[index].isEndOfBlock)
                                     }
                                 }
-                                .opacity(tabViewOpacity)
+
+                            }
+                            .opacity(tabViewOpacity)
+                            .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
+                                pageOffset = newValue
                             }
                             .onDisappear() {
                                 onPageTurn(false)
+                                selectedPage = 1
                             }
                             
                             
                         } else if index == 0 {
                             ZStack {
                                 Color(backgroundColor)
-                                 
-                                LazyVStack(spacing: 0) {
+                                VStack(spacing: 0) {
                                     ForEach(0..<currentPage.count, id: \.self) { index in
                                         TextLineView(font: font,
                                                      textColor: textColor,
@@ -87,23 +85,27 @@ struct PageView: View {
                                                      endBlock: currentPage[index].isEndOfBlock)
                                     }
                                 }
-                                    .onChange(of: geometry.frame(in: .global).minX) {
-                                        tabViewOpacity = 0
-                                        reversedOpacity = true
-                                    }
-                                    .onDisappear() {
-                                        tabViewOpacity = 1
-                                        reversedOpacity = false
-                                    }
+                            }
+                            
+                            .onAppear {
+                          
+                                    tabViewOpacity = 0
+                                    reversedOpacity = true
+                          
+                            }
+                            .onDisappear() {
+                                tabViewOpacity = 1
+                                selectedPage = 1
+                                reversedOpacity = false
+                                
                             }
                         }
                     }
-                    .onDisappear {
-                        selectedPage = 1
-                    }
+
                 }
+          
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
+            .tabViewStyle(.page)
         }
     }
     
