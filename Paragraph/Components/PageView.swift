@@ -99,7 +99,7 @@ struct PageView: View {
                                                      interval: interval,
                                                      padding: padding,
                                                      endBlock: currentPage[index].isEndOfBlock,
-                                                     endContent: nextPage[index].isEndOfContent)
+                                                     endContent: currentPage[index].isEndOfContent)
                                     }
                                     Spacer()
                                 }

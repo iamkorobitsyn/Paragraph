@@ -108,7 +108,7 @@ struct ReaderView: View {
                                      padding: padding,
                                      backgroundColor: backgroundColor,
                                      textColor: textColor,
-                                     previousPage: textLinesOfNextPage,
+                                     previousPage: textLinesOfCurrentPage,
                                      currentPage: textLinesOfCurrentPage,
                                      nextPage: textLinesOfNextPage) { withReverse in
                                 progressBlock = nextPageBlockIndex
@@ -146,15 +146,12 @@ struct ReaderView: View {
                                _ uIFont: UIFont,
                                _ interval: CGFloat,
                                _ padding: CGFloat) {
-        
-        
 
         textLinesOfCurrentPage = []
         textLinesOfNextPage = []
 
         let maxWidht = geometry.size.width - padding * 2
         let maxHeight = geometry.size.height - 100
-        
         var tempHeight: CGFloat = 0
         
         textService.currentBlockIndex = progressBlock
@@ -162,24 +159,28 @@ struct ReaderView: View {
         
         while tempHeight < maxHeight {
             let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
+            
             if maxHeight < tempHeight + wordsLine.textHight { break }
             textLinesOfCurrentPage.append(wordsLine)
             tempHeight += wordsLine.textHight + interval
-            nextPageBlockIndex = textService.currentBlockIndex
-            nextPageWordIndex = textService.currentWordIndex
-            if wordsLine.isEndOfContent {break}
+            if wordsLine.isEndOfContent {return}
+            
+            
         }
+        nextPageBlockIndex = textService.currentBlockIndex
+        nextPageWordIndex = textService.currentWordIndex
         
         tempHeight = 0
-        textService.currentBlockIndex = nextPageBlockIndex
-        textService.currentWordIndex = nextPageWordIndex
-        
+    
         while tempHeight < maxHeight {
             
             let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
             if maxHeight < tempHeight + wordsLine.textHight { break }
+            
             textLinesOfNextPage.append(wordsLine)
             tempHeight += wordsLine.textHight + interval
+            if wordsLine.isEndOfContent {return}
+            
         }
         
     }
