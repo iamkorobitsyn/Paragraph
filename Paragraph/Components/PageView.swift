@@ -62,7 +62,7 @@ struct PageView: View {
                                         .onAppear() {
                                             if currentPage[index].isEndOfContent {
                                                 print("checkEnd")
-                                                pages = 1
+                                                pages = 3
                                             }
                                         }
                                     }

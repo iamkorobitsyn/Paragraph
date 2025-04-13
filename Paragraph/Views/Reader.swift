@@ -115,9 +115,7 @@ struct ReaderView: View {
                                 progressWord = nextPageWordIndex
                                 contentUpdate(content, geometry, uIFont, interval, padding)
                             }
-                            
                         }
-                       
                         .frame(height: geometry.size.height - 100)
                  
                         
@@ -126,6 +124,7 @@ struct ReaderView: View {
                             .foregroundStyle(Color.gray)
                             .frame(height: 40)
                             .padding(.top, 10)
+                        Color(.black)
                     }
                     
                     
@@ -160,29 +159,26 @@ struct ReaderView: View {
         while tempHeight < maxHeight {
             let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
             
+            
             if maxHeight < tempHeight + wordsLine.textHight { break }
             textLinesOfCurrentPage.append(wordsLine)
             tempHeight += wordsLine.textHight + interval
             if wordsLine.isEndOfContent {return}
-            
-            
         }
+        
         nextPageBlockIndex = textService.currentBlockIndex
         nextPageWordIndex = textService.currentWordIndex
         
         tempHeight = 0
     
         while tempHeight < maxHeight {
-            
             let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
-            if maxHeight < tempHeight + wordsLine.textHight { break }
+            if maxHeight < tempHeight + wordsLine.textHight { return }
             
             textLinesOfNextPage.append(wordsLine)
             tempHeight += wordsLine.textHight + interval
-            if wordsLine.isEndOfContent {return}
-            
+            if wordsLine.isEndOfContent { return }
         }
-        
     }
 }
 
