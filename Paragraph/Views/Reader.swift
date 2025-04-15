@@ -21,15 +21,10 @@ struct ReaderView: View {
     @State private var progressBlock: Int = 0
     @State private var progressWord: Int = 0
     
-    @State private var nextPageBlockIndex = 0
-    @State private var nextPageWordIndex = 0
-    
     
     
     var body: some View {
-        
-        
-        
+
         let content = Book(title: "Цирк семьи Пайло",
                            author: "Уилл Элиот",
                            coverImage: "",
@@ -75,6 +70,18 @@ struct ReaderView: View {
                 ZStack(alignment: .top) {
                     Color(backgroundColor)
                         .ignoresSafeArea()
+                    
+                    PageView(font: font,
+                             interval: interval,
+                             padding: padding,
+                             backgroundColor: backgroundColor,
+                             textColor: textColor,
+                             previousPage: textLinesOfCurrentPage,
+                             currentPage: textLinesOfCurrentPage,
+                             nextPage: textLinesOfNextPage) { withReverse in
+                        contentUpdate(content, geometry, uIFont, interval, padding)
+                    }
+                             .padding(.top, 60)
 
                     VStack(spacing: 0) {
                         
@@ -87,7 +94,7 @@ struct ReaderView: View {
                                 .padding(.bottom, 9)
                             
                             Spacer()
-                              
+                            
                             Selector(mode: .readerControls) { i in
                                 if i == 0 {
                                     settingsPresented.toggle()
@@ -96,43 +103,25 @@ struct ReaderView: View {
                                     settingsPresented = false
                                 }
                             }
-                            .padding(.trailing, 20)
-                            .padding([.top, .bottom], 9)
+                            .padding([.trailing, .top], 15)
                         }
-                        .frame(height: 60)
-                      
-         
-                        ZStack {
-                            PageView(font: font,
-                                     interval: interval,
-                                     padding: padding,
-                                     backgroundColor: backgroundColor,
-                                     textColor: textColor,
-                                     previousPage: textLinesOfCurrentPage,
-                                     currentPage: textLinesOfCurrentPage,
-                                     nextPage: textLinesOfNextPage) { withReverse in
-                                progressBlock = nextPageBlockIndex
-                                progressWord = nextPageWordIndex
-                                contentUpdate(content, geometry, uIFont, interval, padding)
-                            }
-                        }
-                        .frame(height: geometry.size.height - 100)
-                 
-                        
-                    
+                    }
+                   
+                    VStack {
+                        Spacer()
                         Text("58 %")
                             .foregroundStyle(Color.gray)
-                            .frame(height: 40)
-                            .padding(.top, 10)
-                        Color(.black)
+                            .padding(.bottom, 20)
+                    }
+                    .ignoresSafeArea()
+                    
+                    VStack {
+                        Spacer()
+                        SettingsView(presented: $settingsPresented)
                     }
                     
-                    
                 }
-                VStack {
-                    Spacer()
-                    SettingsView(presented: $settingsPresented)
-                }
+                
             }
         }
     }
@@ -148,36 +137,44 @@ struct ReaderView: View {
 
         textLinesOfCurrentPage = []
         textLinesOfNextPage = []
+        
+        var tempBlock = progressBlock
+        var tempWord = progressWord
+        
 
         let maxWidht = geometry.size.width - padding * 2
-        let maxHeight = geometry.size.height - 100
+        var maxHeight: CGFloat = geometry.size.height
+        if geometry.size.height > geometry.size.width {
+            maxHeight -= 100
+        } else {
+            maxHeight -= 110
+        }
         var tempHeight: CGFloat = 0
         
-        textService.currentBlockIndex = progressBlock
-        textService.currentWordIndex = progressWord
         
         while tempHeight < maxHeight {
-            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
-            
-            
-            if maxHeight < tempHeight + wordsLine.textHight { break }
-            textLinesOfCurrentPage.append(wordsLine)
+            let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+
+            if maxHeight < tempHeight + wordsLine.textHight + interval { break }
             tempHeight += wordsLine.textHight + interval
+            
+            textLinesOfCurrentPage.append(wordsLine)
+            tempBlock = wordsLine.nextBlock
+            tempWord = wordsLine.nextWord
             if wordsLine.isEndOfContent {return}
         }
-        
-        nextPageBlockIndex = textService.currentBlockIndex
-        nextPageWordIndex = textService.currentWordIndex
         
         tempHeight = 0
     
         while tempHeight < maxHeight {
-            let wordsLine = textService.getLine(content: content, maxWidth: maxWidht, uIFont: uIFont)
-            if maxHeight < tempHeight + wordsLine.textHight { return }
+            let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+            if maxHeight < tempHeight + wordsLine.textHight + interval { return }
+            tempBlock = wordsLine.nextBlock
+            tempWord = wordsLine.nextWord
             
             textLinesOfNextPage.append(wordsLine)
             tempHeight += wordsLine.textHight + interval
-            if wordsLine.isEndOfContent { return }
+            if wordsLine.isEndOfContent {return}
         }
     }
 }

@@ -61,7 +61,6 @@ struct PageView: View {
                                                      endContent: currentPage[index].isEndOfContent)
                                         .onAppear() {
                                             if currentPage[index].isEndOfContent {
-                                                print("checkEnd")
                                                 pages = 3
                                             }
                                         }
@@ -73,7 +72,6 @@ struct PageView: View {
                             .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
                                 let threshold = 0.01
                                 pageOffset = newValue
-//                                print(newValue)
                                 if newValue > threshold {
                                     frontPageOpacity = 0
                                     fadingReverse = true
@@ -83,7 +81,8 @@ struct PageView: View {
                                 }
                             }
                             .onDisappear() {
-                                onPageTurn(false)
+//                                onPageTurn(false)
+                                frontPageOpacity = 1
                                 selectedPage = 1
                             }
                             
@@ -108,6 +107,7 @@ struct PageView: View {
                     }
 
                 }
+               
           
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

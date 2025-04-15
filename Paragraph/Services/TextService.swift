@@ -35,9 +35,6 @@ final class TextService: ObservableObject {
     @AppStorage("lineIntervalIndex") private var intervalIndex = 0
     @AppStorage("paddingSizeIndex") private var paddingIndex = 0
     
-    @Published var currentBlockIndex: Int = 0
-    @Published var currentWordIndex: Int = 0
-    
     let fontList: [FontStyle] = [.charter, .palatino, .baskerville, .courierNew, .helveticaNeue, .helveticaNeueBold]
     let sizeList: [CGFloat] = [15, 20, 25, 30, 35, 40, 45]
     let intervalList: [CGFloat] = [0, 4, 8, 12, 16]
@@ -117,7 +114,7 @@ final class TextService: ObservableObject {
     }
     
     
-    func getLine(content: Book, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
+    func getLine(content: Book, block: Int, word: Int, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
         var tempWidth: CGFloat = 0
         var words: [Word] = []
         var mode: TextMode = .paragraph
@@ -127,42 +124,44 @@ final class TextService: ObservableObject {
         var isEndOfBlock = false
         var isEndOfContent = false
         
+        var tempBlock = block
+        var tempWord = word
         
-        let block = content.textBlocks[currentBlockIndex]
-            mode = block.mode
+        let currentBlock = content.textBlocks[tempBlock]
+            mode = currentBlock.mode
             
-            for wordIndex in currentWordIndex..<block.text.count {
+            for currentWord in tempWord..<currentBlock.text.count {
                 
                 //adding spacer
                 
-                if wordIndex == 0 && block.mode == .paragraph {
+                if currentWord == 0 && currentBlock.mode == .paragraph {
                     tempWidth += 20
                     isStartOfBlock = true
                 }
                 
                 //adding word
                 
-                let wordWidth = block.text[wordIndex].text.widthOfString(usingFont: uIFont)
+                let wordWidth = currentBlock.text[currentWord].text.widthOfString(usingFont: uIFont)
                 
                 if tempWidth + wordWidth <= maxWidth || words.count == 0 {
-                    words.append(block.text[wordIndex])
+                    words.append(currentBlock.text[currentWord])
                         tempWidth += wordWidth
-                        if wordIndex != block.text.count - 1 {
-                            currentWordIndex = wordIndex + 1
+                        if currentWord != currentBlock.text.count - 1 {
+                            tempWord += 1
                         } else {
-                            currentWordIndex = 0
+                            tempWord = 0
                             isEndOfBlock = true
-                            if currentBlockIndex != content.textBlocks.count - 1 {
-                                currentBlockIndex += 1
+                            if tempBlock != content.textBlocks.count - 1 {
+                                tempBlock += 1
                             } else {
                                 isEndOfContent = true
                             }
                             
                         }
                 } else {
-                    return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent)
+                    return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
                 }
             }
-        return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent)
+        return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
     }
 }
