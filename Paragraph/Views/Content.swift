@@ -30,6 +30,8 @@ struct ContentView: View {
              textBlocks: [])
     ]
     
+    
+    
     @State private var device = UIDevice.current.userInterfaceIdiom
     @State private var readerPresented: Bool = false
     @EnvironmentObject private var textService: TextService

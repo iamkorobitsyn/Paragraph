@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct PageView: View {
-    @State private var selectedPage = 1
+    
     @State private var pageOffset: CGFloat = 0
     @State private var frontPageOpacity: CGFloat = 1
     @State private var fadingReverse: Bool = false
@@ -24,50 +24,74 @@ struct PageView: View {
     
     let onPageTurn: (_ withReverse: Bool) -> Void
     
-    @State private var pages = 3
+    @State private var selection = 1
+    @State private var endFlag: Bool = false
     
     var body: some View {
         
         ZStack {
- 
-            VStack(spacing: 0) {
-                ForEach(0..<nextPage.count, id: \.self) { index in
-                    TextLineView(font: font,
-                                 textColor: textColor,
-                                 textLine: nextPage[index],
-                                 interval: interval,
-                                 padding: padding,
-                                 endBlock: nextPage[index].isEndOfBlock,
-                                 endContent: nextPage[index].isEndOfContent)
+            GeometryReader { geometry in
+                if !endFlag {
+                    VStack(spacing: 0) {
+                        ForEach(0..<nextPage.count, id: \.self) { index in
+                            TextLineView(font: font,
+                                         textColor: textColor,
+                                         textLine: nextPage[index],
+                                         interval: interval,
+                                         padding: padding,
+                                         endBlock: nextPage[index].isEndOfBlock,
+                                         endContent: nextPage[index].isEndOfContent)
+                        }
+                        Spacer()
+                    }
+                    .opacity(calculateFading(isReversed: fadingReverse))
                 }
-                Spacer()
             }
-            .opacity(calculateFading(isReversed: fadingReverse))
-                
-            TabView(selection: $selectedPage) {
-                ForEach(0..<pages, id: \.self) { index in
+            
+            
+            TabView(selection: $selection) {
+                ForEach(0..<3, id: \.self) { index in
                     GeometryReader { geometry in
-                        if index == 1 {
-                            ZStack {
-                                Color(backgroundColor)
-                                VStack(spacing: 0) {
-                                    ForEach(0..<currentPage.count, id: \.self) { index in
-                                        TextLineView(font: font,
-                                                     textColor: textColor,
-                                                     textLine: currentPage[index],
-                                                     interval: interval,
-                                                     padding: padding,
-                                                     endBlock: currentPage[index].isEndOfBlock,
-                                                     endContent: currentPage[index].isEndOfContent)
-                                        .onAppear() {
-                                            if currentPage[index].isEndOfContent {
-                                                pages = 3
-                                            }
+                        
+                        if index == 0 {
+                            
+                            Color(backgroundColor)
+                            VStack(spacing: 0) {
+                                ForEach(0..<currentPage.count, id: \.self) { index in
+                                    TextLineView(font: font,
+                                                 textColor: textColor,
+                                                 textLine: currentPage[index],
+                                                 interval: interval,
+                                                 padding: padding,
+                                                 endBlock: currentPage[index].isEndOfBlock,
+                                                 endContent: currentPage[index].isEndOfContent)
+                                }
+                                Spacer()
+                            }
+                            
+                        } else if index == 1 {
+                            
+                            Color(backgroundColor)
+                            VStack(spacing: 0) {
+                                ForEach(0..<currentPage.count, id: \.self) { index in
+                                    TextLineView(font: font,
+                                                 textColor: textColor,
+                                                 textLine: currentPage[index],
+                                                 interval: interval,
+                                                 padding: padding,
+                                                 endBlock: currentPage[index].isEndOfBlock,
+                                                 endContent: currentPage[index].isEndOfContent)
+                                    .onAppear() {
+                                        if currentPage[index].isEndOfContent {
+                                            endFlag = true
+                                            selection = 2
                                         }
                                     }
-                                    Spacer()
                                 }
+                                Spacer()
                             }
+
+                            
                             .opacity(frontPageOpacity)
                             .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
                                 let threshold = 0.01
@@ -81,15 +105,13 @@ struct PageView: View {
                                 }
                             }
                             .onDisappear() {
-//                                onPageTurn(false)
+                                onPageTurn(false)
                                 frontPageOpacity = 1
-                                selectedPage = 1
+                                selection = endFlag ? 2 : 1
                             }
                             
-                            
-                        } else if index == 0 {
-                            ZStack {
-                                Color(backgroundColor)
+                        } else if index == 2 {
+                            if endFlag {
                                 VStack(spacing: 0) {
                                     ForEach(0..<currentPage.count, id: \.self) { index in
                                         TextLineView(font: font,
@@ -99,16 +121,14 @@ struct PageView: View {
                                                      padding: padding,
                                                      endBlock: currentPage[index].isEndOfBlock,
                                                      endContent: currentPage[index].isEndOfContent)
+                                        
                                     }
                                     Spacer()
                                 }
                             }
                         }
                     }
-
                 }
-               
-          
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
         }
