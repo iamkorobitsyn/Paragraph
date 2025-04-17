@@ -40,17 +40,19 @@ final class TextService: ObservableObject {
         
         var splitFlag: Bool = false
         var indentIndex: Int = 0
+        var secondPartCharacterCount: Int = 0
 
-        while !splitFlag && indentIndex < 3 {
+        while !splitFlag && indentIndex <= secondPartCharacterCount {
             
             let length = word.text.count
             let splitIndex = (length / 2) + indentIndex
 
             let firstPart = String(word.text.prefix(splitIndex))
             let secondPart = String(word.text.suffix(length - splitIndex))
+            secondPartCharacterCount = secondPart.count
             
             guard let lastChar = firstPart.last else {return []}
-            if charSet.vowels.contains(lastChar) && secondPart.count > 2 {
+            if charSet.vowels.contains(lastChar) && secondPart.count > 3 {
                 splitFlag = true
                 print(secondPart)
             } else {
