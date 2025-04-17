@@ -9,7 +9,7 @@ import Foundation
 
 struct CharSets {
     
-     static let vowels: [String] = [
+    let vowels: [Character] = [
          "а", "е", "ё", "и", "о", "у", "ы", "э", "ю", "я",
          "a", "e", "i", "o", "u", "y",
          "à", "â", "æ", "é", "è", "ê", "ë", "í", "ï", "î", "ó", "ô", "œ", "ù", "û", "ü",
@@ -19,7 +19,7 @@ struct CharSets {
          "á", "à", "ã", "é", "ê", "í", "ó", "õ", "ô", "ú"
      ]
      
-     static let consonants: [String] = [
+     let consonants: [Character] = [
          "б", "в", "г", "д", "ж", "з", "к", "л", "м", "н", "п", "р", "с", "т", "ф", "х", "ц", "ч", "ш", "щ",
          "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"
      ]

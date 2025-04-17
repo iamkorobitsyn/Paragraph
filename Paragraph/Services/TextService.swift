@@ -33,6 +33,35 @@ final class TextService: ObservableObject {
         return wordList
     }
     
+    private func tryHypernation(word: Word, reverse: Bool) -> [Word] {
+        guard word.text.count > 6 else {return []}
+        
+        let charSet = CharSets()
+        
+        var splitFlag: Bool = false
+        var indentIndex: Int = 0
+
+        while !splitFlag && indentIndex < 3 {
+            
+            let length = word.text.count
+            let splitIndex = (length / 2) + indentIndex
+
+            let firstPart = String(word.text.prefix(splitIndex))
+            let secondPart = String(word.text.suffix(length - splitIndex))
+            
+            guard let lastChar = firstPart.last else {return []}
+            if charSet.vowels.contains(lastChar) && secondPart.count > 2 {
+                splitFlag = true
+                print(secondPart)
+            } else {
+                indentIndex += 1
+            }
+        }
+
+        return []
+        
+    }
+    
     lazy var content = Book(title: "Цирк семьи Пайло",
                        author: "Уилл Элиот",
                        coverImage: "",
@@ -176,6 +205,8 @@ final class TextService: ObservableObject {
                             
                         }
                 } else {
+                    tryHypernation(word: currentBlock.text[currentWord], reverse: false)
+                    
                     return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
                 }
             }
