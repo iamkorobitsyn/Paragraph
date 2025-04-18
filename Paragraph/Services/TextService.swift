@@ -33,10 +33,20 @@ final class TextService: ObservableObject {
         return wordList
     }
     
+    //MARK: - Hypernation
+    
     private func tryHypernation(word: Word, reverse: Bool) -> [Word] {
         guard word.text.count > 6 else {return []}
-        
         let charSet = CharSets()
+        var firstPart: String = ""
+        var secondPart: String = ""
+        
+        if let hypen = word.text.firstIndex(of: "-") {
+            let splitIndex = word.text.distance(from: word.text.startIndex, to: hypen)
+            firstPart = String(word.text.prefix(splitIndex - 1))
+            secondPart = String(word.text.suffix(word.text.count - splitIndex - 1))
+            return [Word(id: word.id, text: firstPart), Word(id: word.id, text: secondPart)]
+        }
         
         var splitFlag: Bool = false
         var indentIndex: Int = 0
@@ -44,17 +54,16 @@ final class TextService: ObservableObject {
 
         while !splitFlag && indentIndex <= secondPartCharacterCount {
             
-            let length = word.text.count
-            let splitIndex = (length / 2) + indentIndex
+            let splitIndex = (word.text.count / 2) + indentIndex
 
-            let firstPart = String(word.text.prefix(splitIndex))
-            let secondPart = String(word.text.suffix(length - splitIndex))
+            firstPart = String(word.text.prefix(splitIndex))
+            secondPart = String(word.text.suffix(word.text.count - splitIndex))
             secondPartCharacterCount = secondPart.count
             
             guard let lastChar = firstPart.last else {return []}
-            if charSet.vowels.contains(lastChar) && secondPart.count > 3 {
+            if charSet.vowels.contains(lastChar) && secondPart.count > 4 {
                 splitFlag = true
-                print(secondPart)
+                return [Word(id: word.id, text: "\(firstPart)-"), Word(id: word.id, text: secondPart)]
             } else {
                 indentIndex += 1
             }
@@ -207,8 +216,16 @@ final class TextService: ObservableObject {
                             
                         }
                 } else {
-                    tryHypernation(word: currentBlock.text[currentWord], reverse: false)
+                    let word = tryHypernation(word: currentBlock.text[currentWord], reverse: false)
+                    if word.count == 2 {
+                        let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
+                        if tempWidth + wordWidth <= maxWidth || words.count == 0 {
+                            words.append(word[0])
+                        }
+                    }
                     
+                    
+                        
                     return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
                 }
             }
