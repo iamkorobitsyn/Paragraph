@@ -23,7 +23,6 @@ final class TextService: ObservableObject {
             if char != " " {
                 tempText.append(char)
             } else {
-                tempText.append(" ")
                 let word = Word(id: wordID, text: String(tempText))
                 wordList.append(word)
                 wordID += 1
@@ -213,28 +212,37 @@ final class TextService: ObservableObject {
                 //adding word
                 
                 let wordWidth = additionalWord.text.widthOfString(usingFont: uIFont)
+                let spacer = " "
+                let spacerWidth = spacer.widthOfString(usingFont: uIFont)
                 
-                if tempWidth + wordWidth <= maxWidth || words.count == 0 {
+                if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
+                    tempWidth += spacerWidth
+                    if words.count != 0 {
+                        words.append(Word(id: nil, text: spacer))
+                        
+                    }
+                    
                     words.append(additionalWord)
-                        tempWidth += wordWidth
-                        if currentWord != currentBlock.text.count - 1 {
-                            tempWord += 1
+                    tempWidth += wordWidth
+                    if currentWord != currentBlock.text.count - 1 {
+                        tempWord += 1
+                    } else {
+                        tempWord = 0
+                        isEndOfBlock = true
+                        if tempBlock != content.textBlocks.count - 1 {
+                            tempBlock += 1
                         } else {
-                            tempWord = 0
-                            isEndOfBlock = true
-                            if tempBlock != content.textBlocks.count - 1 {
-                                tempBlock += 1
-                            } else {
-                                isEndOfContent = true
-                            }
-                            
+                            isEndOfContent = true
                         }
+                        
+                    }
                 } else {
                     let word = tryHypernation(word: additionalWord, reverse: false)
                     if word.count == 2 {
                         let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
-                        if tempWidth + wordWidth <= maxWidth || words.count == 0 {
+                        if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
                             tempWidth += wordWidth
+                            words.append(Word(id: nil, text: spacer))
                             words.append(word[0])
                             tempHypernationWord = word[1]
                         }

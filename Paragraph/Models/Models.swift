@@ -42,7 +42,7 @@ struct TextBlock {
 }
 
 struct Word {
-    let id: Int
+    let id: Int?
     let text: String
 }
 

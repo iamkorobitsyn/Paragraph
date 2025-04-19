@@ -165,7 +165,7 @@ struct TextLineView: View {
                     
                         if !endBlock {
      
-                            WordView(i: word.id, text: word.text, font: font, color: textColor, interval: interval)
+                            WordView(i: word.id ?? nil, text: word.text, font: font, color: textColor, interval: interval)
 
                             if i != textLine.text.count - 1 || textLine.text.count == 1 {
                                 Spacer(minLength: 0)
@@ -191,7 +191,7 @@ struct TextLineView: View {
 //MARK: - WordView
 
 struct WordView: View {
-    let i: Int
+    let i: Int?
     let text: String
     let font: Font
     let color: Color
@@ -208,9 +208,12 @@ struct WordView: View {
             .lineLimit(1)
             .padding(.top, interval)
         
+        
             .onTapGesture {
-                isHighlighted.toggle()
-                print(i)
+                if i != nil {
+                    isHighlighted.toggle()
+                    print(i ?? "nil")
+                }
             }
     }
 }
