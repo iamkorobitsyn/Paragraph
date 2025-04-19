@@ -23,7 +23,7 @@ final class TextService: ObservableObject {
             if char != " " {
                 tempText.append(char)
             } else {
-                tempText.append(char)
+                tempText.append(" ")
                 let word = Word(id: wordID, text: String(tempText))
                 wordList.append(word)
                 wordID += 1
@@ -42,9 +42,12 @@ final class TextService: ObservableObject {
         var secondPart: String = ""
         
         if let hypen = word.text.firstIndex(of: "-") {
-            let splitIndex = word.text.distance(from: word.text.startIndex, to: hypen)
-            firstPart = String(word.text.prefix(splitIndex - 1))
-            secondPart = String(word.text.suffix(word.text.count - splitIndex - 1))
+            print(word.text)
+            let splitIndex = word.text.distance(from: word.text.startIndex, to: hypen) + 1
+            firstPart = String(word.text.prefix(splitIndex))
+            secondPart = String(word.text.suffix(word.text.count - splitIndex))
+            print(firstPart)
+            print(secondPart)
             return [Word(id: word.id, text: firstPart), Word(id: word.id, text: secondPart)]
         }
         
@@ -96,6 +99,8 @@ final class TextService: ObservableObject {
     let sizeList: [CGFloat] = [15, 20, 25, 30, 35, 40, 45]
     let intervalList: [CGFloat] = [0, 4, 8, 12, 16]
     var paddingList: [CGFloat] = [20, 30, 40, 50, 60]
+    
+    var tempHypernationWord: Word?
     
     enum FontStyle: Int {
         case charter, palatino, baskerville, courierNew, helveticaNeue, helveticaNeueBold
@@ -177,6 +182,8 @@ final class TextService: ObservableObject {
         var mode: TextMode = .paragraph
         let height = heightOfString(font: uIFont)
         
+        var additionalWord: Word = Word(id: 0, text: "")
+        
         var isStartOfBlock = false
         var isEndOfBlock = false
         var isEndOfContent = false
@@ -196,12 +203,19 @@ final class TextService: ObservableObject {
                     isStartOfBlock = true
                 }
                 
+                if let word = tempHypernationWord {
+                    additionalWord = word
+                    tempHypernationWord = nil
+                } else {
+                    additionalWord = currentBlock.text[currentWord]
+                }
+                
                 //adding word
                 
-                let wordWidth = currentBlock.text[currentWord].text.widthOfString(usingFont: uIFont)
+                let wordWidth = additionalWord.text.widthOfString(usingFont: uIFont)
                 
                 if tempWidth + wordWidth <= maxWidth || words.count == 0 {
-                    words.append(currentBlock.text[currentWord])
+                    words.append(additionalWord)
                         tempWidth += wordWidth
                         if currentWord != currentBlock.text.count - 1 {
                             tempWord += 1
@@ -216,16 +230,16 @@ final class TextService: ObservableObject {
                             
                         }
                 } else {
-                    let word = tryHypernation(word: currentBlock.text[currentWord], reverse: false)
+                    let word = tryHypernation(word: additionalWord, reverse: false)
                     if word.count == 2 {
                         let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
                         if tempWidth + wordWidth <= maxWidth || words.count == 0 {
+                            tempWidth += wordWidth
                             words.append(word[0])
+                            tempHypernationWord = word[1]
                         }
                     }
                     
-                    
-                        
                     return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
                 }
             }

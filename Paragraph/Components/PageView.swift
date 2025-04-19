@@ -162,6 +162,7 @@ struct TextLineView: View {
             }
             
                 ForEach(Array(textLine.text.enumerated()), id: \.offset) { i, word in
+                    
                         if !endBlock {
      
                             WordView(i: word.id, text: word.text, font: font, color: textColor, interval: interval)
@@ -171,6 +172,7 @@ struct TextLineView: View {
                             }
                             
                         } else {
+                            
                             WordView(i: word.id, text: word.text, font: font, color: textColor, interval: interval)
                             
                             
