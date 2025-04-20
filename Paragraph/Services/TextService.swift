@@ -19,16 +19,19 @@ final class TextService: ObservableObject {
         var wordList: [Word] = []
         var tempText: [Character] = []
         
-        text.forEach { char in
+        for (index, char) in text.enumerated() {
             if char != " " {
                 tempText.append(char)
-            } else {
+            }
+
+            if (char == " " && !tempText.isEmpty) || (index == text.count - 1 && !tempText.isEmpty) {
                 let word = Word(id: wordID, text: String(tempText))
                 wordList.append(word)
                 wordID += 1
                 tempText = []
             }
         }
+        
         return wordList
     }
     
@@ -41,12 +44,9 @@ final class TextService: ObservableObject {
         var secondPart: String = ""
         
         if let hypen = word.text.firstIndex(of: "-") {
-            print(word.text)
             let splitIndex = word.text.distance(from: word.text.startIndex, to: hypen) + 1
             firstPart = String(word.text.prefix(splitIndex))
             secondPart = String(word.text.suffix(word.text.count - splitIndex))
-            print(firstPart)
-            print(secondPart)
             return [Word(id: word.id, text: firstPart), Word(id: word.id, text: secondPart)]
         }
         
@@ -175,11 +175,11 @@ final class TextService: ObservableObject {
     }
     
     
-    func getLine(content: Book, block: Int, word: Int, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
+    func getLine(content: Book, block: Int, word: Int, maxWidth: CGFloat, uIFont: UIFont, reversed: Bool) -> TextLine {
         var tempWidth: CGFloat = 0
         var words: [Word] = []
         var mode: TextMode = .paragraph
-        let height = heightOfString(font: uIFont)
+
         
         var additionalWord: Word = Word(id: 0, text: "")
         
@@ -192,65 +192,77 @@ final class TextService: ObservableObject {
         
         let currentBlock = content.textBlocks[tempBlock]
             mode = currentBlock.mode
+        
+        if reversed {
             
-            for currentWord in tempWord..<currentBlock.text.count {
-                
-                //adding spacer
-                
-                if currentWord == 0 && currentBlock.mode == .paragraph {
-                    tempWidth += 20
-                    isStartOfBlock = true
-                }
-                
-                if let word = tempHypernationWord {
-                    additionalWord = word
-                    tempHypernationWord = nil
-                } else {
-                    additionalWord = currentBlock.text[currentWord]
-                }
-                
-                //adding word
-                
-                let wordWidth = additionalWord.text.widthOfString(usingFont: uIFont)
-                let spacer = " "
-                let spacerWidth = spacer.widthOfString(usingFont: uIFont)
-                
-                if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
-                    tempWidth += spacerWidth
-                    if words.count != 0 {
-                        words.append(Word(id: nil, text: spacer))
-                        
+            
+            
+        }
+        
+        if !reversed {
+            
+            for currentWord in (tempWord..<currentBlock.text.count) {
+                    
+                    //adding spacer
+                    
+                    if currentWord == 0 && currentBlock.mode == .paragraph {
+                        tempWidth += 20
+                        isStartOfBlock = true
                     }
                     
-                    words.append(additionalWord)
-                    tempWidth += wordWidth
-                    if currentWord != currentBlock.text.count - 1 {
-                        tempWord += 1
+                    if let word = tempHypernationWord {
+                        additionalWord = word
+                        tempHypernationWord = nil
                     } else {
-                        tempWord = 0
-                        isEndOfBlock = true
-                        if tempBlock != content.textBlocks.count - 1 {
-                            tempBlock += 1
-                        } else {
-                            isEndOfContent = true
-                        }
-                        
-                    }
-                } else {
-                    let word = tryHypernation(word: additionalWord, reverse: false)
-                    if word.count == 2 {
-                        let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
-                        if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
-                            tempWidth += wordWidth
-                            words.append(Word(id: nil, text: spacer))
-                            words.append(word[0])
-                            tempHypernationWord = word[1]
-                        }
+                        additionalWord = currentBlock.text[currentWord]
                     }
                     
-                    return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
+                    //adding word
+                    
+                    let wordWidth = additionalWord.text.widthOfString(usingFont: uIFont)
+                    let spacer = " "
+                    let spacerWidth = spacer.widthOfString(usingFont: uIFont)
+                    
+                    if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
+                        tempWidth += spacerWidth
+                        
+                        if words.count != 0 {  words.append(Word(id: nil, text: spacer)) }
+                        
+                        words.append(additionalWord)
+                        tempWidth += wordWidth
+                        if currentWord != currentBlock.text.count - 1 {
+                            tempWord += 1
+                        } else {
+                            tempWord = 0
+                            isEndOfBlock = true
+                            if tempBlock != content.textBlocks.count - 1 {
+                                tempBlock += 1
+                            } else {
+                                isEndOfContent = true
+                            }
+                            
+                        }
+                    } else {
+                        let word = tryHypernation(word: additionalWord, reverse: false)
+                        if word.count == 2 {
+                            let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
+                            if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
+                                tempWidth += wordWidth
+                                words.append(Word(id: nil, text: spacer))
+                                words.append(word[0])
+                                tempHypernationWord = word[1]
+                            }
+                        }
+                        
+                        return TextLine(words, mode, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
+                    }
                 }
-            }
-        return TextLine(words, mode, height, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
+            
+            
+            
+            
+        }
+            
+        return TextLine(words, mode, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
     }
 }
