@@ -176,6 +176,7 @@ final class TextService: ObservableObject {
     
     
     func getLine(content: Book, block: Int, word: Int, maxWidth: CGFloat, uIFont: UIFont, reversed: Bool) -> TextLine {
+        
         var tempWidth: CGFloat = 0
         var words: [Word] = []
         var mode: TextMode = .paragraph
@@ -192,16 +193,15 @@ final class TextService: ObservableObject {
         
         let currentBlock = content.textBlocks[tempBlock]
             mode = currentBlock.mode
-        
-        if reversed {
             
+        let wordList = reversed ?
+        Array(0..<tempWord).reversed() : Array(tempWord..<currentBlock.text.count)
             
+        for currentWord in wordList {
+            if reversed {
+                print(currentBlock.text[currentWord])
+            }
             
-        }
-        
-        if !reversed {
-            
-            for currentWord in (tempWord..<currentBlock.text.count) {
                     
                     //adding spacer
                     
@@ -216,6 +216,8 @@ final class TextService: ObservableObject {
                     } else {
                         additionalWord = currentBlock.text[currentWord]
                     }
+
+            
                     
                     //adding word
                     
@@ -257,11 +259,7 @@ final class TextService: ObservableObject {
                         return TextLine(words, mode, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
                     }
                 }
-            
-            
-            
-            
-        }
+
             
         return TextLine(words, mode, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
     }

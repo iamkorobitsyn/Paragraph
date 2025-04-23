@@ -24,30 +24,32 @@ struct PageView: View {
     
     let onPageTurn: (_ withReverse: Bool) -> Void
     
+    @State private var backgroundPage: [TextLine] = []
     @State private var selection = 1
     @State private var endFlag: Bool = false
+    
+    
     
     var body: some View {
         
         ZStack {
             GeometryReader { geometry in
-                if !endFlag {
+//                if !endFlag {
                     VStack(spacing: 0) {
-                        ForEach(0..<nextPage.count, id: \.self) { index in
+                        ForEach(0..<backgroundPage.count, id: \.self) { index in
                             TextLineView(font: font,
                                          textColor: textColor,
-                                         textLine: nextPage[index],
+                                         textLine: backgroundPage[index],
                                          interval: interval,
                                          padding: padding,
-                                         endBlock: nextPage[index].isEndOfBlock,
-                                         endContent: nextPage[index].isEndOfContent)
-                        }
+                                         endBlock: backgroundPage[index].isEndOfBlock,
+                                         endContent: backgroundPage[index].isEndOfContent)                        }
                         Spacer()
+                    
                     }
                     .opacity(calculateFading(isReversed: fadingReverse))
-                }
+//                }
             }
-            
             
             TabView(selection: $selection) {
                 ForEach(0..<3, id: \.self) { index in
@@ -57,14 +59,14 @@ struct PageView: View {
                             
                             Color(backgroundColor)
                             VStack(spacing: 0) {
-                                ForEach(0..<currentPage.count, id: \.self) { index in
+                                ForEach(0..<previousPage.count, id: \.self) { index in
                                     TextLineView(font: font,
                                                  textColor: textColor,
-                                                 textLine: currentPage[index],
+                                                 textLine: previousPage[index],
                                                  interval: interval,
                                                  padding: padding,
-                                                 endBlock: currentPage[index].isEndOfBlock,
-                                                 endContent: currentPage[index].isEndOfContent)
+                                                 endBlock: previousPage[index].isEndOfBlock,
+                                                 endContent: previousPage[index].isEndOfContent)
                                 }
                                 Spacer()
                             }
@@ -72,6 +74,7 @@ struct PageView: View {
                         } else if index == 1 {
                             
                             Color(backgroundColor)
+                                .opacity(frontPageOpacity)
                             VStack(spacing: 0) {
                                 ForEach(0..<currentPage.count, id: \.self) { index in
                                     TextLineView(font: font,
@@ -99,13 +102,15 @@ struct PageView: View {
                                 if newValue > threshold {
                                     frontPageOpacity = 0
                                     fadingReverse = true
+                                    backgroundPage = currentPage
                                 } else if newValue < -threshold {
                                     frontPageOpacity = 1
                                     fadingReverse = false
+                                    backgroundPage = nextPage
                                 }
                             }
                             .onDisappear() {
-                                onPageTurn(false)
+                                onPageTurn(fadingReverse)
                                 frontPageOpacity = 1
                                 selection = endFlag ? 2 : 1
                             }
@@ -121,7 +126,6 @@ struct PageView: View {
                                                      padding: padding,
                                                      endBlock: currentPage[index].isEndOfBlock,
                                                      endContent: currentPage[index].isEndOfContent)
-                                        
                                     }
                                     Spacer()
                                 }
@@ -212,7 +216,7 @@ struct WordView: View {
             .onTapGesture {
                 if i != nil {
                     isHighlighted.toggle()
-                    print(i ?? "nil")
+//                    print(i ?? "nil")
                 }
             }
     }

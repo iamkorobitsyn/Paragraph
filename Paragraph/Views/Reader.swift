@@ -66,12 +66,19 @@ struct ReaderView: View {
                              padding: padding,
                              backgroundColor: backgroundColor,
                              textColor: textColor,
-                             previousPage: textLinesOfCurrentPage,
+                             previousPage: textLinesOfPreviousPage,
                              currentPage: textLinesOfCurrentPage,
                              nextPage: textLinesOfNextPage) { withReverse in
-                        firstBlockOfCurrentPage = firstBlockOfNextPage
-                        firstWordOfCurrentPage = firstWordOfNextPage
-                        contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                        if !withReverse {
+                            firstBlockOfCurrentPage = firstBlockOfNextPage
+                            firstWordOfCurrentPage = firstWordOfNextPage
+                            contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                        } else {
+                            firstBlockOfCurrentPage = 0
+                            firstWordOfCurrentPage = 0
+                            contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                        }
+                        
                     }
                              .padding(.top, 60)
                             
@@ -148,7 +155,6 @@ struct ReaderView: View {
         while tempHeight < maxHeight {
             
             if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval {
-                
                 break
             } else {
                 let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: false)
@@ -157,7 +163,7 @@ struct ReaderView: View {
                 textLinesOfCurrentPage.append(wordsLine)
                 tempBlock = wordsLine.nextBlock
                 tempWord = wordsLine.nextWord
-                if wordsLine.isEndOfContent {return}
+                if wordsLine.isEndOfContent {break}
             }
             
         }
@@ -171,33 +177,34 @@ struct ReaderView: View {
             
             let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: false)
             
-            if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { return }
+            if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { break }
             tempBlock = wordsLine.nextBlock
             tempWord = wordsLine.nextWord
             
             textLinesOfNextPage.append(wordsLine)
             tempHeight += textService.heightOfString(font: uIFont) + interval
             
-            if wordsLine.isEndOfContent {return}
+            if wordsLine.isEndOfContent {break}
         }
         
         tempBlock = firstBlockOfCurrentPage
         tempWord = firstWordOfCurrentPage
         
         tempHeight = 0
+       
     
         while tempHeight < maxHeight {
             
-            let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: false)
+            let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: true)
             
             if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { return }
-            tempBlock = wordsLine.nextBlock
-            tempWord = wordsLine.nextWord
+//            tempBlock = wordsLine.nextBlock
+//            tempWord = wordsLine.nextWord
             
             textLinesOfPreviousPage.append(wordsLine)
             tempHeight += textService.heightOfString(font: uIFont) + interval
             
-            if wordsLine.isEndOfContent {return}
+//            if wordsLine.isEndOfContent {return}
         }
     }
 }
