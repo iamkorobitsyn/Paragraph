@@ -198,10 +198,6 @@ final class TextService: ObservableObject {
         Array(0..<tempWord).reversed() : Array(tempWord..<currentBlock.text.count)
             
         for currentWord in wordList {
-            if reversed {
-                print(currentBlock.text[currentWord])
-            }
-            
                     
                     //adding spacer
                     
@@ -217,8 +213,6 @@ final class TextService: ObservableObject {
                         additionalWord = currentBlock.text[currentWord]
                     }
 
-            
-                    
                     //adding word
                     
                     let wordWidth = additionalWord.text.widthOfString(usingFont: uIFont)
@@ -227,35 +221,43 @@ final class TextService: ObservableObject {
                     
                     if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
                         tempWidth += spacerWidth
+
+                        if !reversed {
+                            if words.count != 0 {  words.append(Word(id: nil, text: spacer)) }
+                            words.append(additionalWord)
+                        } else {
+                            if words.count != 0 {  words.insert(Word(id: nil, text: spacer), at: 0) }
+                            words.insert(additionalWord, at: 0)
+                        }
                         
-                        if words.count != 0 {  words.append(Word(id: nil, text: spacer)) }
-                        
-                        words.append(additionalWord)
                         tempWidth += wordWidth
+                        
                         if currentWord != currentBlock.text.count - 1 {
                             tempWord += 1
                         } else {
-                            tempWord = 0
-                            isEndOfBlock = true
                             if tempBlock != content.textBlocks.count - 1 {
+                                tempWord = 0
                                 tempBlock += 1
+                                isEndOfBlock = true
                             } else {
                                 isEndOfContent = true
                             }
-                            
-                        }
-                    } else {
-                        let word = tryHypernation(word: additionalWord, reverse: false)
-                        if word.count == 2 {
-                            let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
-                            if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
-                                tempWidth += wordWidth
-                                words.append(Word(id: nil, text: spacer))
-                                words.append(word[0])
-                                tempHypernationWord = word[1]
-                            }
                         }
                         
+                        
+                    } else {
+                        if !reversed {
+                            let word = tryHypernation(word: additionalWord, reverse: false)
+                            if word.count == 2 {
+                                let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
+                                if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
+                                    tempWidth += wordWidth
+                                    words.append(Word(id: nil, text: spacer))
+                                    words.append(word[0])
+                                    tempHypernationWord = word[1]
+                                }
+                            }
+                        }
                         return TextLine(words, mode, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
                     }
                 }

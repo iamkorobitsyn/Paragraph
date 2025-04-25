@@ -20,7 +20,7 @@ struct ReaderView: View {
     @EnvironmentObject private var colorService: ColorService
     
     @State private var firstBlockOfCurrentPage: Int = 0
-    @State private var firstWordOfCurrentPage: Int = 43
+    @State private var firstWordOfCurrentPage: Int = 0
     
     // 43
     
@@ -151,6 +151,25 @@ struct ReaderView: View {
         }
         var tempHeight: CGFloat = 0
         
+        if firstBlockOfCurrentPage != 0 && firstWordOfCurrentPage != 0 {
+            
+            while tempHeight < maxHeight {
+                
+                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: true)
+                
+                if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { break }
+//                tempBlock = wordsLine.nextBlock
+//                tempWord = wordsLine.nextWord
+                
+                textLinesOfPreviousPage.append(wordsLine)
+                tempHeight += textService.heightOfString(font: uIFont) + interval
+                
+//                if wordsLine.isEndOfContent {return}
+            }
+            
+        }
+        
+        tempHeight = 0
         
         while tempHeight < maxHeight {
             
@@ -163,7 +182,7 @@ struct ReaderView: View {
                 textLinesOfCurrentPage.append(wordsLine)
                 tempBlock = wordsLine.nextBlock
                 tempWord = wordsLine.nextWord
-                if wordsLine.isEndOfContent {break}
+                if wordsLine.isEndOfContent {return}
             }
             
         }
@@ -191,21 +210,6 @@ struct ReaderView: View {
         tempWord = firstWordOfCurrentPage
         
         tempHeight = 0
-       
-    
-        while tempHeight < maxHeight {
-            
-            let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: true)
-            
-            if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { return }
-//            tempBlock = wordsLine.nextBlock
-//            tempWord = wordsLine.nextWord
-            
-            textLinesOfPreviousPage.append(wordsLine)
-            tempHeight += textService.heightOfString(font: uIFont) + interval
-            
-//            if wordsLine.isEndOfContent {return}
-        }
     }
 }
 
