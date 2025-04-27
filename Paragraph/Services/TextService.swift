@@ -232,17 +232,30 @@ final class TextService: ObservableObject {
                         
                         tempWidth += wordWidth
                         
-                        if currentWord != currentBlock.text.count - 1 {
-                            tempWord += 1
-                        } else {
-                            if tempBlock != content.textBlocks.count - 1 {
-                                tempWord = 0
-                                tempBlock += 1
-                                isEndOfBlock = true
+                        if !reversed {
+                            if currentWord != currentBlock.text.count - 1 {
+                                tempWord += 1
                             } else {
-                                isEndOfContent = true
+                                if tempBlock != content.textBlocks.count - 1 {
+                                    tempBlock += 1
+                                    tempWord = 0
+                                    isEndOfBlock = true
+                                } else {
+                                    isEndOfContent = true
+                                }
+                            }
+                        } else {
+                            if currentWord != 0 {
+                                tempWord -= 1
+                            } else {
+                                if tempBlock != 0 {
+                                    tempBlock -= 1
+                                    tempWord = content.textBlocks[tempBlock].text.count - 1
+                                    isStartOfBlock = true
+                                }
                             }
                         }
+                        
                         
                         
                     } else {
