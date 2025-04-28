@@ -73,11 +73,22 @@ struct ReaderView: View {
                         if !withReverse {
                             firstBlockOfCurrentPage = firstBlockOfNextPage
                             firstWordOfCurrentPage = firstWordOfNextPage
-                            contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                            if !textLinesOfNextPage.isEmpty {
+                                let next = textLinesOfNextPage
+                                contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                                textLinesOfCurrentPage = next
+                            } else if !textLinesOfPreviousPage.isEmpty {
+                                let previous = textLinesOfPreviousPage
+                                contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                                textLinesOfCurrentPage = previous
+                            }
+                            
                         } else {
                             firstBlockOfCurrentPage = firstBlockOfPreviousPage
                             firstWordOfCurrentPage = firstWordOfPreviousPage
+                            let prev = textLinesOfPreviousPage
                             contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                            textLinesOfCurrentPage = prev
                         }
                         
                     }
@@ -142,6 +153,10 @@ struct ReaderView: View {
         var tempBlock = firstBlockOfCurrentPage
         var tempWord = 0
         
+        let lineHeght = textService.heightOfString(font: uIFont) + interval
+        
+        textService.tempHypernationWord = nil
+        
 
         let maxWidht = geometry.size.width - padding * 2
         var maxHeight: CGFloat = geometry.size.height
@@ -157,28 +172,38 @@ struct ReaderView: View {
         
         if firstBlockOfCurrentPage != 0 || firstWordOfCurrentPage != 0 {
             
-            while tempHeight < maxHeight {
-                
-                if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { break }
-                
+            var tempTextLines: [TextLine] = []
+            
+            while tempHeight < maxHeight + lineHeght {
+                if tempWord < content.textBlocks[tempBlock].text.count {
+                    
+                    let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    
+                    tempBlock = wordsLine.endBlock
+                    tempWord = wordsLine.endWord
+                    
+                    tempTextLines.append(wordsLine)
+                    tempHeight += textService.heightOfString(font: uIFont) + interval
+                } else {
+                    textLinesOfPreviousPage.append(contentsOf: tempTextLines)
+                    tempWord = 0
+                    if tempBlock != 0 {
+                        tempBlock -= 1
+                    }
+                }
+            }
+            
+            while tempWord < content.textBlocks[tempBlock].text.count {
                 let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
                 
                 tempBlock = wordsLine.endBlock
                 tempWord = wordsLine.endWord
-                
-                textLinesOfPreviousPage.append(wordsLine)
+                tempTextLines.removeFirst()
+                tempTextLines.append(wordsLine)
                 tempHeight += textService.heightOfString(font: uIFont) + interval
             }
             
-            while tempWord < firstWordOfCurrentPage {
-                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
-                
-                tempBlock = wordsLine.endBlock
-                tempWord = wordsLine.endWord
-                textLinesOfPreviousPage.removeFirst()
-                textLinesOfPreviousPage.append(wordsLine)
-                tempHeight += textService.heightOfString(font: uIFont) + interval
-            }
+            textLinesOfPreviousPage.insert(contentsOf: tempTextLines, at: 0)
             
             firstBlockOfPreviousPage = textLinesOfPreviousPage.first!.startBlock
             firstWordOfPreviousPage = textLinesOfPreviousPage.first!.startWord
@@ -232,6 +257,8 @@ struct ReaderView: View {
         tempWord = firstWordOfCurrentPage
         
         tempHeight = 0
+        
+        
     }
 }
 

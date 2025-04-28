@@ -181,7 +181,6 @@ final class TextService: ObservableObject {
         var words: [Word] = []
         var mode: TextMode = .paragraph
 
-        
         var additionalWord: Word = Word(id: 0, text: "")
         
         var isStartOfBlock = false
