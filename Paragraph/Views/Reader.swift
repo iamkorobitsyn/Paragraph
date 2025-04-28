@@ -19,10 +19,11 @@ struct ReaderView: View {
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
     
-    @State private var firstBlockOfCurrentPage: Int = 0
-    @State private var firstWordOfCurrentPage: Int = 43
+    @State private var firstBlockOfPreviousPage: Int = 0
+    @State private var firstWordOfPreviousPage: Int = 0
     
-    // 43
+    @State private var firstBlockOfCurrentPage: Int = 0
+    @State private var firstWordOfCurrentPage: Int = 0
     
     @State private var firstBlockOfNextPage: Int = 0
     @State private var firstWordOfNextPage: Int = 0
@@ -74,8 +75,8 @@ struct ReaderView: View {
                             firstWordOfCurrentPage = firstWordOfNextPage
                             contentUpdate(textService.content, geometry, uIFont, interval, padding)
                         } else {
-                            firstBlockOfCurrentPage = 0
-                            firstWordOfCurrentPage = 0
+                            firstBlockOfCurrentPage = firstBlockOfPreviousPage
+                            firstWordOfCurrentPage = firstWordOfPreviousPage
                             contentUpdate(textService.content, geometry, uIFont, interval, padding)
                         }
                         
@@ -139,7 +140,7 @@ struct ReaderView: View {
         textLinesOfNextPage = []
         
         var tempBlock = firstBlockOfCurrentPage
-        var tempWord = firstWordOfCurrentPage
+        var tempWord = 0
         
 
         let maxWidht = geometry.size.width - padding * 2
@@ -158,17 +159,29 @@ struct ReaderView: View {
             
             while tempHeight < maxHeight {
                 
-                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: true)
-                
                 if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { break }
-                tempBlock = wordsLine.nextBlock
-                tempWord = wordsLine.nextWord
                 
-                textLinesOfPreviousPage.insert(wordsLine, at: 0)
+                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                
+                textLinesOfPreviousPage.append(wordsLine)
                 tempHeight += textService.heightOfString(font: uIFont) + interval
-                
-//                if wordsLine.isEndOfContent {return}
             }
+            
+            while tempWord < firstWordOfCurrentPage {
+                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                textLinesOfPreviousPage.removeFirst()
+                textLinesOfPreviousPage.append(wordsLine)
+                tempHeight += textService.heightOfString(font: uIFont) + interval
+            }
+            
+            firstBlockOfPreviousPage = textLinesOfPreviousPage.first!.startBlock
+            firstWordOfPreviousPage = textLinesOfPreviousPage.first!.startWord
             
         }
         
@@ -183,12 +196,12 @@ struct ReaderView: View {
             if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval {
                 break
             } else {
-                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: false)
+                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
                 tempHeight += textService.heightOfString(font: uIFont) + interval
                 
                 textLinesOfCurrentPage.append(wordsLine)
-                tempBlock = wordsLine.nextBlock
-                tempWord = wordsLine.nextWord
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
                 if wordsLine.isEndOfContent {return}
             }
             
@@ -203,11 +216,11 @@ struct ReaderView: View {
     
         while tempHeight < maxHeight {
             
-            let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont, reversed: false)
+            let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
             
             if maxHeight < tempHeight + textService.heightOfString(font: uIFont) + interval { break }
-            tempBlock = wordsLine.nextBlock
-            tempWord = wordsLine.nextWord
+            tempBlock = wordsLine.endBlock
+            tempWord = wordsLine.endWord
             
             textLinesOfNextPage.append(wordsLine)
             tempHeight += textService.heightOfString(font: uIFont) + interval

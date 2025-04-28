@@ -175,7 +175,7 @@ final class TextService: ObservableObject {
     }
     
     
-    func getLine(content: Book, block: Int, word: Int, maxWidth: CGFloat, uIFont: UIFont, reversed: Bool) -> TextLine {
+    func getLine(content: Book, block: Int, word: Int, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
         
         var tempWidth: CGFloat = 0
         var words: [Word] = []
@@ -188,16 +188,16 @@ final class TextService: ObservableObject {
         var isEndOfBlock = false
         var isEndOfContent = false
         
-        var tempBlock = block
-        var tempWord = word
+        let startBlock = block
+        let startWord = word
         
-        let currentBlock = content.textBlocks[tempBlock]
+        var endBlock = block
+        var endWord = word
+        
+        let currentBlock = content.textBlocks[endBlock]
             mode = currentBlock.mode
             
-        let wordList = reversed ?
-        Array(0..<tempWord).reversed() : Array(tempWord..<currentBlock.text.count)
-            
-        for currentWord in wordList {
+        for currentWord in endWord..<currentBlock.text.count {
                     
                     //adding spacer
                     
@@ -222,44 +222,25 @@ final class TextService: ObservableObject {
                     if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
                         tempWidth += spacerWidth
 
-                        if !reversed {
-                            if words.count != 0 {  words.append(Word(id: nil, text: spacer)) }
-                            words.append(additionalWord)
-                        } else {
-                            if words.count != 0 {  words.insert(Word(id: nil, text: spacer), at: 0) }
-                            words.insert(additionalWord, at: 0)
-                        }
+                        if words.count != 0 {  words.append(Word(id: nil, text: spacer)) }
+                        words.append(additionalWord)
+                        
                         
                         tempWidth += wordWidth
                         
-                        if !reversed {
-                            if currentWord != currentBlock.text.count - 1 {
-                                tempWord += 1
-                            } else {
-                                if tempBlock != content.textBlocks.count - 1 {
-                                    tempBlock += 1
-                                    tempWord = 0
-                                    isEndOfBlock = true
-                                } else {
-                                    isEndOfContent = true
-                                }
-                            }
+                        if currentWord != currentBlock.text.count - 1 {
+                            endWord += 1
                         } else {
-                            if currentWord != 0 {
-                                tempWord -= 1
+                            if endBlock != content.textBlocks.count - 1 {
+                                endBlock += 1
+                                endWord = 0
+                                isEndOfBlock = true
                             } else {
-                                if tempBlock != 0 {
-                                    tempBlock -= 1
-                                    tempWord = content.textBlocks[tempBlock].text.count - 1
-                                    isStartOfBlock = true
-                                }
+                                isEndOfContent = true
                             }
                         }
-                        
-                        
-                        
+
                     } else {
-                        if !reversed {
                             let word = tryHypernation(word: additionalWord, reverse: false)
                             if word.count == 2 {
                                 let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
@@ -270,12 +251,15 @@ final class TextService: ObservableObject {
                                     tempHypernationWord = word[1]
                                 }
                             }
-                        }
-                        return TextLine(words, mode, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
+                        return TextLine(text: words, mode: mode,
+                                        isStartOfBlock: isStartOfBlock, isEndOfBlock: isEndOfBlock, isEndOfContent: isEndOfContent,
+                                        startBlock: startBlock, startWord: startWord, endBlock: endBlock, endWord: endWord)
                     }
                 }
 
             
-        return TextLine(words, mode, isStartOfBlock, isEndOfBlock, isEndOfContent, tempBlock, tempWord)
+        return TextLine(text: words, mode: mode,
+                        isStartOfBlock: isStartOfBlock, isEndOfBlock: isEndOfBlock, isEndOfContent: isEndOfContent,
+                        startBlock: startBlock, startWord: startWord, endBlock: endBlock, endWord: endWord)
     }
 }

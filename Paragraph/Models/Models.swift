@@ -48,14 +48,19 @@ struct Word {
 
 struct TextLine {
     
-    init(_ text: [Word], _ mode: TextMode, _ isStartOfBlock: Bool, _ isEndOfBlock: Bool, _ isEndOfContent: Bool, _ nextBlock: Int, _ nextWord: Int) {
+    init(text: [Word], mode: TextMode,
+         isStartOfBlock: Bool, isEndOfBlock: Bool, isEndOfContent: Bool,
+         startBlock: Int, startWord: Int,
+         endBlock: Int, endWord: Int) {
         self.text = text
         self.mode = mode
         self.isStartOfBlock = isStartOfBlock
         self.isEndOfBlock = isEndOfBlock
         self.isEndOfContent = isEndOfContent
-        self.nextBlock = nextBlock
-        self.nextWord = nextWord
+        self.startBlock = startBlock
+        self.startWord = startWord
+        self.endBlock = endBlock
+        self.endWord = endWord
     }
     
     let text: [Word]
@@ -63,8 +68,10 @@ struct TextLine {
     let isStartOfBlock: Bool
     let isEndOfBlock: Bool
     let isEndOfContent: Bool
-    let nextBlock: Int
-    let nextWord: Int
+    let startBlock: Int
+    let startWord: Int
+    let endBlock: Int
+    let endWord: Int
 }
 
 
