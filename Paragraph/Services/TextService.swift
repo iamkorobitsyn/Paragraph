@@ -224,7 +224,6 @@ final class TextService: ObservableObject {
                         if words.count != 0 {  words.append(Word(id: nil, text: spacer)) }
                         words.append(additionalWord)
                         
-                        
                         tempWidth += wordWidth
                         
                         if currentWord != currentBlock.text.count - 1 {

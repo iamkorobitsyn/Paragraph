@@ -73,22 +73,15 @@ struct ReaderView: View {
                         if !withReverse {
                             firstBlockOfCurrentPage = firstBlockOfNextPage
                             firstWordOfCurrentPage = firstWordOfNextPage
-                            if !textLinesOfNextPage.isEmpty {
-                                let next = textLinesOfNextPage
-                                contentUpdate(textService.content, geometry, uIFont, interval, padding)
-                                textLinesOfCurrentPage = next
-                            } else if !textLinesOfPreviousPage.isEmpty {
-                                let previous = textLinesOfPreviousPage
-                                contentUpdate(textService.content, geometry, uIFont, interval, padding)
-                                textLinesOfCurrentPage = previous
-                            }
-                            
+                            let tempNextTextLines = textLinesOfNextPage
+                            contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                            textLinesOfCurrentPage = tempNextTextLines
                         } else {
                             firstBlockOfCurrentPage = firstBlockOfPreviousPage
                             firstWordOfCurrentPage = firstWordOfPreviousPage
-                            let prev = textLinesOfPreviousPage
+                            let tempPreviousTextLines = textLinesOfPreviousPage
                             contentUpdate(textService.content, geometry, uIFont, interval, padding)
-                            textLinesOfCurrentPage = prev
+                            textLinesOfCurrentPage = tempPreviousTextLines
                         }
                         
                     }
@@ -150,7 +143,7 @@ struct ReaderView: View {
         textLinesOfCurrentPage = []
         textLinesOfNextPage = []
         
-        var tempBlock = firstBlockOfCurrentPage
+        var tempBlock = 0
         var tempWord = 0
         
         let lineHeght = textService.heightOfString(font: uIFont) + interval
@@ -171,43 +164,75 @@ struct ReaderView: View {
         var tempHeight: CGFloat = 0
         
         if firstBlockOfCurrentPage != 0 || firstWordOfCurrentPage != 0 {
+
+            var endWordIndex = firstWordOfCurrentPage
+            var focusBlockIndex = firstBlockOfCurrentPage
             
             var tempTextLines: [TextLine] = []
-            
-            while tempHeight < maxHeight + lineHeght {
-                if tempWord < content.textBlocks[tempBlock].text.count {
-                    
-                    let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
-                    
-                    tempBlock = wordsLine.endBlock
+            var switchBlockFlag = false
+            var endBlockFlag = false
+
+            while maxHeight > tempHeight + lineHeght {
+                
+                
+                if tempWord < endWordIndex {
+                    let wordsLine = textService.getLine(content: content, block: focusBlockIndex, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+
                     tempWord = wordsLine.endWord
                     
                     tempTextLines.append(wordsLine)
-                    tempHeight += textService.heightOfString(font: uIFont) + interval
+                    tempHeight += lineHeght
+                    endBlockFlag = wordsLine.isEndOfBlock
+
                 } else {
-                    textLinesOfPreviousPage.append(contentsOf: tempTextLines)
-                    tempWord = 0
-                    if tempBlock != 0 {
-                        tempBlock -= 1
+                    textLinesOfPreviousPage.insert(contentsOf: tempTextLines, at: 0)
+                    tempTextLines = []
+                    if focusBlockIndex != 0 {
+                        focusBlockIndex -= 1
+                        endWordIndex = content.textBlocks[focusBlockIndex].text.count
+                        tempWord = 0
+                        switchBlockFlag = true
+                    } else {
+                        return
                     }
                 }
             }
             
-            while tempWord < content.textBlocks[tempBlock].text.count {
-                let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+            if !switchBlockFlag {
                 
-                tempBlock = wordsLine.endBlock
-                tempWord = wordsLine.endWord
-                tempTextLines.removeFirst()
-                tempTextLines.append(wordsLine)
-                tempHeight += textService.heightOfString(font: uIFont) + interval
+                while tempWord < endWordIndex {
+                    
+                    let wordsLine = textService.getLine(content: content, block: focusBlockIndex, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    
+                    tempWord = wordsLine.endWord
+                    
+                    tempTextLines.removeFirst()
+                    tempTextLines.append(wordsLine)
+                    
+                }
+                
+            } else {
+                
+                while !endBlockFlag && switchBlockFlag {
+                    
+                    let wordsLine = textService.getLine(content: content, block: focusBlockIndex, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    
+                    tempWord = wordsLine.endWord
+                    endBlockFlag = wordsLine.isEndOfBlock
+                    
+                    tempTextLines.removeFirst()
+                    tempTextLines.append(wordsLine)
+                }
+                
             }
             
             textLinesOfPreviousPage.insert(contentsOf: tempTextLines, at: 0)
             
-            firstBlockOfPreviousPage = textLinesOfPreviousPage.first!.startBlock
-            firstWordOfPreviousPage = textLinesOfPreviousPage.first!.startWord
-            
+        }
+        
+        if !textLinesOfPreviousPage.isEmpty {
+            firstBlockOfPreviousPage = textLinesOfPreviousPage[0].startBlock
+            firstWordOfPreviousPage = textLinesOfPreviousPage[0].startWord
         }
         
         //MARK: - CurrentPage
@@ -231,6 +256,7 @@ struct ReaderView: View {
             }
             
         }
+        
         
         firstBlockOfNextPage = tempBlock
         firstWordOfNextPage = tempWord
