@@ -10,6 +10,7 @@ struct PageView: View {
     @State private var pageOffset: CGFloat = 0
     @State private var frontPageOpacity: CGFloat = 1
     @State private var fadingReverse: Bool = false
+    @State private var isScrollingDisabled: Bool = false
     
     let font: Font
     let interval: CGFloat
@@ -97,44 +98,42 @@ struct PageView: View {
                             
                             .opacity(frontPageOpacity)
                             .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
+                                
                                 let threshold = 0.01
                                 pageOffset = newValue
                                 if newValue > threshold {
                                     frontPageOpacity = 0
                                     fadingReverse = true
                                     backgroundPage = currentPage
+                                    
                                 } else if newValue < -threshold {
                                     frontPageOpacity = 1
                                     fadingReverse = false
                                     backgroundPage = nextPage
+                                    if endFlag && newValue < -100 {
+                                        isScrollingDisabled = true
+                                        print("disabled")
+                                    } else if newValue == 0 {
+                                        isScrollingDisabled = false
+                                    }
+                                } else if newValue == 0 {
+//                                    print("work2")
+//                                    isScrollingDisabled = false
                                 }
                             }
+                            
+                            
                             .onDisappear() {
                                 onPageTurn(fadingReverse)
                                 frontPageOpacity = 1
-                                selection = endFlag ? 2 : 1
-                            }
-                            
-                        } else if index == 2 {
-                            if endFlag {
-                                VStack(spacing: 0) {
-                                    ForEach(0..<currentPage.count, id: \.self) { index in
-                                        TextLineView(font: font,
-                                                     textColor: textColor,
-                                                     textLine: currentPage[index],
-                                                     interval: interval,
-                                                     padding: padding,
-                                                     endBlock: currentPage[index].isEndOfBlock,
-                                                     endContent: currentPage[index].isEndOfContent)
-                                    }
-                                    Spacer()
-                                }
+                                selection = 1
                             }
                         }
                     }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .disabled(isScrollingDisabled)
         }
     }
     

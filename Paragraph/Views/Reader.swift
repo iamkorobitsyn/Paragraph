@@ -71,11 +71,15 @@ struct ReaderView: View {
                              currentPage: textLinesOfCurrentPage,
                              nextPage: textLinesOfNextPage) { withReverse in
                         if !withReverse {
-                            firstBlockOfCurrentPage = firstBlockOfNextPage
-                            firstWordOfCurrentPage = firstWordOfNextPage
+                            
                             let tempNextTextLines = textLinesOfNextPage
                             contentUpdate(textService.content, geometry, uIFont, interval, padding)
-                            textLinesOfCurrentPage = tempNextTextLines
+                            if !tempNextTextLines.isEmpty {
+                                firstBlockOfCurrentPage = firstBlockOfNextPage
+                                firstWordOfCurrentPage = firstWordOfNextPage
+                                textLinesOfCurrentPage = tempNextTextLines
+                            }
+                            
                         } else {
                             firstBlockOfCurrentPage = firstBlockOfPreviousPage
                             firstWordOfCurrentPage = firstWordOfPreviousPage
