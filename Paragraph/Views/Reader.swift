@@ -28,6 +28,8 @@ struct ReaderView: View {
     @State private var firstBlockOfNextPage: Int = 0
     @State private var firstWordOfNextPage: Int = 0
     
+    @State private var endFlag: Bool = false
+    
     var body: some View {
         
         let font = textService.getFont()
@@ -73,19 +75,20 @@ struct ReaderView: View {
                         if !withReverse {
                             
                             let tempNextTextLines = textLinesOfNextPage
-                            contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                            
                             if !tempNextTextLines.isEmpty {
                                 firstBlockOfCurrentPage = firstBlockOfNextPage
                                 firstWordOfCurrentPage = firstWordOfNextPage
                                 textLinesOfCurrentPage = tempNextTextLines
+                                contentUpdate(textService.content, geometry, uIFont, interval, padding)
                             }
                             
                         } else {
                             firstBlockOfCurrentPage = firstBlockOfPreviousPage
                             firstWordOfCurrentPage = firstWordOfPreviousPage
-                            let tempPreviousTextLines = textLinesOfPreviousPage
+//                            let tempPreviousTextLines = textLinesOfPreviousPage
                             contentUpdate(textService.content, geometry, uIFont, interval, padding)
-                            textLinesOfCurrentPage = tempPreviousTextLines
+//                            textLinesOfCurrentPage = tempPreviousTextLines
                         }
                         
                     }

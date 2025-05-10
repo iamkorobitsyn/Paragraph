@@ -10,8 +10,7 @@ struct PageView: View {
     @State private var pageOffset: CGFloat = 0
     @State private var frontPageOpacity: CGFloat = 1
     @State private var fadingReverse: Bool = false
-    @State private var isScrollingDisabled: Bool = false
-    
+
     let font: Font
     let interval: CGFloat
     let padding: CGFloat
@@ -27,15 +26,12 @@ struct PageView: View {
     
     @State private var backgroundPage: [TextLine] = []
     @State private var selection = 1
-    @State private var endFlag: Bool = false
-    
-    
+    @State private var pages = [0, 1, 2]
     
     var body: some View {
         
         ZStack {
             GeometryReader { geometry in
-//                if !endFlag {
                     VStack(spacing: 0) {
                         ForEach(0..<backgroundPage.count, id: \.self) { index in
                             TextLineView(font: font,
@@ -49,11 +45,11 @@ struct PageView: View {
                     
                     }
                     .opacity(calculateFading(isReversed: fadingReverse))
-//                }
             }
             
             TabView(selection: $selection) {
-                ForEach(0..<3, id: \.self) { index in
+                
+                ForEach(pages, id: \.self) { index in
                     GeometryReader { geometry in
                         
                         if index == 0 {
@@ -68,6 +64,7 @@ struct PageView: View {
                                                  padding: padding,
                                                  endBlock: previousPage[index].isEndOfBlock,
                                                  endContent: previousPage[index].isEndOfContent)
+
                                 }
                                 Spacer()
                             }
@@ -85,20 +82,12 @@ struct PageView: View {
                                                  padding: padding,
                                                  endBlock: currentPage[index].isEndOfBlock,
                                                  endContent: currentPage[index].isEndOfContent)
-                                    .onAppear() {
-                                        if currentPage[index].isEndOfContent {
-                                            endFlag = true
-                                            selection = 2
-                                        }
-                                    }
                                 }
                                 Spacer()
                             }
-
                             
                             .opacity(frontPageOpacity)
                             .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
-                                
                                 let threshold = 0.01
                                 pageOffset = newValue
                                 if newValue > threshold {
@@ -110,18 +99,35 @@ struct PageView: View {
                                     frontPageOpacity = 1
                                     fadingReverse = false
                                     backgroundPage = nextPage
-                                    if endFlag && newValue < -100 {
-                                        isScrollingDisabled = true
-                                        print("disabled")
-                                    } else if newValue == 0 {
-                                        isScrollingDisabled = false
-                                    }
-                                } else if newValue == 0 {
-//                                    print("work2")
-//                                    isScrollingDisabled = false
+                                    
                                 }
                             }
                             
+                            .onAppear() {
+                                
+                                if previousPage.isEmpty {
+                                    if pages.contains(0) {
+                                        print("prev clean")
+                                        pages.removeFirst()
+                                    }
+                                } else {
+                                    if !pages.contains(0) {
+                                        pages.insert(0, at: 0)
+                                    }
+                                }
+                                
+                                if nextPage.isEmpty {
+                                    print("next clean")
+                                    if pages.contains(2) {
+                                        pages.removeLast()
+                                    }
+                                } else {
+                                    if !pages.contains(2) {
+                                        pages.append(2)
+                                    }
+                                }
+                                
+                            }
                             
                             .onDisappear() {
                                 onPageTurn(fadingReverse)
@@ -133,8 +139,37 @@ struct PageView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .disabled(isScrollingDisabled)
         }
+        
+        .onChange(of: previousPage.count) {
+            print("Change")
+            if previousPage.isEmpty {
+                if pages.contains(0) {
+                    print("prev clean")
+                    pages.removeFirst()
+                }
+            } else {
+                if !pages.contains(0) {
+                    pages.insert(0, at: 0)
+                }
+            }
+        }
+        
+        .onChange(of: nextPage.count) {
+            print("Change")
+            if nextPage.isEmpty {
+                print("next clean")
+                if pages.contains(2) {
+                    pages.removeLast()
+                }
+            } else {
+                if !pages.contains(2) {
+                    pages.append(2)
+                }
+            }
+        }
+        
+        
     }
     
     private func calculateFading(isReversed: Bool = false) -> Double {
