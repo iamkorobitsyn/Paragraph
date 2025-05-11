@@ -7,10 +7,6 @@ import SwiftUI
 
 struct PageView: View {
     
-    @State private var pageOffset: CGFloat = 0
-    @State private var frontPageOpacity: CGFloat = 1
-    @State private var fadingReverse: Bool = false
-
     let font: Font
     let interval: CGFloat
     let padding: CGFloat
@@ -22,155 +18,148 @@ struct PageView: View {
     let currentPage: [TextLine]
     let nextPage: [TextLine]
     
+    @State private var pageCounter = [0, 1, 2]
+    @State private var selection = 1
+    @State private var touchDisabled: Bool = true
+
+    @State private var pageOffset: CGFloat = 0
+    @State private var currentPageOpacity: CGFloat = 1
+    
+    @State private var fadingPage: [TextLine] = []
+    @State private var fadingReverse: Bool = false
+    
+    @State private var tempPage: [TextLine] = []
+    @State private var tempPageOpacity: CGFloat = 0
+
     let onPageTurn: (_ withReverse: Bool) -> Void
     
-    @State private var backgroundPage: [TextLine] = []
-    @State private var selection = 1
-    @State private var pages = [0, 1, 2]
-    
+  
     var body: some View {
         
         ZStack {
+            
+            //MARK: - FadingPage
+            
             GeometryReader { geometry in
-                    VStack(spacing: 0) {
-                        ForEach(0..<backgroundPage.count, id: \.self) { index in
-                            TextLineView(font: font,
-                                         textColor: textColor,
-                                         textLine: backgroundPage[index],
-                                         interval: interval,
-                                         padding: padding,
-                                         endBlock: backgroundPage[index].isEndOfBlock,
-                                         endContent: backgroundPage[index].isEndOfContent)                        }
-                        Spacer()
-                    
-                    }
+                pageContent(fadingPage)
                     .opacity(calculateFading(isReversed: fadingReverse))
             }
             
+            //MARK: - TempPage
+            
+            GeometryReader { geometry in
+                pageContent(currentPage)
+                    .opacity(tempPageOpacity)
+            }
+            
+            //MARK: - TabView
+            
             TabView(selection: $selection) {
                 
-                ForEach(pages, id: \.self) { index in
+                ForEach(pageCounter, id: \.self) { index in
                     GeometryReader { geometry in
                         
                         if index == 0 {
                             
                             Color(backgroundColor)
-                            VStack(spacing: 0) {
-                                ForEach(0..<previousPage.count, id: \.self) { index in
-                                    TextLineView(font: font,
-                                                 textColor: textColor,
-                                                 textLine: previousPage[index],
-                                                 interval: interval,
-                                                 padding: padding,
-                                                 endBlock: previousPage[index].isEndOfBlock,
-                                                 endContent: previousPage[index].isEndOfContent)
-
+                            pageContent(previousPage)
+                                .onAppear() {
+                                    touchDisabled = true
                                 }
-                                Spacer()
-                            }
                             
                         } else if index == 1 {
                             
                             Color(backgroundColor)
-                                .opacity(frontPageOpacity)
-                            VStack(spacing: 0) {
-                                ForEach(0..<currentPage.count, id: \.self) { index in
-                                    TextLineView(font: font,
-                                                 textColor: textColor,
-                                                 textLine: currentPage[index],
-                                                 interval: interval,
-                                                 padding: padding,
-                                                 endBlock: currentPage[index].isEndOfBlock,
-                                                 endContent: currentPage[index].isEndOfContent)
-                                }
-                                Spacer()
-                            }
+                                .opacity(currentPageOpacity)
                             
-                            .opacity(frontPageOpacity)
-                            .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
-                                let threshold = 0.01
-                                pageOffset = newValue
-                                if newValue > threshold {
-                                    frontPageOpacity = 0
-                                    fadingReverse = true
-                                    backgroundPage = currentPage
-                                    
-                                } else if newValue < -threshold {
-                                    frontPageOpacity = 1
-                                    fadingReverse = false
-                                    backgroundPage = nextPage
-                                    
-                                }
-                            }
+                            pageContent(currentPage)
+                                .opacity(currentPageOpacity)
                             
-                            .onAppear() {
-                                
-                                if previousPage.isEmpty {
-                                    if pages.contains(0) {
-                                        print("prev clean")
-                                        pages.removeFirst()
-                                    }
-                                } else {
-                                    if !pages.contains(0) {
-                                        pages.insert(0, at: 0)
-                                    }
-                                }
-                                
-                                if nextPage.isEmpty {
-                                    print("next clean")
-                                    if pages.contains(2) {
-                                        pages.removeLast()
-                                    }
-                                } else {
-                                    if !pages.contains(2) {
-                                        pages.append(2)
-                                    }
-                                }
-                                
-                            }
+                            //MARK: - Offset & Fading
                             
-                            .onDisappear() {
-                                onPageTurn(fadingReverse)
-                                frontPageOpacity = 1
-                                selection = 1
-                            }
+                                .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
+                                    tempPageOpacity = 0
+                                    let threshold = 0.01
+                                    pageOffset = newValue
+                                    if newValue > threshold {
+                                        currentPageOpacity = 0
+                                        fadingReverse = true
+                                        fadingPage = currentPage
+                                        
+                                    } else if newValue < -threshold {
+                                        currentPageOpacity = 1
+                                        fadingReverse = false
+                                        fadingPage = nextPage
+                                        
+                                    }
+                                }
+                            
+                                .onAppear() {
+                                    touchDisabled = true
+                                    tempPageOpacity = 1
+                                    if previousPage.isEmpty { pageCounter = [1, 2] }
+                                    if nextPage.isEmpty { pageCounter = [0, 1] }
+                                }
+                            
+                                .onDisappear() {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { touchDisabled = false }
+                                    onPageTurn(fadingReverse)
+                                    currentPageOpacity = 1
+                                    selection = 1
+                                }
+                            
+                        } else if index == 2 {
+                            Color(.clear)
+                                .onAppear() {
+                                    touchDisabled = true
+                                }
                         }
                     }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .disabled(touchDisabled)
         }
         
         .onChange(of: previousPage.count) {
-            print("Change")
-            if previousPage.isEmpty {
-                if pages.contains(0) {
-                    print("prev clean")
-                    pages.removeFirst()
-                }
+            tempPageOpacity = 1
+            if previousPage.isEmpty && pageCounter.contains(0) {
+                pageCounter.removeFirst()
             } else {
-                if !pages.contains(0) {
-                    pages.insert(0, at: 0)
-                }
+                if !pageCounter.contains(0) { pageCounter.insert(0, at: 0) }
             }
+            
         }
         
         .onChange(of: nextPage.count) {
-            print("Change")
-            if nextPage.isEmpty {
-                print("next clean")
-                if pages.contains(2) {
-                    pages.removeLast()
-                }
+            tempPageOpacity = 1
+            if nextPage.isEmpty && pageCounter.contains(2) {
+                pageCounter.removeLast()
             } else {
-                if !pages.contains(2) {
-                    pages.append(2)
-                }
+                if !pageCounter.contains(2) { pageCounter.append(2) }
             }
         }
-        
-        
     }
+    
+    //MARK: - PageContent
+    
+    private func pageContent(_ lines: [TextLine]) -> some View {
+        VStack(spacing: 0) {
+            ForEach(0..<lines.count, id: \.self) { index in
+                TextLineView(
+                    font: font,
+                    textColor: textColor,
+                    textLine: lines[index],
+                    interval: interval,
+                    padding: padding,
+                    endBlock: lines[index].isEndOfBlock,
+                    endContent: lines[index].isEndOfContent
+                )}
+            Spacer()
+        }
+    }
+    
+    //MARK: - CalculateFading
     
     private func calculateFading(isReversed: Bool = false) -> Double {
         let screenWidth = UIScreen.main.bounds.width
@@ -204,24 +193,15 @@ struct TextLineView: View {
                         if !endBlock {
      
                             WordView(i: word.id ?? nil, text: word.text, font: font, color: textColor, interval: interval)
-
-                            if i != textLine.text.count - 1 || textLine.text.count == 1 {
-                                Spacer(minLength: 0)
-                            }
+                            if i != textLine.text.count - 1 || textLine.text.count == 1 { Spacer(minLength: 0) }
                             
                         } else {
                             
                             WordView(i: word.id, text: word.text, font: font, color: textColor, interval: interval)
-                            
-                            
-                            if i == textLine.text.count - 1 {
-                                Spacer(minLength: 0)
-                            }
+                            if i == textLine.text.count - 1 { Spacer(minLength: 0) }
                         }
                 }
-            
         }
-        
         .padding([.leading, .trailing], padding)
     }
 }
