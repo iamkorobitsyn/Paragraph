@@ -20,7 +20,7 @@ struct PageView: View {
     
     @State private var pageCounter = [0, 1, 2]
     @State private var selection = 1
-    @State private var touchDisabled: Bool = true
+    @State private var tabViewDisabled: Bool = true
 
     @State private var pageOffset: CGFloat = 0
     @State private var currentPageOpacity: CGFloat = 1
@@ -31,8 +31,7 @@ struct PageView: View {
     @State private var tempPage: [TextLine] = []
     @State private var tempPageOpacity: CGFloat = 0
 
-    let onPageTurn: (_ withReverse: Bool) -> Void
-    
+    let onPageTurn: (_ reverse: Bool) -> Void
   
     var body: some View {
         
@@ -63,9 +62,8 @@ struct PageView: View {
                             
                             Color(backgroundColor)
                             pageContent(previousPage)
-                                .onAppear() {
-                                    touchDisabled = true
-                                }
+                                .onAppear() { disableTabView(true) }
+                                .onDisappear() { disableTabView(false) }
                             
                         } else if index == 1 {
                             
@@ -90,19 +88,18 @@ struct PageView: View {
                                         currentPageOpacity = 1
                                         fadingReverse = false
                                         fadingPage = nextPage
-                                        
                                     }
                                 }
                             
                                 .onAppear() {
-                                    touchDisabled = true
+                                    disableTabView(true)
                                     tempPageOpacity = 1
                                     if previousPage.isEmpty { pageCounter = [1, 2] }
                                     if nextPage.isEmpty { pageCounter = [0, 1] }
                                 }
                             
                                 .onDisappear() {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { touchDisabled = false }
+                                    disableTabView(false)
                                     onPageTurn(fadingReverse)
                                     currentPageOpacity = 1
                                     selection = 1
@@ -110,15 +107,14 @@ struct PageView: View {
                             
                         } else if index == 2 {
                             Color(.clear)
-                                .onAppear() {
-                                    touchDisabled = true
-                                }
+                                .onAppear() { disableTabView(true) }
+                                .onDisappear() { disableTabView(false) }
                         }
                     }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .disabled(touchDisabled)
+            .disabled(tabViewDisabled)
         }
         
         .onChange(of: previousPage.count) {
@@ -128,7 +124,6 @@ struct PageView: View {
             } else {
                 if !pageCounter.contains(0) { pageCounter.insert(0, at: 0) }
             }
-            
         }
         
         .onChange(of: nextPage.count) {
@@ -167,7 +162,19 @@ struct PageView: View {
         let rawOpacity = min(1, normalizedOffset)
         return isReversed ? (1 - rawOpacity) : rawOpacity
     }
+    
+    //MARK: - DisableTabView
+    
+    private func disableTabView(_ disabled: Bool) {
+        if disabled {
+            tabViewDisabled = true
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { tabViewDisabled = false }
+        }
+    }
+    
 }
+
 
 //MARK: - TextLineView
 

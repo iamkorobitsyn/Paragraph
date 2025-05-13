@@ -195,6 +195,8 @@ final class TextService: ObservableObject {
         
         let currentBlock = content.textBlocks[endBlock]
             mode = currentBlock.mode
+        
+        let spacerWidth = " ".widthOfString(usingFont: uIFont)
             
         for currentWord in endWord..<currentBlock.text.count {
                     
@@ -215,13 +217,11 @@ final class TextService: ObservableObject {
                     //adding word
                     
                     let wordWidth = additionalWord.text.widthOfString(usingFont: uIFont)
-                    let spacer = " "
-                    let spacerWidth = spacer.widthOfString(usingFont: uIFont)
                     
                     if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
                         tempWidth += spacerWidth
 
-                        if words.count != 0 {  words.append(Word(id: nil, text: spacer)) }
+                        if words.count != 0 {  words.append(Word(id: nil, text: " ")) }
                         words.append(additionalWord)
                         
                         tempWidth += wordWidth
@@ -244,7 +244,7 @@ final class TextService: ObservableObject {
                                 let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
                                 if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
                                     tempWidth += wordWidth
-                                    words.append(Word(id: nil, text: spacer))
+                                    words.append(Word(id: nil, text: " "))
                                     words.append(word[0])
                                     tempHypernationWord = word[1]
                                 }

@@ -64,6 +64,8 @@ struct ReaderView: View {
                     Color(backgroundColor)
                         .ignoresSafeArea()
                     
+                    //MARK: - PageView
+                    
                     PageView(font: font,
                              interval: interval,
                              padding: padding,
@@ -71,8 +73,8 @@ struct ReaderView: View {
                              textColor: textColor,
                              previousPage: textLinesOfPreviousPage,
                              currentPage: textLinesOfCurrentPage,
-                             nextPage: textLinesOfNextPage) { withReverse in
-                        if !withReverse {
+                             nextPage: textLinesOfNextPage) { reverse in
+                        if !reverse {
                             
                             let tempNextTextLines = textLinesOfNextPage
                             
@@ -82,13 +84,21 @@ struct ReaderView: View {
                                 textLinesOfCurrentPage = tempNextTextLines
                                 contentUpdate(textService.content, geometry, uIFont, interval, padding)
                             }
-                            
+//                            print("previous\(firstBlockOfPreviousPage)")
+//                            print("previous\(firstWordOfPreviousPage)")
+//                            
+//                            print("current\(firstBlockOfCurrentPage)")
+//                            print("current\(firstWordOfCurrentPage)")
+//                            
+//                            print("next\(firstBlockOfNextPage)")
+//                            print("next\(firstWordOfNextPage)")
                         } else {
+                            let tempPreviousTextLines = textLinesOfPreviousPage
                             firstBlockOfCurrentPage = firstBlockOfPreviousPage
                             firstWordOfCurrentPage = firstWordOfPreviousPage
-//                            let tempPreviousTextLines = textLinesOfPreviousPage
+                            textLinesOfCurrentPage = tempPreviousTextLines
                             contentUpdate(textService.content, geometry, uIFont, interval, padding)
-//                            textLinesOfCurrentPage = tempPreviousTextLines
+
                         }
                         
                     }
@@ -157,14 +167,9 @@ struct ReaderView: View {
         
         textService.tempHypernationWord = nil
         
-
-        let maxWidht = geometry.size.width - padding * 2
         var maxHeight: CGFloat = geometry.size.height
-        if geometry.size.height > geometry.size.width {
-            maxHeight -= 100
-        } else {
-            maxHeight -= 110
-        }
+        let maxWidht = geometry.size.width - (padding * 2)
+        maxHeight -= geometry.size.height > geometry.size.width ? 100 : 110
         
         // PreviousPage
         
@@ -172,18 +177,19 @@ struct ReaderView: View {
         
         if firstBlockOfCurrentPage != 0 || firstWordOfCurrentPage != 0 {
 
-            var endWordIndex = firstWordOfCurrentPage
-            var focusBlockIndex = firstBlockOfCurrentPage
+            var endWord = firstWordOfCurrentPage
+            var focusBlock = firstBlockOfCurrentPage
             
-            var tempTextLines: [TextLine] = []
             var switchBlockFlag = false
             var endBlockFlag = false
-
+            
+            var tempTextLines: [TextLine] = []
+            
             while maxHeight > tempHeight + lineHeght {
                 
                 
-                if tempWord < endWordIndex {
-                    let wordsLine = textService.getLine(content: content, block: focusBlockIndex, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                if tempWord < endWord {
+                    let wordsLine = textService.getLine(content: content, block: focusBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
 
                     tempWord = wordsLine.endWord
                     
@@ -194,9 +200,9 @@ struct ReaderView: View {
                 } else {
                     textLinesOfPreviousPage.insert(contentsOf: tempTextLines, at: 0)
                     tempTextLines = []
-                    if focusBlockIndex != 0 {
-                        focusBlockIndex -= 1
-                        endWordIndex = content.textBlocks[focusBlockIndex].text.count
+                    if focusBlock != 0 {
+                        focusBlock -= 1
+                        endWord = content.textBlocks[focusBlock].text.count
                         tempWord = 0
                         switchBlockFlag = true
                     } else {
@@ -207,9 +213,9 @@ struct ReaderView: View {
             
             if !switchBlockFlag {
                 
-                while tempWord < endWordIndex {
+                while tempWord < endWord {
                     
-                    let wordsLine = textService.getLine(content: content, block: focusBlockIndex, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    let wordsLine = textService.getLine(content: content, block: focusBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
                     
                     tempWord = wordsLine.endWord
                     
@@ -222,7 +228,7 @@ struct ReaderView: View {
                 
                 while !endBlockFlag && switchBlockFlag {
                     
-                    let wordsLine = textService.getLine(content: content, block: focusBlockIndex, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    let wordsLine = textService.getLine(content: content, block: focusBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
                     
                     tempWord = wordsLine.endWord
                     endBlockFlag = wordsLine.isEndOfBlock
