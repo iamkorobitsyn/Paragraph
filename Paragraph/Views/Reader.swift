@@ -163,7 +163,8 @@ struct ReaderView: View {
         var tempBlock = 0
         var tempWord = 0
         
-        let lineHeght = textService.heightOfString(font: uIFont) + interval
+        let lineHeight = textService.heightOfString(font: uIFont) + interval
+        var tempHeight: CGFloat = 0
         
         textService.tempHypernationWord = nil
         
@@ -173,47 +174,28 @@ struct ReaderView: View {
         
         // PreviousPage
         
-        var tempHeight: CGFloat = 0
-        
         if firstBlockOfCurrentPage != 0 || firstWordOfCurrentPage != 0 {
 
-            var endWord = firstWordOfCurrentPage
+            let endWord = firstWordOfCurrentPage
             var focusBlock = firstBlockOfCurrentPage
-            
-            var switchBlockFlag = false
+
             var endBlockFlag = false
             
             var tempTextLines: [TextLine] = []
             
-            while maxHeight > tempHeight + lineHeght {
+            while tempWord < endWord {
                 
-                
-                if tempWord < endWord {
+                if maxHeight > tempHeight + lineHeight {
+                    
                     let wordsLine = textService.getLine(content: content, block: focusBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
 
                     tempWord = wordsLine.endWord
                     
                     tempTextLines.append(wordsLine)
-                    tempHeight += lineHeght
+                    tempHeight += lineHeight
                     endBlockFlag = wordsLine.isEndOfBlock
-
+                    
                 } else {
-                    textLinesOfPreviousPage.insert(contentsOf: tempTextLines, at: 0)
-                    tempTextLines = []
-                    if focusBlock != 0 {
-                        focusBlock -= 1
-                        endWord = content.textBlocks[focusBlock].text.count
-                        tempWord = 0
-                        switchBlockFlag = true
-                    } else {
-                        return
-                    }
-                }
-            }
-            
-            if !switchBlockFlag {
-                
-                while tempWord < endWord {
                     
                     let wordsLine = textService.getLine(content: content, block: focusBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
                     
@@ -221,26 +203,55 @@ struct ReaderView: View {
                     
                     tempTextLines.removeFirst()
                     tempTextLines.append(wordsLine)
+                }
+            }
+            
+            print(tempTextLines)
+            
+            textLinesOfPreviousPage.append(contentsOf: tempTextLines)
+            tempTextLines = []
+            
+            while maxHeight > tempHeight + lineHeight {
+                if focusBlock == 0 {
+                    tempBlock = 0
+                    tempWord = 0
+                    tempHeight = 0
+                    textLinesOfPreviousPage = []
                     
+                    while maxHeight > tempHeight + lineHeight {
+                        
+                        let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                        tempHeight += lineHeight
+                        
+                        textLinesOfPreviousPage.append(wordsLine)
+                        tempBlock = wordsLine.endBlock
+                        tempWord = wordsLine.endWord
+                    }
+                    break
+                } else {
+                    tempWord = 0
+                    focusBlock -= 1
                 }
                 
-            } else {
                 
-                while !endBlockFlag && switchBlockFlag {
+                while !endBlockFlag {
+                    if maxHeight < tempHeight + lineHeight { tempTextLines.removeFirst() }
                     
-                    let wordsLine = textService.getLine(content: content, block: focusBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    tempHeight += lineHeight
                     
+                    tempTextLines.append(wordsLine)
+                    tempBlock = wordsLine.endBlock
                     tempWord = wordsLine.endWord
                     endBlockFlag = wordsLine.isEndOfBlock
-                    
-                    tempTextLines.removeFirst()
-                    tempTextLines.append(wordsLine)
                 }
-                
+
+                textLinesOfPreviousPage.insert(contentsOf: tempTextLines, at: 0)
+                tempTextLines = []
+                tempBlock = 0
+                tempWord = 0
+                endBlockFlag.toggle()
             }
-            
-            textLinesOfPreviousPage.insert(contentsOf: tempTextLines, at: 0)
-            
         }
         
         if !textLinesOfPreviousPage.isEmpty {
