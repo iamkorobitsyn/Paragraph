@@ -81,17 +81,10 @@ struct ReaderView: View {
                             if !tempNextTextLines.isEmpty {
                                 firstBlockOfCurrentPage = firstBlockOfNextPage
                                 firstWordOfCurrentPage = firstWordOfNextPage
-                                textLinesOfCurrentPage = tempNextTextLines
                                 contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                                textLinesOfCurrentPage = tempNextTextLines
                             }
-//                            print("previous\(firstBlockOfPreviousPage)")
-//                            print("previous\(firstWordOfPreviousPage)")
-//                            
-//                            print("current\(firstBlockOfCurrentPage)")
-//                            print("current\(firstWordOfCurrentPage)")
-//                            
-//                            print("next\(firstBlockOfNextPage)")
-//                            print("next\(firstWordOfNextPage)")
+                            
                         } else {
                             let tempPreviousTextLines = textLinesOfPreviousPage
                             firstBlockOfCurrentPage = firstBlockOfPreviousPage
@@ -206,8 +199,6 @@ struct ReaderView: View {
                 }
             }
             
-            print(tempTextLines)
-            
             textLinesOfPreviousPage.append(contentsOf: tempTextLines)
             tempTextLines = []
             
@@ -237,11 +228,10 @@ struct ReaderView: View {
                 while !endBlockFlag {
                     if maxHeight < tempHeight + lineHeight { tempTextLines.removeFirst() }
                     
-                    let wordsLine = textService.getLine(content: content, block: tempBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
+                    let wordsLine = textService.getLine(content: content, block: focusBlock, word: tempWord, maxWidth: maxWidht, uIFont: uIFont)
                     tempHeight += lineHeight
                     
                     tempTextLines.append(wordsLine)
-                    tempBlock = wordsLine.endBlock
                     tempWord = wordsLine.endWord
                     endBlockFlag = wordsLine.isEndOfBlock
                 }
