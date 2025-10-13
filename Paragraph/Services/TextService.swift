@@ -10,12 +10,39 @@ import SwiftUI
 
 final class TextService: ObservableObject {
     
- 
+    lazy var content = Book(title: "Цирк семьи Пайло",
+                            author: "Уилл Элиот",
+                            coverImage: "",
+                            status: .open,
+                            progress: 58.5,
+                            bookParts: [
+                                .init(textBlocks:
+                                            [TextBlock(text: textConvert(text: "Title"), mode: .title)]),
+                                    .init(textBlocks:
+                                            [TextBlock(text: textConvert(text: "Страница 1"), mode: .paragraph),
+                                             TextBlock(text: textConvert(text: "2 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph),
+                                             TextBlock(text: textConvert(text: "5 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph)]),
+                                
+                                        .init(textBlocks:
+                                                [TextBlock(text: textConvert(text: "Страница 2"), mode: .paragraph),
+                                                 TextBlock(text: textConvert(text: "2 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph),
+                                                 TextBlock(text: textConvert(text: "4 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph),
+                                                 ]),
+                                    
+                                    .init(textBlocks:
+                                            [TextBlock(text: textConvert(text: "Страница 3"), mode: .paragraph),
+                                             TextBlock(text: textConvert(text: "2 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph),
+                                             TextBlock(text: textConvert(text: "3 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph),
+                                             TextBlock(text: textConvert(text: "4 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph),
+                                             TextBlock(text: textConvert(text: "5 Моя мама стояла всего в семи метрах от моего такси и копалась в мусорном бачке. На плечи она накинула какие-то тряпки, чтобы было теплее, и рядом с ней играла ее собака – помесь терьера и дворняжки черно-белой расцветки. Я прекрасно знала мамины жесты и мимику – исследуя содержимое помойки, она наклоняла голову и слегка оттопыривала нижнюю губу в поисках «сокровищ», которые вытаскивала из бачка. Когда она находила что-нибудь, что ей нравилось, ее глаза расширялись от радости. Ее волосы поседели и висели клочьями, глаза запали, но, тем не менее, это была моя мама, которую я прекрасно помнила, которая ныряла в море с высоких скал, рисовала в пустыне и читала наизусть Шекспира. У нее были все те же скулы, хотя кожа на лице была в старческих пятнах от солнца и ветра. Всем прохожим она представлялась обычной бездомной, которых в Нью-Йорке тысячи."), mode: .paragraph)]),
+                            ] )
+                                                   
     
     
-    var wordID: Int = 0
+    
     
     func textConvert(text: String) -> [Word] {
+
         var wordList: [Word] = []
         var tempText: [Character] = []
         
@@ -35,59 +62,10 @@ final class TextService: ObservableObject {
         return wordList
     }
     
-    //MARK: - Hypernation
+   
     
-    private func tryHypernation(word: Word, reverse: Bool) -> [Word] {
-        guard word.text.count > 6 else {return []}
-        let charSet = CharSets()
-        var firstPart: String = ""
-        var secondPart: String = ""
-        
-        if let hypen = word.text.firstIndex(of: "-") {
-            let splitIndex = word.text.distance(from: word.text.startIndex, to: hypen) + 1
-            firstPart = String(word.text.prefix(splitIndex))
-            secondPart = String(word.text.suffix(word.text.count - splitIndex))
-            return [Word(id: word.id, text: firstPart), Word(id: word.id, text: secondPart)]
-        }
-        
-        var splitFlag: Bool = false
-        var indentIndex: Int = 0
-        var secondPartCharacterCount: Int = 0
-
-        while !splitFlag && indentIndex <= secondPartCharacterCount {
-            
-            let splitIndex = (word.text.count / 2) + indentIndex
-
-            firstPart = String(word.text.prefix(splitIndex))
-            secondPart = String(word.text.suffix(word.text.count - splitIndex))
-            secondPartCharacterCount = secondPart.count
-            
-            guard let lastChar = firstPart.last else {return []}
-            if charSet.vowels.contains(lastChar) && secondPart.count > 4 {
-                splitFlag = true
-                return [Word(id: word.id, text: "\(firstPart)-"), Word(id: word.id, text: secondPart)]
-            } else {
-                indentIndex += 1
-            }
-        }
-
-        return []
-        
-    }
     
-    lazy var content = Book(title: "Цирк семьи Пайло",
-                       author: "Уилл Элиот",
-                       coverImage: "",
-                       status: .open,
-                       progress: 58.5,
-                       textBlocks: [TextBlock(text: textConvert(text: "Что может быть страшнее клоуна за пределами цирка? Только сам цирк, в котором клоуны-убийцы воюют с акробатами, а хозяева ставят эксперименты на своих артистах. И только такой мир, полный кошмаров и гротеска, может заставить обычного недотепу-консьержа в буквальном смысле бороться с самим собой – воевать со своим клоунским альтер-эго не на жизнь, а на смерть. Автор романа – Уилл Эллиотт – не понаслышке знает, что такое раздвоение личности, хотя и не считает роман автобиографическим. Тем не менее щупальца шизофрении так тихо, но властно проникают в сознание, что читателю следует быть уверенным в собственном душевном равновесии, прежде чем приниматься за книгу."),
-                                        mode: .paragraph),
-                              TextBlock(text: textConvert(text: "Что сразу насторожило Джейми – так это взгляд клоуна, изумленный блеск, будто он впервые очутился в этом мире, словно машина Джейми – первое, что он увидел. Казалось, существо только-только вылупилось из огромного яйца, доковыляло до дороги и застыло там, как манекен в витрине магазина. Цветастая рубаха, заправленная в штаны, едва удерживала обвисший живот, руки плотно прижаты к бокам, а ладони, обтянутые белыми перчатками, сжаты в кулаки. Под мышками расплывались пятна от пота. Клоун таращился на него через ветровое стекло нелепыми удивленными глазами, потом интерес пропал, и он отвернулся от машины, едва не задавившей его насмерть."),
-                                        mode: .paragraph),
-                              TextBlock(text: textConvert(text: "Часы на приборной панели отсчитали десятую секунду с того момента, как Джейми вдарил по тормозам. Он чувствовал запах жженой резины. За все время, что он провел за рулем, мир лишился двух кошек, одного фазана, и вот теперь к этому списку едва не добавился совершенно одуревший человек. В голове у Джейми пронеслись все те напасти, что могли бы свалиться на него, не затормози он вовремя: судебные процессы, обвинения, бессонные ночи и чувство вины до конца жизни. На него накатил приступ гнева, как это бывает у водителей, – он опустил стекло и заорал:"),
-                                        mode: .paragraph)               
-                       ])
-    
+    var wordID: Int = 0
     
     @AppStorage("fontStyleIndex") private var fontIndex = 0
     @AppStorage("fontSizeIndex") private var sizeIndex = 0
@@ -99,7 +77,8 @@ final class TextService: ObservableObject {
     let intervalList: [CGFloat] = [0, 4, 8, 12, 16]
     var paddingList: [CGFloat] = [20, 30, 40, 50, 60]
     
-    var tempHypernationWord: Word?
+    var regularHypernationWord: Word?
+    var hypernationWordOfPreviousPage: Word?
     
     enum FontStyle: Int {
         case charter, palatino, baskerville, courierNew, helveticaNeue, helveticaNeueBold
@@ -147,7 +126,6 @@ final class TextService: ObservableObject {
         }
     }
     
-    
     func getInterval() -> CGFloat
     { return intervalList[intervalIndex] }
     
@@ -174,90 +152,69 @@ final class TextService: ObservableObject {
         return boundingRect.height
     }
     
+    //MARK: - GetTextLine
     
-    func getLine(content: Book, block: Int, word: Int, maxWidth: CGFloat, uIFont: UIFont) -> TextLine {
-        
+    func getLine(content: Book, part: Int, block: Int, word: Int, maxWidth: CGFloat, spacerWidth: CGFloat, uIFont: UIFont) -> TextLine {
+
         var tempWidth: CGFloat = 0
         var words: [Word] = []
-        var mode: TextMode = .paragraph
+        let mode = content.bookParts[part].textBlocks[block].mode
 
-        var additionalWord: Word = Word(id: 0, text: "")
-        
-        var isStartOfBlock = false
-        var isEndOfBlock = false
-        var isEndOfContent = false
-        
-        let startBlock = block
-        let startWord = word
-        
+        var endPart = part
         var endBlock = block
         var endWord = word
         
-        let currentBlock = content.textBlocks[endBlock]
-            mode = currentBlock.mode
+        var startFlag = false
+        var endFlag = false
+        var endContent = false
         
-        let spacerWidth = " ".widthOfString(usingFont: uIFont)
+        for i in word..<content.bookParts[part].textBlocks[block].text.count {
             
-        for currentWord in endWord..<currentBlock.text.count {
-                    
-                    //adding spacer
-                    
-                    if currentWord == 0 && currentBlock.mode == .paragraph {
-                        tempWidth += 20
-                        isStartOfBlock = true
-                    }
-                    
-                    if let word = tempHypernationWord {
-                        additionalWord = word
-                        tempHypernationWord = nil
-                    } else {
-                        additionalWord = currentBlock.text[currentWord]
-                    }
+            //adding spacer
+            
+            if i == 0 && mode == .paragraph {
+                startFlag.toggle()
+                tempWidth += 20
+            }
+            //adding word
 
-                    //adding word
-                    
-                    let wordWidth = additionalWord.text.widthOfString(usingFont: uIFont)
-                    
-                    if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
-                        tempWidth += spacerWidth
+            let wordWidth = content.bookParts[part].textBlocks[block].text[i].text.widthOfString(usingFont: uIFont)
 
-                        if words.count != 0 {  words.append(Word(id: nil, text: " ")) }
-                        words.append(additionalWord)
-                        
-                        tempWidth += wordWidth
-                        
-                        if currentWord != currentBlock.text.count - 1 {
-                            endWord += 1
-                        } else {
-                            if endBlock != content.textBlocks.count - 1 {
-                                endBlock += 1
-                                endWord = 0
-                                isEndOfBlock = true
-                            } else {
-                                isEndOfContent = true
-                            }
-                        }
-
-                    } else {
-                            let word = tryHypernation(word: additionalWord, reverse: false)
-                            if word.count == 2 {
-                                let wordWidth = word[0].text.widthOfString(usingFont: uIFont)
-                                if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
-                                    tempWidth += wordWidth
-                                    words.append(Word(id: nil, text: " "))
-                                    words.append(word[0])
-                                    tempHypernationWord = word[1]
-                                }
-                            }
-                        return TextLine(text: words, mode: mode,
-                                        isStartOfBlock: isStartOfBlock, isEndOfBlock: isEndOfBlock, isEndOfContent: isEndOfContent,
-                                        startBlock: startBlock, startWord: startWord, endBlock: endBlock, endWord: endWord)
-                    }
+            if tempWidth + wordWidth + spacerWidth <= maxWidth || words.count == 0 {
+                
+                words.append(content.bookParts[part].textBlocks[block].text[i])
+                tempWidth += (spacerWidth + wordWidth)
+                
+                
+                
+                
+                if i != content.bookParts[part].textBlocks[block].text.count - 1 {
+                    endWord += 1
+                } else {
+                  if endBlock != content.bookParts[endPart].textBlocks.count - 1 {
+                    endWord = 0
+                    endBlock += 1
+                      endFlag = true
+                    break
+                } else if endPart != content.bookParts.count - 1 {
+                    endPart += 1
+                    endBlock = 0
+                    endWord = 0
+                    endContent = true
+                    break
+                } else if endPart == content.bookParts.count - 1 {
+                    endContent = true
+                    break
                 }
-
-            
+                }
+                
+            } else {
+                break
+            }
+        }
+ 
         return TextLine(text: words, mode: mode,
-                        isStartOfBlock: isStartOfBlock, isEndOfBlock: isEndOfBlock, isEndOfContent: isEndOfContent,
-                        startBlock: startBlock, startWord: startWord, endBlock: endBlock, endWord: endWord)
+                        endPart: endPart, endBlock: endBlock, endWord: endWord,
+                        startFlag: startFlag, endFlag: endFlag, endContent: endContent, height: heightOfString(font: uIFont))
     }
 }

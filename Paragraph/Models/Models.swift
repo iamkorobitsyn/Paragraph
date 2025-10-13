@@ -15,15 +15,13 @@ enum BookStatus {
 }
 
 enum TextMode {
-    case bookTitle
-    case bookAuthor
-    case chapterTitle
+    case title
     case subTitle
     case paragraph
     case annotation
-    case citation
-    case list
     case verse
+    case caption
+    case indent
 }
 
 struct Book: Identifiable {
@@ -33,6 +31,10 @@ struct Book: Identifiable {
     let coverImage: String?
     let status: BookStatus
     let progress: Double
+    let bookParts: [BookPart]
+}
+
+struct BookPart {
     let textBlocks: [TextBlock]
 }
 
@@ -46,32 +48,35 @@ struct Word {
     let text: String
 }
 
+struct TextLinesPart {
+    let text: [TextLine]
+    let height: CGFloat
+}
+
 struct TextLine {
     
-    init(text: [Word], mode: TextMode,
-         isStartOfBlock: Bool, isEndOfBlock: Bool, isEndOfContent: Bool,
-         startBlock: Int, startWord: Int,
-         endBlock: Int, endWord: Int) {
+    init(text: [Word], mode: TextMode, endPart: Int, endBlock: Int, endWord: Int,
+         startFlag: Bool, endFlag: Bool, endContent: Bool, height: CGFloat) {
         self.text = text
         self.mode = mode
-        self.isStartOfBlock = isStartOfBlock
-        self.isEndOfBlock = isEndOfBlock
-        self.isEndOfContent = isEndOfContent
-        self.startBlock = startBlock
-        self.startWord = startWord
+        self.endPart = endPart
         self.endBlock = endBlock
         self.endWord = endWord
+        self.startFlag = startFlag
+        self.endFlag = endFlag
+        self.endContent = endContent
+        self.height = height
     }
     
     let text: [Word]
     let mode: TextMode
-    let isStartOfBlock: Bool
-    let isEndOfBlock: Bool
-    let isEndOfContent: Bool
-    let startBlock: Int
-    let startWord: Int
+    let endPart: Int
     let endBlock: Int
     let endWord: Int
+    let startFlag: Bool
+    let endFlag: Bool
+    let endContent: Bool
+    let height: CGFloat
 }
 
 

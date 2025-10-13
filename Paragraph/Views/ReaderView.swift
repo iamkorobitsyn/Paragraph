@@ -9,17 +9,22 @@ import SwiftUI
 
 struct ReaderView: View {
     
-    @State private var firstPartOfCurrentPage: Int = 1
-    
-    @State private var textLinesOfPreviousPage: TextLinesPart = TextLinesPart(scroll: false, textLines: [])
-    @State private var textLinesOfCurrentPage: TextLinesPart = TextLinesPart(scroll: false, textLines: [])
-    @State private var textLinesOfNextPage: TextLinesPart = TextLinesPart(scroll: false, textLines: [])
-    
-    @Binding var presented: Bool
+    @Binding var selfPresented: Bool
     @State private var settingsPresented: Bool = false
     
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
+    
+//    @State private var currentPart = 3
+//    @State private var currentLine = 0
+    
+    @AppStorage("progressPart") private var progressPart = 0
+    @AppStorage("progressLine") private var progressLine = 0
+    
+    @State private var previousPage = TextLinesPart(text: [], height: 0)
+    @State private var currentPage = TextLinesPart(text: [], height: 0)
+    @State private var nextPage = TextLinesPart(text: [], height: 0)
+    @State private var isContentReady = false
     
     var body: some View {
         
@@ -32,7 +37,7 @@ struct ReaderView: View {
         let backgroundColor = colorService.theme().background
         let textColor = colorService.theme().text
   
-        if presented {
+        if selfPresented {
             GeometryReader { geometry in
                 
                 Color(.clear)
@@ -48,6 +53,9 @@ struct ReaderView: View {
                     .onChange(of: [interval, padding]) {
                         contentUpdate(textService.content, geometry, uIFont, interval, padding)
                     }
+                    .onChange(of: progressPart) {
+                        contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                    }
                 
                 
                 ZStack(alignment: .top) {
@@ -56,33 +64,47 @@ struct ReaderView: View {
                     
                     //MARK: - PageView
                     
-                    PageView(font: font,
-                             interval: interval,
-                             padding: padding,
-                             backgroundColor: backgroundColor,
-                             textColor: textColor,
-                             previousPage: textLinesOfPreviousPage,
-                             currentPage: textLinesOfCurrentPage,
-                             nextPage: textLinesOfNextPage)
-
-                             .ignoresSafeArea()
-                            
+           
                     
-                    VStack(spacing: 0) {
-                        VStack {
-                            Spacer()
-                            Selector(mode: .readerControls) { i in
-                                if i == 0 {
-                                    settingsPresented.toggle()
-                                } else {
-                                    presented.toggle()
-                                    settingsPresented = false
+                            if isContentReady {
+                                VStack(spacing: 0) {
+                                    TopMarginLine(width: geometry.size.width - padding * 2)
+                                    PageView(backColor: backgroundColor,
+                                             textColor: textColor,
+                                             font: font,
+                                             interval: interval,
+                                             padding: padding,
+                                             prevPage: $previousPage,
+                                             currentPage: $currentPage,
+                                             nextPage: $nextPage,
+                                             updateContent: { swipeState in
+                                        switch swipeState {
+                                            
+                                        case .previous: progressPart -= 1
+                                        case .next: progressPart += 1
+                                        }
+                                    })
+                                    .ignoresSafeArea()
+                                }
+                                                                
+
+  
+                                VStack(spacing: 0) {
+                                    VStack {
+                                        Spacer()
+                                        Selector(mode: .readerControls) { i in
+                                            if i == 0 {
+                                                settingsPresented.toggle()
+                                            } else {
+                                                selfPresented.toggle()
+                                                settingsPresented = false
+                                            }
+                                        }
+                                    }
+                                        
+                                    SettingsView(presented: $settingsPresented)
                                 }
                             }
-                        }
-                            
-                        SettingsView(presented: $settingsPresented)
-                    }
                 }
             }
         }
@@ -96,109 +118,95 @@ struct ReaderView: View {
                                _ uIFont: UIFont,
                                _ interval: CGFloat,
                                _ padding: CGFloat) {
-        
-        var tempLines: [TextLine] = []
-        
-        let tempPart = firstPartOfCurrentPage
-        var tempBlock = 0
-        var tempWord = 0
-        var endContent: Bool = false
-        var scrollFlag: Bool = false
-
-        let maxWidht = geometry.size.width - (padding * 2)
-        let spacerWidth = " ".widthOfString(usingFont: uIFont)
-        
-        //MARK: - previous content
-        
-        
-        while !endContent {
+       
+            var tempLines: [TextLine] = []
             
-            if tempPart == 0 {break}
-            let wordsLine = textService.getLine(content: content,
-                                                part: tempPart - 1, block: tempBlock, word: tempWord,
-                                                maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
+            var tempBlock = 0
+            var tempWord = 0
+            var tempHeight: CGFloat = 0
+            var endContent: Bool = false
             
-            tempBlock = wordsLine.endBlock
-            tempWord = wordsLine.endWord
+            let maxWidht = geometry.size.width - (padding * 2)
+            let spacerWidth = " ".widthOfString(usingFont: uIFont)
             
-            tempLines.append(wordsLine)
-            if wordsLine.endContent {endContent = true}
+            //MARK: - previous content
             
-            if wordsLine.mode == .title {
-                scrollFlag = false
-            } else {
-                scrollFlag = true
-            }
-        }
-        
-        textLinesOfPreviousPage = TextLinesPart(scroll: scrollFlag, textLines: tempLines)
-        
-        
-        tempBlock = 0
-        tempWord = 0
-        tempLines = []
-        endContent = false
-        
-        
-        //MARK: - current content
-
-        
-        while !endContent {
-            let wordsLine = textService.getLine(content: content,
-                                                part: tempPart, block: tempBlock, word: tempWord,
-                                                maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
             
-            tempBlock = wordsLine.endBlock
-            tempWord = wordsLine.endWord
-            
-            tempLines.append(wordsLine)
-            if wordsLine.endContent {endContent = true}
-            
-            if wordsLine.mode == .title {
-                scrollFlag = false
-            } else {
-                scrollFlag = true
+            while !endContent {
+                
+                if progressPart == 0 {break}
+                let wordsLine = textService.getLine(content: content,
+                                                    part: progressPart - 1, block: tempBlock, word: tempWord,
+                                                    maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                tempHeight += textService.heightOfString(font: uIFont)
+                
+                tempLines.append(wordsLine)
+                if wordsLine.endContent {endContent = true}
+                
             }
             
-        }
-        
-        textLinesOfCurrentPage = TextLinesPart(scroll: scrollFlag, textLines: tempLines)
-        
-        tempLines = []
-        endContent = false
-
-        
-        //MARK: = next content
-        
-        while !endContent {
+            previousPage = TextLinesPart(text: tempLines, height: tempHeight)
             
-            if tempPart == content.bookParts.count - 1 {break}
-
-            let wordsLine = textService.getLine(content: content,
-                                                part: tempPart + 1, block: tempBlock, word: tempWord,
-                                                maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
             
-            tempBlock = wordsLine.endBlock
-            tempWord = wordsLine.endWord
             
-            tempLines.append(wordsLine)
-            if wordsLine.endContent {endContent = true}
+            tempBlock = 0
+            tempWord = 0
+            tempHeight = 0
+            tempLines = []
+            endContent = false
             
-            if wordsLine.mode == .title {
-                scrollFlag = false
-            } else {
-                scrollFlag = true
+            
+            //MARK: - current content
+            
+            while !endContent {
+                let wordsLine = textService.getLine(content: content,
+                                                    part: progressPart, block: tempBlock, word: tempWord,
+                                                    maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                tempHeight += textService.heightOfString(font: uIFont)
+                tempLines.append(wordsLine)
+                if wordsLine.endContent {endContent = true}
+                
             }
+            currentPage = TextLinesPart(text: tempLines, height: tempHeight)
+            tempHeight = 0
+            tempLines = []
+            endContent = false
             
-        }
+            
+            //MARK: = next content
+            
+            while !endContent {
+                
+                if progressPart == content.bookParts.count - 1 {break}
+                
+                let wordsLine = textService.getLine(content: content,
+                                                    part: progressPart + 1, block: tempBlock, word: tempWord,
+                                                    maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                tempHeight += textService.heightOfString(font: uIFont)
+                tempLines.append(wordsLine)
+                if wordsLine.endContent {endContent = true}
+                
+                
+            }
+            nextPage = TextLinesPart(text: tempLines, height: tempHeight)
         
-        textLinesOfNextPage = TextLinesPart(scroll: scrollFlag, textLines: tempLines)
-    }
+        isContentReady = true
+        }
+    
 }
 
 
 #Preview {
-    ReaderView(presented: .constant(true))
+    ReaderView(selfPresented: .constant(true))
         .environmentObject(TextService())
         .environmentObject(ColorService())
 }

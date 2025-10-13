@@ -12,8 +12,6 @@ struct ToolBarView: View {
     
     @AppStorage("sortMode") var sortIndex: Int = 0
     @Binding var readerPresented: Bool
-    let device: UIUserInterfaceIdiom
-
     
     var body: some View {
         if !readerPresented {
@@ -28,14 +26,14 @@ struct ToolBarView: View {
                             readerPresented.toggle()
                         }
                     })
-                    .padding(.leading, device == .pad ? 60 : 40)
+                    .padding(.leading, 40)
                     Spacer()
                     Selector(mode: .toolbarControls, action: {i in
                         if i == 0 {
                         } else {
                         }
                     })
-                    .padding(.trailing, device == .pad ? 60 : 40)
+                    .padding(.trailing, 40)
                 }
                 .padding(.top, -80)
                 
@@ -43,10 +41,10 @@ struct ToolBarView: View {
                     Selector(mode: .toolBarBookSort(sortIndex), action: { i in
                         sortIndex = i
                     })
-                    .padding(.leading, device == .pad ? 60 : 40)
+                    .padding(.leading, 40)
                     Spacer()
                     Selector(mode: .toolbarQuotes, action: { i in })
-                        .padding(.trailing, device == .pad ? 60 : 40)
+                        .padding(.trailing, 40)
                 }
                 .padding(.top, 100)
             }
@@ -58,8 +56,7 @@ struct ToolBarView: View {
     
     ZStack {
         Color.gray
-        ToolBarView(readerPresented: .constant(false),
-                    device: .phone)
+        ToolBarView(readerPresented: .constant(false))
             .frame(width: 360, height: 200)
     }.ignoresSafeArea()
         .environmentObject(TextService())

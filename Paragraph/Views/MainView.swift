@@ -44,7 +44,7 @@ struct MainView: View {
                     .resizable()
                     .ignoresSafeArea()
                 
-                ReaderView(presented: $readerPresented)
+                ReaderView(selfPresented: $readerPresented)
                     .onAppear() {
                         textService.setPaddingList(landscape: false)
                     }

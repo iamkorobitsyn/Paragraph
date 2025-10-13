@@ -9,19 +9,20 @@
 /* Begin PBXBuildFile section */
 		651CE3A72C008FDC001C18D8 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651CE3A62C008FDC001C18D8 /* DocumentPicker.swift */; };
 		652BC7462BEBA6A300BFB528 /* ParagraphApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652BC7452BEBA6A300BFB528 /* ParagraphApp.swift */; };
-		652BC7482BEBA6A300BFB528 /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652BC7472BEBA6A300BFB528 /* Content.swift */; };
+		652BC7482BEBA6A300BFB528 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652BC7472BEBA6A300BFB528 /* MainView.swift */; };
 		652BC74A2BEBA6A400BFB528 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652BC7492BEBA6A400BFB528 /* Assets.xcassets */; };
 		652BC74D2BEBA6A400BFB528 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652BC74C2BEBA6A400BFB528 /* Preview Assets.xcassets */; };
+		654D2CD42E83D9C100825604 /* PageComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654D2CD32E83D9C100825604 /* PageComponents.swift */; };
 		6569E4612D82D86B006A36E6 /* Color + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569E4602D82D86B006A36E6 /* Color + Extensions.swift */; };
 		6569E4642D82EF2A006A36E6 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569E4632D82EF2A006A36E6 /* Models.swift */; };
 		6569E4662D82F0CF006A36E6 /* BookCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569E4652D82F0CF006A36E6 /* BookCell.swift */; };
 		657401332D9B57EB00CFA126 /* PageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657401322D9B57EB00CFA126 /* PageView.swift */; };
 		658283E62D7B30050026FD75 /* toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658283E52D7B30050026FD75 /* toolbar.swift */; };
 		658283E82D7B32DA0026FD75 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658283E72D7B32DA0026FD75 /* Library.swift */; };
-		658283ED2D7B35780026FD75 /* Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658283EC2D7B35780026FD75 /* Reader.swift */; };
+		658283ED2D7B35780026FD75 /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658283EC2D7B35780026FD75 /* ReaderView.swift */; };
 		658283F02D7B35BA0026FD75 /* Selectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658283EF2D7B35BA0026FD75 /* Selectors.swift */; };
 		658283F22D7B371B0026FD75 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658283F12D7B371B0026FD75 /* Settings.swift */; };
-		65A70E572D84A8AD009B9312 /* SettingsCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A70E562D84A8AD009B9312 /* SettingsCells.swift */; };
+		65A70E572D84A8AD009B9312 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A70E562D84A8AD009B9312 /* SettingsComponents.swift */; };
 		65EA64A62D89783500B1B66B /* TextService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64A52D89783500B1B66B /* TextService.swift */; };
 		65EA64A92D89C14300B1B66B /* CharactersSets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64A82D89C14300B1B66B /* CharactersSets.swift */; };
 		65EA64AB2D89F03C00B1B66B /* TestBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EA64AA2D89F03C00B1B66B /* TestBook.swift */; };
@@ -36,19 +37,20 @@
 		651CE3A92C009431001C18D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		652BC7422BEBA6A300BFB528 /* Paragraph.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Paragraph.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		652BC7452BEBA6A300BFB528 /* ParagraphApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParagraphApp.swift; sourceTree = "<group>"; };
-		652BC7472BEBA6A300BFB528 /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
+		652BC7472BEBA6A300BFB528 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		652BC7492BEBA6A400BFB528 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		652BC74C2BEBA6A400BFB528 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		654D2CD32E83D9C100825604 /* PageComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageComponents.swift; sourceTree = "<group>"; };
 		6569E4602D82D86B006A36E6 /* Color + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color + Extensions.swift"; sourceTree = "<group>"; };
 		6569E4632D82EF2A006A36E6 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		6569E4652D82F0CF006A36E6 /* BookCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCell.swift; sourceTree = "<group>"; };
 		657401322D9B57EB00CFA126 /* PageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageView.swift; sourceTree = "<group>"; };
 		658283E52D7B30050026FD75 /* toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toolbar.swift; sourceTree = "<group>"; };
 		658283E72D7B32DA0026FD75 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
-		658283EC2D7B35780026FD75 /* Reader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reader.swift; sourceTree = "<group>"; };
+		658283EC2D7B35780026FD75 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		658283EF2D7B35BA0026FD75 /* Selectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selectors.swift; sourceTree = "<group>"; };
 		658283F12D7B371B0026FD75 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
-		65A70E562D84A8AD009B9312 /* SettingsCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCells.swift; sourceTree = "<group>"; };
+		65A70E562D84A8AD009B9312 /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
 		65EA64A52D89783500B1B66B /* TextService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextService.swift; sourceTree = "<group>"; };
 		65EA64A82D89C14300B1B66B /* CharactersSets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharactersSets.swift; sourceTree = "<group>"; };
 		65EA64AA2D89F03C00B1B66B /* TestBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBook.swift; sourceTree = "<group>"; };
@@ -133,10 +135,10 @@
 			isa = PBXGroup;
 			children = (
 				658283EF2D7B35BA0026FD75 /* Selectors.swift */,
-				6569E4652D82F0CF006A36E6 /* BookCell.swift */,
-				65A70E562D84A8AD009B9312 /* SettingsCells.swift */,
 				65EA64B12D8E343600B1B66B /* BookMenu.swift */,
-				657401322D9B57EB00CFA126 /* PageView.swift */,
+				6569E4652D82F0CF006A36E6 /* BookCell.swift */,
+				65A70E562D84A8AD009B9312 /* SettingsComponents.swift */,
+				654D2CD32E83D9C100825604 /* PageComponents.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -144,10 +146,11 @@
 		65D558952BF69CD60095A70F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				652BC7472BEBA6A300BFB528 /* Content.swift */,
+				652BC7472BEBA6A300BFB528 /* MainView.swift */,
+				658283EC2D7B35780026FD75 /* ReaderView.swift */,
+				657401322D9B57EB00CFA126 /* PageView.swift */,
 				658283E52D7B30050026FD75 /* toolbar.swift */,
 				658283E72D7B32DA0026FD75 /* Library.swift */,
-				658283EC2D7B35780026FD75 /* Reader.swift */,
 				658283F12D7B371B0026FD75 /* Settings.swift */,
 			);
 			path = Views;
@@ -244,16 +247,17 @@
 				6569E4642D82EF2A006A36E6 /* Models.swift in Sources */,
 				658283E62D7B30050026FD75 /* toolbar.swift in Sources */,
 				65EA64B42D8ECA1700B1B66B /* ColorService.swift in Sources */,
-				658283ED2D7B35780026FD75 /* Reader.swift in Sources */,
+				658283ED2D7B35780026FD75 /* ReaderView.swift in Sources */,
 				65EA64B22D8E343600B1B66B /* BookMenu.swift in Sources */,
 				65EA64AB2D89F03C00B1B66B /* TestBook.swift in Sources */,
 				657401332D9B57EB00CFA126 /* PageView.swift in Sources */,
 				65EA64A62D89783500B1B66B /* TextService.swift in Sources */,
-				652BC7482BEBA6A300BFB528 /* Content.swift in Sources */,
+				652BC7482BEBA6A300BFB528 /* MainView.swift in Sources */,
 				651CE3A72C008FDC001C18D8 /* DocumentPicker.swift in Sources */,
-				65A70E572D84A8AD009B9312 /* SettingsCells.swift in Sources */,
+				65A70E572D84A8AD009B9312 /* SettingsComponents.swift in Sources */,
 				658283E82D7B32DA0026FD75 /* Library.swift in Sources */,
 				6569E4612D82D86B006A36E6 /* Color + Extensions.swift in Sources */,
+				654D2CD42E83D9C100825604 /* PageComponents.swift in Sources */,
 				652BC7462BEBA6A300BFB528 /* ParagraphApp.swift in Sources */,
 				65EA64AE2D8B043A00B1B66B /* String + Extensions.swift in Sources */,
 				658283F02D7B35BA0026FD75 /* Selectors.swift in Sources */,
@@ -397,11 +401,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Paragraph/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -409,9 +413,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = paragraphApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -428,11 +436,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Paragraph/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -440,9 +448,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = paragraphApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

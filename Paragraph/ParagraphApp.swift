@@ -15,7 +15,7 @@ struct ParagraphApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
                 .environmentObject(textService)
                 .environmentObject(colorService)
         }
