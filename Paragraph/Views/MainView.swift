@@ -49,7 +49,7 @@ struct MainView: View {
                         textService.setPaddingList(landscape: false)
                     }
                 VStack(spacing: 0) {
-                    ToolBarView(readerPresented: $readerPresented)
+                    HeaderView(readerPresented: $readerPresented)
                     .frame(width: device == .pad ? 560 : 360,
                            height: device == .pad ? 250 : 200)
                     .padding(.top, 100)

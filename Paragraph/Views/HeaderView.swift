@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ToolBarView: View {
+struct HeaderView: View {
     
     @AppStorage("sortMode") var sortIndex: Int = 0
     @Binding var readerPresented: Bool
@@ -56,7 +56,7 @@ struct ToolBarView: View {
     
     ZStack {
         Color.gray
-        ToolBarView(readerPresented: .constant(false))
+        HeaderView(readerPresented: .constant(false))
             .frame(width: 360, height: 200)
     }.ignoresSafeArea()
         .environmentObject(TextService())
