@@ -22,6 +22,7 @@ struct SettingsView: View {
                         HStack {
                             ColorThemeCell()
                             Spacer()
+                            
                         }
                         fontStyleCell()
                         FontSizeCell()
