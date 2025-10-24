@@ -154,7 +154,8 @@ final class TextService: ObservableObject {
     
     //MARK: - GetTextLine
     
-    func getLine(content: Book, part: Int, block: Int, word: Int, maxWidth: CGFloat, spacerWidth: CGFloat, uIFont: UIFont) -> TextLine {
+    func getLine(content: Book, part: Int, block: Int, word: Int,
+                 maxWidth: CGFloat, spacerWidth: CGFloat, uIFont: UIFont) -> TextLine {
 
         var tempWidth: CGFloat = 0
         var words: [Word] = []

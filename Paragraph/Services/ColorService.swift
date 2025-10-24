@@ -5,7 +5,6 @@
 //  Created by Александр Коробицын on 22.03.2025.
 //
 
-import Foundation
 import SwiftUI
 
 final class ColorService: ObservableObject {

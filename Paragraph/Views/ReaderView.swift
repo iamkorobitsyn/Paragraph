@@ -15,9 +15,6 @@ struct ReaderView: View {
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
     
-//    @State private var currentPart = 3
-//    @State private var currentLine = 0
-    
     @AppStorage("progressPart") private var progressPart = 0
     @AppStorage("progressLine") private var progressLine = 0
     
@@ -64,12 +61,10 @@ struct ReaderView: View {
                     
                     //MARK: - PageView
                     
-           
-                    
                             if isContentReady {
                                 VStack(spacing: 0) {
                                     TopMarginLine(width: geometry.size.width - padding * 2)
-                                    PageView(backColor: backgroundColor,
+                                    TextView(backColor: backgroundColor,
                                              textColor: textColor,
                                              font: font,
                                              interval: interval,
@@ -118,7 +113,7 @@ struct ReaderView: View {
                                _ uIFont: UIFont,
                                _ interval: CGFloat,
                                _ padding: CGFloat) {
-       
+        
             var tempLines: [TextLine] = []
             
             var tempBlock = 0
