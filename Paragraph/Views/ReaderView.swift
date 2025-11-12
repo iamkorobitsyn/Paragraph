@@ -14,9 +14,10 @@ struct ReaderView: View {
     
     @EnvironmentObject private var textService: TextService
     @EnvironmentObject private var colorService: ColorService
+    @EnvironmentObject private var textConstructHelper: TextConstructHelper
+    @EnvironmentObject private var contentTestingHelper: ContentTestingHelper
     
     @AppStorage("progressPart") private var progressPart = 0
-    @AppStorage("progressLine") private var progressLine = 0
     
     @State private var previousPage = TextLinesPart(text: [], height: 0)
     @State private var currentPage = TextLinesPart(text: [], height: 0)
@@ -40,18 +41,18 @@ struct ReaderView: View {
                 Color(.clear)
   
                     .onAppear() {
-                        contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
                     }
         
                     .onChange(of: font) {
-                        contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
                     }
                 
                     .onChange(of: [interval, padding]) {
-                        contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
                     }
                     .onChange(of: progressPart) {
-                        contentUpdate(textService.content, geometry, uIFont, interval, padding)
+                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
                     }
                 
                 
@@ -130,13 +131,13 @@ struct ReaderView: View {
             while !endContent {
                 
                 if progressPart == 0 {break}
-                let wordsLine = textService.getLine(content: content,
+                let wordsLine = textConstructHelper.constructTextLine(content: content,
                                                     part: progressPart - 1, block: tempBlock, word: tempWord,
                                                     maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
                 
                 tempBlock = wordsLine.endBlock
                 tempWord = wordsLine.endWord
-                tempHeight += textService.heightOfString(font: uIFont)
+                tempHeight += textConstructHelper.heightOfString(font: uIFont)
                 
                 tempLines.append(wordsLine)
                 if wordsLine.endContent {endContent = true}
@@ -157,13 +158,13 @@ struct ReaderView: View {
             //MARK: - current content
             
             while !endContent {
-                let wordsLine = textService.getLine(content: content,
+                let wordsLine = textConstructHelper.constructTextLine(content: content,
                                                     part: progressPart, block: tempBlock, word: tempWord,
                                                     maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
                 
                 tempBlock = wordsLine.endBlock
                 tempWord = wordsLine.endWord
-                tempHeight += textService.heightOfString(font: uIFont)
+                tempHeight += textConstructHelper.heightOfString(font: uIFont)
                 tempLines.append(wordsLine)
                 if wordsLine.endContent {endContent = true}
                 
@@ -180,13 +181,13 @@ struct ReaderView: View {
                 
                 if progressPart == content.bookParts.count - 1 {break}
                 
-                let wordsLine = textService.getLine(content: content,
+                let wordsLine = textConstructHelper.constructTextLine(content: content,
                                                     part: progressPart + 1, block: tempBlock, word: tempWord,
                                                     maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
                 
                 tempBlock = wordsLine.endBlock
                 tempWord = wordsLine.endWord
-                tempHeight += textService.heightOfString(font: uIFont)
+                tempHeight += textConstructHelper.heightOfString(font: uIFont)
                 tempLines.append(wordsLine)
                 if wordsLine.endContent {endContent = true}
                 
@@ -204,4 +205,6 @@ struct ReaderView: View {
     ReaderView(selfPresented: .constant(true))
         .environmentObject(TextService())
         .environmentObject(ColorService())
+        .environmentObject(TextConstructHelper())
+        .environmentObject(ContentTestingHelper())
 }

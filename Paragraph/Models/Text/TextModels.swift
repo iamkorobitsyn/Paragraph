@@ -1,18 +1,11 @@
 //
-//  Models.swift
+//  TextModels.swift
 //  Paragraph
 //
-//  Created by Александр Коробицын on 13.03.2025.
+//  Created by iamkorobitsyn on 11.11.2025.
 //
 
 import Foundation
-import SwiftUI
-
-enum BookStatus {
-    case closed
-    case open
-    case completed
-}
 
 enum TextMode {
     case title
@@ -22,35 +15,6 @@ enum TextMode {
     case verse
     case caption
     case indent
-}
-
-struct Book: Identifiable {
-    let id = UUID()
-    let title: String?
-    let author: String?
-    let coverImage: String?
-    let status: BookStatus
-    let progress: Double
-    let bookParts: [BookPart]
-}
-
-struct BookPart {
-    let textBlocks: [TextBlock]
-}
-
-struct TextBlock {
-    let text: [Word]
-    let mode: TextMode
-}
-
-struct Word {
-    let id: Int?
-    let text: String
-}
-
-struct TextLinesPart {
-    let text: [TextLine]
-    let height: CGFloat
 }
 
 struct TextLine {
@@ -79,6 +43,9 @@ struct TextLine {
     let height: CGFloat
 }
 
-
+struct TextLinesPart {
+    let text: [TextLine]
+    let height: CGFloat
+}
 
 
