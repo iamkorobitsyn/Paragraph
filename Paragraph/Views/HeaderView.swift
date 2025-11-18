@@ -59,6 +59,6 @@ struct HeaderView: View {
         HeaderView(readerPresented: .constant(false))
             .frame(width: 360, height: 200)
     }.ignoresSafeArea()
-        .environmentObject(TextService())
+        .environmentObject(TextTypographyHelper())
         
 }

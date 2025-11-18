@@ -12,47 +12,56 @@ struct ReaderView: View {
     @Binding var selfPresented: Bool
     @State private var settingsPresented: Bool = false
     
-    @EnvironmentObject private var textService: TextService
-    @EnvironmentObject private var colorService: ColorService
+    @EnvironmentObject private var textTypographyHelper: TextTypographyHelper
     @EnvironmentObject private var textConstructHelper: TextConstructHelper
+    @EnvironmentObject private var colorThemeHelper: ColorThemeHelper
     @EnvironmentObject private var contentTestingHelper: ContentTestingHelper
     
-    @AppStorage("progressPart") private var progressPart = 0
-    
-    @State private var previousPage = TextLinesPart(text: [], height: 0)
-    @State private var currentPage = TextLinesPart(text: [], height: 0)
-    @State private var nextPage = TextLinesPart(text: [], height: 0)
-    @State private var isContentReady = false
+    @State private var textLoadingContent: TextLoadingContent?
     
     var body: some View {
         
-        let font = textService.getFont()
-        let uIFont = textService.getUIFont()
+        let font = textTypographyHelper.getFont()
+        let uIFont = textTypographyHelper.getUIFont()
         
-        let interval = textService.getInterval()
-        let padding = textService.getPadding()
+        let interval = textTypographyHelper.getInterval()
+        let padding = textTypographyHelper.getPadding()
         
-        let backgroundColor = colorService.theme().background
-        let textColor = colorService.theme().text
-  
+        let typographyMetrics = TypographyMetrics(font: font, uIFont: uIFont, interval: interval, padding: padding)
+        
+        let backgroundColor = colorThemeHelper.theme().background
+        let textColor = colorThemeHelper.theme().text
+        
         if selfPresented {
             GeometryReader { geometry in
                 
                 Color(.clear)
-  
+                
                     .onAppear() {
-                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
+                        textLoadingContent = textConstructHelper.contentUpdate(
+                            book: contentTestingHelper.content,
+                            metrics: typographyMetrics,
+                            geometry: geometry)
                     }
-        
+                
                     .onChange(of: font) {
-                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
+                        textLoadingContent = textConstructHelper.contentUpdate(
+                            book: contentTestingHelper.content,
+                            metrics: typographyMetrics,
+                            geometry: geometry)
                     }
                 
                     .onChange(of: [interval, padding]) {
-                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
+                        textLoadingContent = textConstructHelper.contentUpdate(
+                            book: contentTestingHelper.content,
+                            metrics: typographyMetrics,
+                            geometry: geometry)
                     }
-                    .onChange(of: progressPart) {
-                        contentUpdate(contentTestingHelper.content, geometry, uIFont, interval, padding)
+                    .onChange(of: contentTestingHelper.progressPart) {
+                        textLoadingContent = textConstructHelper.contentUpdate(
+                            book: contentTestingHelper.content,
+                            metrics: typographyMetrics,
+                            geometry: geometry)
                     }
                 
                 
@@ -62,149 +71,59 @@ struct ReaderView: View {
                     
                     //MARK: - PageView
                     
-                            if isContentReady {
-                                VStack(spacing: 0) {
-                                    TopMarginLine(width: geometry.size.width - padding * 2)
-                                    TextView(backColor: backgroundColor,
-                                             textColor: textColor,
-                                             font: font,
-                                             interval: interval,
-                                             padding: padding,
-                                             prevPage: $previousPage,
-                                             currentPage: $currentPage,
-                                             nextPage: $nextPage,
-                                             updateContent: { swipeState in
-                                        switch swipeState {
-                                            
-                                        case .previous: progressPart -= 1
-                                        case .next: progressPart += 1
-                                        }
-                                    })
-                                    .ignoresSafeArea()
+                    if textConstructHelper.isContentReady {
+                        VStack(spacing: 0) {
+                            TopMarginLine(width: geometry.size.width - padding * 2)
+                            TextView(backColor: backgroundColor,
+                                     textColor: textColor,
+                                     font: font,
+                                     interval: interval,
+                                     padding: padding,
+                                     textLoadingContent: textLoadingContent!,
+                                     updateContent: { swipeState in
+                                switch swipeState {
+                                    
+                                case .previous:
+                                    contentTestingHelper.progressPart -= 1
+                                case .next:
+                                    contentTestingHelper.progressPart += 1
                                 }
-                                                                
-
-  
-                                VStack(spacing: 0) {
-                                    VStack {
-                                        Spacer()
-                                        Selector(mode: .readerControls) { i in
-                                            if i == 0 {
-                                                settingsPresented.toggle()
-                                            } else {
-                                                selfPresented.toggle()
-                                                settingsPresented = false
-                                            }
-                                        }
+                            })
+                            .ignoresSafeArea()
+                        }
+                        
+                        
+                        
+                        VStack(spacing: 0) {
+                            VStack {
+                                Spacer()
+                                Selector(mode: .readerControls) { i in
+                                    if i == 0 {
+                                        settingsPresented.toggle()
+                                    } else {
+                                        selfPresented.toggle()
+                                        settingsPresented = false
                                     }
-                                        
-                                    SettingsView(presented: $settingsPresented)
                                 }
                             }
+                            
+                            SettingsView(presented: $settingsPresented)
+                        }
+                    }
                 }
             }
         }
     }
     
-    //MARK: - ContentUpdate
-
     
-    private func contentUpdate(_ content: Book,
-                               _ geometry: GeometryProxy,
-                               _ uIFont: UIFont,
-                               _ interval: CGFloat,
-                               _ padding: CGFloat) {
-        
-            var tempLines: [TextLine] = []
-            
-            var tempBlock = 0
-            var tempWord = 0
-            var tempHeight: CGFloat = 0
-            var endContent: Bool = false
-            
-            let maxWidht = geometry.size.width - (padding * 2)
-            let spacerWidth = " ".widthOfString(usingFont: uIFont)
-            
-            //MARK: - previous content
-            
-            
-            while !endContent {
-                
-                if progressPart == 0 {break}
-                let wordsLine = textConstructHelper.constructTextLine(content: content,
-                                                    part: progressPart - 1, block: tempBlock, word: tempWord,
-                                                    maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
-                
-                tempBlock = wordsLine.endBlock
-                tempWord = wordsLine.endWord
-                tempHeight += textConstructHelper.heightOfString(font: uIFont)
-                
-                tempLines.append(wordsLine)
-                if wordsLine.endContent {endContent = true}
-                
-            }
-            
-            previousPage = TextLinesPart(text: tempLines, height: tempHeight)
-            
-            
-            
-            tempBlock = 0
-            tempWord = 0
-            tempHeight = 0
-            tempLines = []
-            endContent = false
-            
-            
-            //MARK: - current content
-            
-            while !endContent {
-                let wordsLine = textConstructHelper.constructTextLine(content: content,
-                                                    part: progressPart, block: tempBlock, word: tempWord,
-                                                    maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
-                
-                tempBlock = wordsLine.endBlock
-                tempWord = wordsLine.endWord
-                tempHeight += textConstructHelper.heightOfString(font: uIFont)
-                tempLines.append(wordsLine)
-                if wordsLine.endContent {endContent = true}
-                
-            }
-            currentPage = TextLinesPart(text: tempLines, height: tempHeight)
-            tempHeight = 0
-            tempLines = []
-            endContent = false
-            
-            
-            //MARK: = next content
-            
-            while !endContent {
-                
-                if progressPart == content.bookParts.count - 1 {break}
-                
-                let wordsLine = textConstructHelper.constructTextLine(content: content,
-                                                    part: progressPart + 1, block: tempBlock, word: tempWord,
-                                                    maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: uIFont)
-                
-                tempBlock = wordsLine.endBlock
-                tempWord = wordsLine.endWord
-                tempHeight += textConstructHelper.heightOfString(font: uIFont)
-                tempLines.append(wordsLine)
-                if wordsLine.endContent {endContent = true}
-                
-                
-            }
-            nextPage = TextLinesPart(text: tempLines, height: tempHeight)
-        
-        isContentReady = true
-        }
     
 }
 
 
 #Preview {
     ReaderView(selfPresented: .constant(true))
-        .environmentObject(TextService())
-        .environmentObject(ColorService())
+        .environmentObject(TextTypographyHelper())
+        .environmentObject(ColorThemeHelper())
         .environmentObject(TextConstructHelper())
         .environmentObject(ContentTestingHelper())
 }

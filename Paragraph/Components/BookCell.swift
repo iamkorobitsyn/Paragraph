@@ -43,7 +43,7 @@ struct BookCell: View {
                                 .frame(width: 100, height: 1)
                             Rectangle()
                                 .foregroundStyle(.white)
-                                .frame(width: book.progress * 100, height: 6)
+                                .frame(width: 100, height: 6)
                                 .cornerRadius(3)
                         }
                         
@@ -67,7 +67,7 @@ struct BookCell: View {
                             author: "Fredrik Backman",
                             coverImage: "Beartown Fredrik Backman",
                             status: .closed,
-                            progress: 0.78,
+                            progressPart: 0,
                             bookParts: []))
     }
     

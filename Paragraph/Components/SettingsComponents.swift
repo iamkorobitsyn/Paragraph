@@ -43,7 +43,7 @@ struct ColorThemeCell: View {
 struct fontStyleCell: View {
     
     @AppStorage("fontStyleIndex") private var i: Int = 0
-    @EnvironmentObject private var service: TextService
+    @EnvironmentObject private var service: TextTypographyHelper
     
     var body: some View {
         
@@ -95,7 +95,7 @@ struct fontStyleCell: View {
 struct FontSizeCell: View {
 
     @AppStorage("fontSizeIndex") private var i: Int = 0
-    @EnvironmentObject private var service: TextService
+    @EnvironmentObject private var service: TextTypographyHelper
     
     var body: some View {
         
@@ -145,7 +145,7 @@ struct FontSizeCell: View {
 struct LineIntervalCell: View {
     
     @AppStorage("lineIntervalIndex") private var i: Int = 0
-    @EnvironmentObject private var service: TextService
+    @EnvironmentObject private var service: TextTypographyHelper
     
     var body: some View {
         
@@ -193,7 +193,7 @@ struct LineIntervalCell: View {
 struct PaddingSizeCell: View {
     
     @AppStorage("paddingSizeIndex") private var i: Int = 0
-    @EnvironmentObject private var service: TextService
+    @EnvironmentObject private var service: TextTypographyHelper
     
     var body: some View {
         
@@ -274,7 +274,7 @@ struct TransferOfWordsCell: View {
     ZStack {
         Color(.gray)
         TransferOfWordsCell()
-            .environmentObject(TextService())
+            .environmentObject(TextTypographyHelper())
     }
     .frame(height: 50)
 }

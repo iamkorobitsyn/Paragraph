@@ -10,17 +10,17 @@ import SwiftUI
 @main
 struct ParagraphApp: App {
     
-    @StateObject private var textService = TextService()
-    @StateObject private var colorService = ColorService()
+    @StateObject private var textTypographyHelper = TextTypographyHelper()
     @StateObject private var textConstructHelper = TextConstructHelper()
+    @StateObject private var colorThemeHelper = ColorThemeHelper()
     @StateObject private var contentTestingHelper = ContentTestingHelper()
     
     var body: some Scene {
         WindowGroup {
             MainView()
-                .environmentObject(textService)
-                .environmentObject(colorService)
+                .environmentObject(textTypographyHelper)
                 .environmentObject(textConstructHelper)
+                .environmentObject(colorThemeHelper)
                 .environmentObject(contentTestingHelper)
         }
     }

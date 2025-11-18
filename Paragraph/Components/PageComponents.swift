@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TextView: View {
     
-    @EnvironmentObject private var textService: TextService
+    @EnvironmentObject private var textService: TextTypographyHelper
     
     let backColor: Color
     let textColor: Color
@@ -18,9 +18,11 @@ struct TextView: View {
     let interval: CGFloat
     let padding: CGFloat
     
-    @Binding var prevPage: TextLinesPart
-    @Binding var currentPage: TextLinesPart
-    @Binding var nextPage: TextLinesPart
+    var textLoadingContent: TextLoadingContent
+    
+//    @Binding var prevPage: TextPart
+//    @Binding var currentPage: TextPart
+//    @Binding var nextPage: TextPart
     
     let updateContent: (SwipeState) -> Void
     
@@ -49,7 +51,7 @@ struct TextView: View {
                 TabView {
                     ZStack {
                         Color(backColor)
-                        ScrollView { constructTextContent(currentPage.text) }
+                        ScrollView { constructTextContent(textLoadingContent.currentPart.text) }
                         SwipeLinesView(lLine: topBoundsDetected, rLine: bottomBoundsDetected)
                     }
                 }
@@ -58,7 +60,7 @@ struct TextView: View {
                 .padding(.top, 1)
                 .opacity(plaiceholderOpacity)
                 
-                if currentPage.height > geometry.size.height {
+                if textLoadingContent.currentPart.height > geometry.size.height {
                     
                     //MARK: - DynamicScroll
 
@@ -73,13 +75,13 @@ struct TextView: View {
                                     BoundsDetectionView { detected in topBoundsDetected = detected}
                                    
                                    VStack(spacing: 0) {
-                                         ForEach(0..<currentPage.text.count, id: \.self) { index in
+                                       ForEach(0..<textLoadingContent.currentPart.text.count, id: \.self) { index in
                                              if index == 0 { Rectangle().fill(.clear).frame(height: 20) }
                                              ZStack {
                                                  TextLineView(
                                                     font: font,
                                                     textColor: textColor,
-                                                    textLine: currentPage.text[index],
+                                                    textLine: textLoadingContent.currentPart.text[index],
                                                     interval: interval,
                                                     padding: padding
                                                  )
@@ -98,12 +100,12 @@ struct TextView: View {
                                 .background(backColor)
                                 
                                 
-                                if !prevPage.text.isEmpty {
+                                if !textLoadingContent.previousPart.text.isEmpty {
                                     
                                     VStack {
                                         
                                         TabView(selection: $selected) {
-                                            ZStack { ScrollView { constructTextContent(prevPage.text) } }
+                                            ZStack { ScrollView { constructTextContent(textLoadingContent.previousPart.text) } }
                                                 .background(backColor)
                                                 .tag(0)
                                             
@@ -122,7 +124,7 @@ struct TextView: View {
                                     .padding(.top, 1)
                                 }
                                 
-                                if !nextPage.text.isEmpty {
+                                if !textLoadingContent.nextPart.text.isEmpty {
                                     
                                     VStack {
                                         
@@ -139,7 +141,7 @@ struct TextView: View {
                                                     }
                                                 }
                                             
-                                            ZStack { ScrollView { constructTextContent(nextPage.text) } }
+                                            ZStack { ScrollView { constructTextContent(textLoadingContent.nextPart.text) } }
                                                 .background(backColor)
                                                 .tag(2)
                                         }
@@ -153,8 +155,8 @@ struct TextView: View {
                         .onAppear { proxy.scrollTo(currentId, anchor: .top) }
                     }
    
-                    SwipeLinesView(lLine: topBoundsDetected && !prevPage.text.isEmpty,
-                                   rLine: bottomBoundsDetected && !nextPage.text.isEmpty)
+                    SwipeLinesView(lLine: topBoundsDetected && !textLoadingContent.previousPart.text.isEmpty,
+                                   rLine: bottomBoundsDetected && !textLoadingContent.previousPart.text.isEmpty)
 
                 } else {
                     //MARK: - StaticTab
@@ -164,15 +166,16 @@ struct TextView: View {
                         ZStack {
                             
                             VStack {
-                                constructTextContent(currentPage.text).background(backColor)
+                                constructTextContent(textLoadingContent.currentPart.text).background(backColor)
                                 Spacer()
                             }
                             
                             VStack {
                                 TabView(selection: $selected) {
                                     
-                                    if !prevPage.text.isEmpty {
-                                        ScrollView { constructTextContent(prevPage.text) }.background(backColor).tag(0)
+                                    if !textLoadingContent.previousPart.text.isEmpty {
+                                        ScrollView
+                                        { constructTextContent(textLoadingContent.previousPart.text) }.background(backColor).tag(0)
                                     }
                                     
                                     Color.clear.tag(1)
@@ -182,8 +185,9 @@ struct TextView: View {
                                             updateLoadingState()
                                         }
                                     
-                                    if !nextPage.text.isEmpty {
-                                        ScrollView { constructTextContent(nextPage.text) }.background(backColor).tag(2)
+                                    if !textLoadingContent.nextPart.text.isEmpty {
+                                        ScrollView
+                                        { constructTextContent(textLoadingContent.nextPart.text) }.background(backColor).tag(2)
                                     }
                                 }
                                 .frame(height: geometry.size.height)
@@ -195,7 +199,8 @@ struct TextView: View {
                         }
                         .padding(.top, 1)
                     }
-                    SwipeLinesView(lLine: !prevPage.text.isEmpty ? true : false, rLine: !nextPage.text.isEmpty ? true : false)
+                    SwipeLinesView(lLine: !textLoadingContent.previousPart.text.isEmpty ? true : false,
+                                   rLine: !textLoadingContent.nextPart.text.isEmpty ? true : false)
                 }
             }
         }

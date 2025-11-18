@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class ColorService: ObservableObject {
+final class ColorThemeHelper: ObservableObject {
     
     @AppStorage("colorThemeIndex") private var colorThemeIndex: Int = 0
     

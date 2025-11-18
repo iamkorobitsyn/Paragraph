@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
 
 final class ContentTestingHelper: ObservableObject {
     
     var wordID: Int = 0
+    
+    @AppStorage("progressPart") var progressPart = 0
     
     func textConvert(text: String) -> [Word] {
 
@@ -37,7 +40,7 @@ final class ContentTestingHelper: ObservableObject {
                             author: "Уилл Элиот",
                             coverImage: "",
                             status: .open,
-                            progress: 58.5,
+                            progressPart: progressPart,
                             bookParts: [
                                 .init(textBlocks:
                                             [TextBlock(text: textConvert(text: "Title"), mode: .title)]),

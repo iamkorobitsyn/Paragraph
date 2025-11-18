@@ -43,9 +43,15 @@ struct TextLine {
     let height: CGFloat
 }
 
-struct TextLinesPart {
+struct TextPart {
     let text: [TextLine]
     let height: CGFloat
+}
+
+struct TextLoadingContent {
+    let previousPart: TextPart
+    let currentPart: TextPart
+    let nextPart: TextPart
 }
 
 

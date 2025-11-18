@@ -20,7 +20,7 @@ struct Book: Identifiable {
     let author: String?
     let coverImage: String?
     let status: BookStatus
-    let progress: Double
+    let progressPart: Int
     let bookParts: [BookPart]
 }
 

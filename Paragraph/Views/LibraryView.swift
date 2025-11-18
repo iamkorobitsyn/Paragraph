@@ -36,21 +36,21 @@ struct LibraryView: View {
                  author: "Fredrik Backman",
                  coverImage: "Beartown Fredrik Backman",
                  status: .closed,
-                 progress: 0.33,
+                 progressPart: 0,
                  bookParts: []),
             
             Book(title: "My grandmother asked me to tell you shes sorry",
                  author: "Fredrik Backman",
                  coverImage: "My grandmother asked me to tell you shes sorry   Fredrik Backman",
                  status: .open,
-                 progress: 0.95,
+                 progressPart: 0,
                  bookParts: []),
             
             Book(title: "Things my son needs to know about the world",
                  author: "Fredrik Backman",
                  coverImage: "Things my son needs to know about the world  Fredrik Backman",
                  status: .completed,
-                 progress: 0.0,
+                 progressPart: 0,
                  bookParts: [])
         ])
     }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class TextService: ObservableObject {
+final class TextTypographyHelper: ObservableObject {
     
     @AppStorage("fontStyleIndex") private var fontIndex = 0
     @AppStorage("fontSizeIndex") private var sizeIndex = 0
@@ -19,8 +19,6 @@ final class TextService: ObservableObject {
     let intervalList: [CGFloat] = [0, 4, 8, 12, 16]
     var paddingList: [CGFloat] = [20, 30, 40, 50, 60]
     
-    var regularHypernationWord: Word?
-    var hypernationWordOfPreviousPage: Word?
     
     enum FontStyle: Int {
         case charter, palatino, baskerville, courierNew, helveticaNeue, helveticaNeueBold

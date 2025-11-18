@@ -10,6 +10,115 @@ import SwiftUI
 
 final class TextConstructHelper: ObservableObject {
     
+    var isContentReady = false
+    
+    
+    //MARK: - ContentUpdate
+
+    
+    func contentUpdate(book: Book,
+                               metrics: TypographyMetrics,
+                               geometry: GeometryProxy) -> TextLoadingContent {
+        
+        var previousPage = TextPart(text: [], height: 0)
+        var currentPage = TextPart(text: [], height: 0)
+        var nextPage = TextPart(text: [], height: 0)
+        
+        var tempLines: [TextLine] = []
+        
+        var tempBlock = 0
+        var tempWord = 0
+        var tempHeight: CGFloat = 0
+        var endContent: Bool = false
+        
+        let maxWidht = geometry.size.width - (metrics.padding * 2)
+        let spacerWidth = " ".widthOfString(usingFont: metrics.uIFont)
+            
+            //MARK: - previous content
+            
+            
+            while !endContent {
+                
+                if book.progressPart == 0 {break}
+                let wordsLine = constructTextLine(content: book,
+                                                    part: book.progressPart - 1, block: tempBlock, word: tempWord,
+                                                                      maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: metrics.uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                tempHeight += heightOfString(font: metrics.uIFont)
+                
+                tempLines.append(wordsLine)
+                if wordsLine.endContent {endContent = true}
+                
+            }
+            
+            previousPage = TextPart(text: tempLines, height: tempHeight)
+            
+            
+            
+            tempBlock = 0
+            tempWord = 0
+            tempHeight = 0
+            tempLines = []
+            endContent = false
+            
+            
+            //MARK: - current content
+            
+            while !endContent {
+                let wordsLine = constructTextLine(content: book,
+                                                    part: book.progressPart, block: tempBlock, word: tempWord,
+                                                                      maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: metrics.uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                tempHeight += heightOfString(font: metrics.uIFont)
+                tempLines.append(wordsLine)
+                if wordsLine.endContent {endContent = true}
+                
+            }
+            currentPage = TextPart(text: tempLines, height: tempHeight)
+            tempHeight = 0
+            tempLines = []
+            endContent = false
+            
+            
+            //MARK: = next content
+            
+            while !endContent {
+                
+                if book.progressPart == book.bookParts.count - 1 {break}
+                
+                let wordsLine = constructTextLine(content: book,
+                                                    part: book.progressPart + 1, block: tempBlock, word: tempWord,
+                                                                      maxWidth: maxWidht, spacerWidth: spacerWidth, uIFont: metrics.uIFont)
+                
+                tempBlock = wordsLine.endBlock
+                tempWord = wordsLine.endWord
+                tempHeight += heightOfString(font: metrics.uIFont)
+                tempLines.append(wordsLine)
+                if wordsLine.endContent {endContent = true}
+                
+                
+            }
+            nextPage = TextPart(text: tempLines, height: tempHeight)
+
+        
+        
+        let textLoadingContent = TextLoadingContent(previousPart: previousPage,
+                                                    currentPart: currentPage,
+                                                    nextPart: nextPage)
+        
+        isContentReady = true
+        
+        return textLoadingContent
+        
+        }
+    
+    
+    
+    
     
     //MARK: ConstructTextLine
     

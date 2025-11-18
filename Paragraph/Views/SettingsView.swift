@@ -46,7 +46,7 @@ struct SettingsView: View {
     ZStack() {
         Color(.gray).ignoresSafeArea()
         SettingsView(presented: .constant(true))
-            .environmentObject(TextService())
+            .environmentObject(TextTypographyHelper())
     }
     
 }
